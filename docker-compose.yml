@@ -1,0 +1,5 @@
+version: "3.9"
+services:
+  ethereum_contract_builder:
+    build: .
+    container_name: ethereum_contract_builder

@@ -19,7 +19,6 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
 *.lcov
 
 # nyc test coverage
@@ -102,3 +101,46 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Solidity
+allFiredEvents
+build
+build_
+node_modules
+.certora*
+certora_*
+coverage/
+coverage.json
+coverageEnv/
+emv-*/
+formulas/
+networks/test.json
+networks/test-abi.json
+networks/coverage.json
+networks/coverage-abi.json
+networks/development.json
+networks/development-abi.json
+networks/coverage-contracts/*
+networks/test-contracts/*
+networks/*-contracts.json
+networks/*-history
+networks/*-settings.json
+outputs/
+Reports/
+scTopics
+*.DS_Store
+test-results.xml
+.tsbuilt
+yarn-error.log
+scenario/build/webpack.js
+.scencache
+.solcache
+.solcachecov
+scenario/.tscache
+script/certora
+tests/scenarios/
+junit.xml
+.build
+.last_confs
+.saddle_history
+node_modules_tmp

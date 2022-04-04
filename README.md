@@ -1,2 +1,4 @@
 # DeFi_Marketplace
-Makertplace DeFi
+Marketplace DeFi
+
+*This marketplace is based on the Compound
