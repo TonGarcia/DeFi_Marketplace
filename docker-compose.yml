@@ -3,3 +3,5 @@ services:
   ethereum_contract_builder:
     build: .
     container_name: ethereum_contract_builder
+    volumes:
+      - .:/protocol

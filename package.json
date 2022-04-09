@@ -12,8 +12,8 @@
       "repl": "./scenario/script/repl",
       "profile": "yarn test tests/gasProfiler.js",
       "report": "npx run ./script/saddle/gasReport.js",
-      "test": "./script/test",
-      "test:prepare": "NO_RUN=true ./script/test",
+      "test": "sh ./script/test",
+      "test:prepare": "NO_RUN=true sh ./script/test",
       "checksize": "npx run ./script/saddle/comptrollerSize.js"
     },
     "repository": "git@github.com:niural/niural-protocol.git",
