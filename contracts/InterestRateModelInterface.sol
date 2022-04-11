@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: none
-pragma solidity ^0.8.12;
+pragma solidity ^0.5.16;
 
 /**
   * @title Compound's InterestRateModel Interface
   * @author Compound
   */
-abstract contract InterestRateModelInterface {
+contract InterestRateModelInterface {
     /// @notice Indicator that this is an InterestRateModel contract (for inspection)
     bool public constant isInterestRateModel = true;
 
@@ -16,7 +16,7 @@ abstract contract InterestRateModelInterface {
       * @param reserves The total amount of reserves the market has
       * @return The borrow rate per block (as a percentage, and scaled by 1e18)
       */
-    function getBorrowRate(uint cash, uint borrows, uint reserves) external virtual view returns (uint);
+    function getBorrowRate(uint cash, uint borrows, uint reserves) external view returns (uint);
 
     /**
       * @notice Calculates the current supply interest rate per block
@@ -26,6 +26,6 @@ abstract contract InterestRateModelInterface {
       * @param reserveFactorMantissa The current reserve factor the market has
       * @return The supply rate per block (as a percentage, and scaled by 1e18)
       */
-    function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) external virtual view returns (uint);
+    function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) external view returns (uint);
 
 }
