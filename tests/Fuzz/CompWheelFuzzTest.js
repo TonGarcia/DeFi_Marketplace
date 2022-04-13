@@ -43,7 +43,7 @@ expect.extend({
 describe.skip('CompWheelFuzzTest', () => {
   // This whole test is fake, but we're testing to see if our equations match reality.
 
-  // First, we're going to build a simple simulator of the Compound protocol
+  // First, we're going to build a simple simulator of the Niural protocol
 
   let randAccount = globals => {
     return globals.accounts[rand(globals.accounts.length)];

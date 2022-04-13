@@ -5,12 +5,12 @@ const {
 } = require('./Utils/Ethereum');
 
 const {
-  makeComptroller,
+  makeNiutroller,
   makeCToken,
   preApprove,
   preSupply,
   quickRedeem,
-} = require('./Utils/Compound');
+} = require('./Utils/Niural');
 
 async function compBalance(comptroller, user) {
   return etherUnsigned(await call(comptroller.comp, 'balanceOf', [user]))
@@ -180,7 +180,7 @@ describe('Gas report', () => {
   ])('Comp claims %s', (patch) => {
     beforeEach(async () => {
       [root, minter, redeemer, ...accounts] = saddle.accounts;
-      comptroller = await makeComptroller({ kind: patch });
+      comptroller = await makeNiutroller({ kind: patch });
       let interestRateModelOpts = {borrowRate: 0.000001};
       cToken = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
       if (patch == 'unitroller') {

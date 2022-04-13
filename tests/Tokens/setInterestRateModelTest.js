@@ -3,7 +3,7 @@ const {
   fastForward,
   makeCToken,
   makeInterestRateModel
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 describe('CToken', function () {
   let root, accounts;

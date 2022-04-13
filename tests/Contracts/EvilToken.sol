@@ -3,8 +3,8 @@ pragma solidity ^0.5.16;
 import "./FaucetToken.sol";
 
 /**
-  * @title The Compound Evil Test Token
-  * @author Compound
+  * @title The Niural Evil Test Token
+  * @author Niural based on prev readme author
   * @notice A simple test token that fails certain operations
   */
 contract EvilToken is FaucetToken {

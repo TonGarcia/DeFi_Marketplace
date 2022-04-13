@@ -33,7 +33,7 @@ export async function buildGovernor(
       `
       #### GovernorBravoDelegator
 
-      * "GovernorBravo Deploy BravoDelegator name:<String> timelock:<Address> comp:<Address> admin:<Address> implementation<address> votingPeriod:<Number> votingDelay:<Number>" - Deploys Compound Governor Bravo with a given parameters
+      * "GovernorBravo Deploy BravoDelegator name:<String> timelock:<Address> comp:<Address> admin:<Address> implementation<address> votingPeriod:<Number> votingDelay:<Number>" - Deploys Niural Governor Bravo with a given parameters
         * E.g. "GovernorBravo Deploy BravoDelegator GovernorBravo (Address Timelock) (Address Comp) Admin (Address impl) 17280 1"
     `,
       "BravoDelegator",
@@ -66,7 +66,7 @@ export async function buildGovernor(
       `
       #### GovernorBravoImmutable
 
-      * "GovernorBravoImmut Deploy BravoImmutable name:<String> timelock:<Address> comp:<Address> admin:<Address> votingPeriod:<Number> votingDelay:<Number>" - Deploys Compound Governor Bravo Immutable with a given parameters
+      * "GovernorBravoImmut Deploy BravoImmutable name:<String> timelock:<Address> comp:<Address> admin:<Address> votingPeriod:<Number> votingDelay:<Number>" - Deploys Niural Governor Bravo Immutable with a given parameters
         * E.g. "GovernorBravo Deploy BravoImmutable GovernorBravo (Address Timelock) (Address Comp) Admin 17280 1"
     `,
       "BravoImmutable",
@@ -98,7 +98,7 @@ export async function buildGovernor(
       `
       #### GovernorBravoDelegate
 
-      * "Governor Deploy BravoDelegate name:<String>" - Deploys Compound Governor Bravo Delegate
+      * "Governor Deploy BravoDelegate name:<String>" - Deploys Niural Governor Bravo Delegate
         * E.g. "Governor Deploy BravoDelegate GovernorBravoDelegate"
     `,
       "BravoDelegate",
@@ -124,7 +124,7 @@ export async function buildGovernor(
       `
       #### GovernorBravoDelegateHarness
 
-      * "Governor Deploy BravoDelegateHarness name:<String>" - Deploys Compound Governor Bravo Delegate Harness
+      * "Governor Deploy BravoDelegateHarness name:<String>" - Deploys Niural Governor Bravo Delegate Harness
         * E.g. "Governor Deploy BravoDelegateHarness GovernorBravoDelegateHarness"
     `,
       "BravoDelegateHarness",

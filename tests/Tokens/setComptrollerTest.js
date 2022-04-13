@@ -1,7 +1,7 @@
 const {
-  makeComptroller,
+  makeNiutroller,
   makeCToken
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 describe('CToken', function () {
   let root, accounts;
@@ -10,7 +10,7 @@ describe('CToken', function () {
     [root, ...accounts] = saddle.accounts;
     cToken = await makeCToken();
     oldComptroller = cToken.comptroller;
-    newComptroller = await makeComptroller();
+    newComptroller = await makeNiutroller();
     expect(newComptroller._address).not.toEqual(oldComptroller._address);
   });
 
@@ -29,7 +29,7 @@ describe('CToken', function () {
 
     it("reverts if passed a contract that implements isComptroller as false", async () => {
       // extremely unlikely to occur, of course, but let's be exhaustive
-      const badComptroller = await makeComptroller({ kind: 'false-marker' });
+      const badComptroller = await makeNiutroller({ kind: 'false-marker' });
       await expect(send(cToken, '_setComptroller', [badComptroller._address])).rejects.toRevert("revert marker method returned false");
       expect(await call(cToken, 'comptroller')).toEqual(oldComptroller._address);
     });

@@ -15,7 +15,7 @@ const {
   pretendBorrow,
   preApprove,
   enterMarkets
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 const repayAmount = etherExp(10);
 const seizeTokens = repayAmount.multipliedBy(4); // forced

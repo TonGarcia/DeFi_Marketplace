@@ -2,8 +2,8 @@
 pragma solidity ^0.5.16;
 
 /**
-  * @title Compound's InterestRateModel Interface
-  * @author Compound
+  * @title Niural's InterestRateModel Interface
+  * @author Niural based on prev readme author
   */
 contract InterestRateModelInterface {
     /// @notice Indicator that this is an InterestRateModel contract (for inspection)

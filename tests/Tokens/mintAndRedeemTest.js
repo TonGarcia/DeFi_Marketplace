@@ -16,7 +16,7 @@ const {
   preSupply,
   quickRedeem,
   quickRedeemUnderlying
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 const exchangeRate = 50e3;
 const mintAmount = etherUnsigned(10e4);

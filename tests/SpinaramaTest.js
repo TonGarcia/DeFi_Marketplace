@@ -10,7 +10,7 @@ const {
   balanceOf,
   borrowSnapshot,
   enterMarkets
-} = require('./Utils/Compound');
+} = require('./Utils/Niural');
 
 describe('Spinarama', () => {
   let root, from, accounts;

@@ -4,9 +4,9 @@ const {
   etherExp,
 } = require('../Utils/Ethereum');
 const {
-  makeComptroller,
+  makeNiutroller,
   makeCToken,
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 function cullTuple(tuple) {
   return Object.keys(tuple).reduce((acc, key) => {
@@ -21,12 +21,12 @@ function cullTuple(tuple) {
   }, {});
 }
 
-describe('CompoundLens', () => {
+describe('NiuralLens', () => {
   let compoundLens;
   let acct;
 
   beforeEach(async () => {
-    compoundLens = await deploy('CompoundLens');
+    compoundLens = await deploy('NiuralLens');
     acct = accounts[0];
   });
 
@@ -83,7 +83,7 @@ describe('CompoundLens', () => {
       });
     });
     it('is correct for cErc20 with set comp speeds', async () => {
-      let comptroller = await makeComptroller();
+      let comptroller = await makeNiutroller();
       let cErc20 = await makeCToken({comptroller, supportMarket: true});
       await send(comptroller, '_setCompSpeeds', [[cErc20._address], [etherExp(0.25)], [etherExp(0.75)]]);
       expect(
@@ -272,7 +272,7 @@ describe('CompoundLens', () => {
 
   describe('getAccountLimits', () => {
     it('gets correct values', async () => {
-      let comptroller = await makeComptroller();
+      let comptroller = await makeNiutroller();
 
       expect(
         cullTuple(await call(compoundLens, 'getAccountLimits', [comptroller._address, acct]))
@@ -363,7 +363,7 @@ describe('CompoundLens', () => {
 
     describe('getCompBalanceMetadataExt', () => {
       it('gets correct values', async () => {
-        let comptroller = await makeComptroller();
+        let comptroller = await makeNiutroller();
         await send(comptroller, 'setCompAccrued', [acct, 5]); // harness only
 
         expect(

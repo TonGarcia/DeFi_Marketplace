@@ -13,7 +13,7 @@ npx saddle -n rinkeby script token:verify 0x19B674715cD20626415C738400FDd0d32D68
   "comptroller": "$Comptroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
-  "name": "Compound Kyber Network Crystal",
+  "name": "Niural Kyber Network Crystal",
   "symbol": "cKNC",
   "decimals": "8",
   "admin": "$Timelock"

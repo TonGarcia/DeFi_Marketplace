@@ -1,9 +1,9 @@
 const {etherUnsigned, UInt256Max} = require('../Utils/Ethereum');
 const {
-  makeComptroller,
+  makeNiutroller,
   makeCToken,
   setOraclePrice
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 const borrowedPrice = 2e10;
 const collateralPrice = 1e18;
@@ -23,7 +23,7 @@ describe('Comptroller', () => {
 
   beforeEach(async () => {
     [root, ...accounts] = saddle.accounts;
-    comptroller = await makeComptroller();
+    comptroller = await makeNiutroller();
     cTokenBorrowed = await makeCToken({comptroller: comptroller, underlyingPrice: 0});
     cTokenCollateral = await makeCToken({comptroller: comptroller, underlyingPrice: 0});
   });

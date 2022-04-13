@@ -17,7 +17,7 @@ const {
   setEtherBalance,
   getBalances,
   adjustBalances
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 const BigNumber = require('bignumber.js');
 

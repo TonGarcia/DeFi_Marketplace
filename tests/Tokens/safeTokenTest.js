@@ -2,7 +2,7 @@ const {
   makeCToken,
   getBalances,
   adjustBalances
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 const exchangeRate = 5;
 

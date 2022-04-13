@@ -1,9 +1,9 @@
 const {
-  makeComptroller,
+  makeNiutroller,
   makeCToken,
   enterMarkets,
   quickMint
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 describe('Comptroller', () => {
   let root, accounts;
@@ -89,7 +89,7 @@ describe('Comptroller', () => {
 
   describe("getAccountLiquidity", () => {
     it("returns 0 if not 'in' any markets", async () => {
-      const comptroller = await makeComptroller();
+      const comptroller = await makeNiutroller();
       const {0: error, 1: liquidity, 2: shortfall} = await call(comptroller, 'getAccountLiquidity', [accounts[0]]);
       expect(error).toEqualNumber(0);
       expect(liquidity).toEqualNumber(0);

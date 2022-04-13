@@ -31,7 +31,7 @@ export async function buildGovernor(
       `
       #### GovernorAlpha
 
-      * "Governor Deploy Alpha name:<String> timelock:<Address> comp:<Address> guardian:<Address>" - Deploys Compound Governor Alpha
+      * "Governor Deploy Alpha name:<String> timelock:<Address> comp:<Address> guardian:<Address>" - Deploys Niural Governor Alpha
         * E.g. "Governor Deploy Alpha GovernorAlpha (Address Timelock) (Address Comp) Guardian"
     `,
       "Alpha",
@@ -60,7 +60,7 @@ export async function buildGovernor(
       `
       #### GovernorAlphaHarness
 
-      * "Governor Deploy AlphaHarness name:<String> timelock:<Address> comp:<Address> guardian:<Address>" - Deploys Compound Governor Alpha with a mocked voting period
+      * "Governor Deploy AlphaHarness name:<String> timelock:<Address> comp:<Address> guardian:<Address>" - Deploys Niural Governor Alpha with a mocked voting period
         * E.g. "Governor Deploy AlphaHarness GovernorAlphaHarness (Address Timelock) (Address Comp) Guardian"
     `,
       "AlphaHarness",

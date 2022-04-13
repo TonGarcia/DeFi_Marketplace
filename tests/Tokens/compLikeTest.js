@@ -1,6 +1,6 @@
 const {
   makeCToken,
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 
 describe('CCompLikeDelegate', function () {

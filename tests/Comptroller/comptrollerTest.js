@@ -4,11 +4,11 @@ const {
 } = require('../Utils/Ethereum');
 
 const {
-  makeComptroller,
+  makeNiutroller,
   makePriceOracle,
   makeCToken,
   makeToken
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 describe('Comptroller', () => {
   let root, accounts;
@@ -19,13 +19,13 @@ describe('Comptroller', () => {
 
   describe('constructor', () => {
     it("on success it sets admin to creator and pendingAdmin is unset", async () => {
-      const comptroller = await makeComptroller();
+      const comptroller = await makeNiutroller();
       expect(await call(comptroller, 'admin')).toEqual(root);
       expect(await call(comptroller, 'pendingAdmin')).toEqualNumber(0);
     });
 
     it("on success it sets closeFactor as specified", async () => {
-      const comptroller = await makeComptroller();
+      const comptroller = await makeNiutroller();
       expect(await call(comptroller, 'closeFactorMantissa')).toEqualNumber(0.051e18);
     });
   });
@@ -38,7 +38,7 @@ describe('Comptroller', () => {
 
     let comptroller;
     beforeEach(async () => {
-      comptroller = await makeComptroller();
+      comptroller = await makeNiutroller();
     });
 
     it("fails if called by non-admin", async () => {
@@ -62,7 +62,7 @@ describe('Comptroller', () => {
   describe('_setPriceOracle', () => {
     let comptroller, oldOracle, newOracle;
     beforeEach(async () => {
-      comptroller = await makeComptroller();
+      comptroller = await makeNiutroller();
       oldOracle = comptroller.priceOracle;
       newOracle = await makePriceOracle();
     });
@@ -150,7 +150,7 @@ describe('Comptroller', () => {
     });
 
     it("fails if asset is not a CToken", async () => {
-      const comptroller = await makeComptroller()
+      const comptroller = await makeNiutroller()
       const asset = await makeToken(root);
       await expect(send(comptroller, '_supportMarket', [asset._address])).rejects.toRevert();
     });
@@ -181,19 +181,19 @@ describe('Comptroller', () => {
 
   describe('redeemVerify', () => {
     it('should allow you to redeem 0 underlying for 0 tokens', async () => {
-      const comptroller = await makeComptroller();
+      const comptroller = await makeNiutroller();
       const cToken = await makeCToken({comptroller: comptroller});
       await call(comptroller, 'redeemVerify', [cToken._address, accounts[0], 0, 0]);
     });
 
     it('should allow you to redeem 5 underlyig for 5 tokens', async () => {
-      const comptroller = await makeComptroller();
+      const comptroller = await makeNiutroller();
       const cToken = await makeCToken({comptroller: comptroller});
       await call(comptroller, 'redeemVerify', [cToken._address, accounts[0], 5, 5]);
     });
 
     it('should not allow you to redeem 5 underlying for 0 tokens', async () => {
-      const comptroller = await makeComptroller();
+      const comptroller = await makeNiutroller();
       const cToken = await makeCToken({comptroller: comptroller});
       await expect(call(comptroller, 'redeemVerify', [cToken._address, accounts[0], 5, 0])).rejects.toRevert("revert redeemTokens zero");
     });

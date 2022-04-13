@@ -13,7 +13,7 @@ npx saddle -n mainnet script token:deploy '{
   "comptroller": "$Comptroller",
   "interestRateModel": "0xd956188795ca6f4a74092ddca33e0ea4ca3a1395",
   "initialExchangeRateMantissa": "2.0e26",
-  "name": "Compound ChainLink Token",
+  "name": "Niural ChainLink Token",
   "symbol": "cLINK",
   "decimals": "8",
   "admin": "$Timelock",

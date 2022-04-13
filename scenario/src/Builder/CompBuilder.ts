@@ -42,7 +42,7 @@ export async function buildComp(
           invokation: await CompScenarioContract.deploy<CompScenario>(world, from, [account.val]),
           contract: 'CompScenario',
           symbol: 'COMP',
-          name: 'Compound Governance Token',
+          name: 'Niural Governance Token',
           decimals: 18
         };
       }
@@ -65,7 +65,7 @@ export async function buildComp(
             invokation: await CompScenarioContract.deploy<CompScenario>(world, from, [account.val]),
             contract: 'CompScenario',
             symbol: 'COMP',
-            name: 'Compound Governance Token',
+            name: 'Niural Governance Token',
             decimals: 18
           };
         } else {
@@ -73,7 +73,7 @@ export async function buildComp(
             invokation: await CompContract.deploy<Comp>(world, from, [account.val]),
             contract: 'Comp',
             symbol: 'COMP',
-            name: 'Compound Governance Token',
+            name: 'Niural Governance Token',
             decimals: 18
           };
         }

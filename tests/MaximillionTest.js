@@ -5,12 +5,12 @@ const {
 } = require('./Utils/Ethereum');
 
 const {
-  makeComptroller,
+  makeNiutroller,
   makeCToken,
   makePriceOracle,
   pretendBorrow,
   borrowSnapshot
-} = require('./Utils/Compound');
+} = require('./Utils/Niural');
 
 describe('Maximillion', () => {
   let root, borrower;

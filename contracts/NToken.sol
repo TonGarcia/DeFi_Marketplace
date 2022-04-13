@@ -997,7 +997,7 @@ contract NToken is NTokenInterface, Exponential, TokenErrorReporter {
 
         /* We calculate the number of collateral tokens that will be seized */
         (uint amountSeizeError, uint seizeTokens) = niutroller.liquidateCalculateSeizeTokens(address(this), address(cTokenCollateral), actualRepayAmount);
-        require(amountSeizeError == uint(Error.NO_ERROR), "LIQUIDATE_COMPTROLLER_CALCULATE_AMOUNT_SEIZE_FAILED");
+        require(amountSeizeError == uint(Error.NO_ERROR), "LIQUIDATE_NIUTROLLER_CALCULATE_AMOUNT_SEIZE_FAILED");
 
         /* Revert if borrower collateral token balance < seizeTokens */
         require(cTokenCollateral.balanceOf(borrower) >= seizeTokens, "LIQUIDATE_SEIZE_TOO_MUCH");
@@ -1182,7 +1182,7 @@ contract NToken is NTokenInterface, Exponential, TokenErrorReporter {
     function _setNiutroller(NiutrollerInterface newNiutroller) public returns (uint) {
         // Check caller is admin
         if (msg.sender != admin) {
-            return fail(Error.UNAUTHORIZED, FailureInfo.SET_COMPTROLLER_OWNER_CHECK);
+            return fail(Error.UNAUTHORIZED, FailureInfo.SET_NIUTROLLER_OWNER_CHECK);
         }
 
         NiutrollerInterface oldNiutroller = niutroller;

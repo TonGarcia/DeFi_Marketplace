@@ -4,9 +4,9 @@ const {
 } = require('../Utils/Ethereum');
 
 const {
-  makeComptroller,
+  makeNiutroller,
   makePriceOracle
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 describe('Unitroller', () => {
   let root, accounts;

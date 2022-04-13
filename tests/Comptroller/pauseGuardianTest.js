@@ -1,5 +1,5 @@
 const { address, both, etherMantissa } = require('../Utils/Ethereum');
-const { makeComptroller, makeCToken } = require('../Utils/Compound');
+const { makeNiutroller, makeCToken } = require('../Utils/Niural');
 
 describe('Comptroller', () => {
   let comptroller, cToken;
@@ -11,7 +11,7 @@ describe('Comptroller', () => {
 
   describe("_setPauseGuardian", () => {
     beforeEach(async () => {
-      comptroller = await makeComptroller();
+      comptroller = await makeNiutroller();
     });
 
     describe("failing", () => {
@@ -35,7 +35,7 @@ describe('Comptroller', () => {
       let result;
 
       beforeEach(async () => {
-        comptroller = await makeComptroller();
+        comptroller = await makeNiutroller();
 
         result = await send(comptroller, '_setPauseGuardian', [accounts[1]]);
       });

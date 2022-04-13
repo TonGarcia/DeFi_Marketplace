@@ -1,8 +1,8 @@
 const {both} = require('../Utils/Ethereum');
 const {
-  makeComptroller,
+  makeNiutroller,
   makeCToken
-} = require('../Utils/Compound');
+} = require('../Utils/Niural');
 
 describe('assetListTest', () => {
   let root, customer, accounts;
@@ -11,7 +11,7 @@ describe('assetListTest', () => {
 
   beforeEach(async () => {
     [root, customer, ...accounts] = saddle.accounts;
-    comptroller = await makeComptroller({maxAssets: 10});
+    comptroller = await makeNiutroller({maxAssets: 10});
     allTokens = [OMG, ZRX, BAT, REP, DAI, SKT] = await Promise.all(
       ['OMG', 'ZRX', 'BAT', 'REP', 'DAI', 'sketch']
         .map(async (name) => makeCToken({comptroller, name, symbol: name, supportMarket: name != 'sketch', underlyingPrice: 0.5}))

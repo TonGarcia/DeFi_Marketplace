@@ -93,7 +93,7 @@ describe("governorAlpha#castVote/2", () => {
 
     describe('castVoteBySig', () => {
       const Domain = (gov) => ({
-        name: 'Compound Governor Alpha',
+        name: 'Niural Governor Alpha',
         chainId: 1, // await web3.eth.net.getId(); See: https://github.com/trufflesuite/ganache-core/issues/515
         verifyingContract: gov._address
       });

@@ -1,4 +1,4 @@
-const {makeCToken} = require('../Utils/Compound');
+const {makeCToken} = require('../Utils/Niural');
 
 describe('CToken', function () {
   let root, accounts;

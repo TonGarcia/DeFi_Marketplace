@@ -1,6 +1,6 @@
 const { address, etherMantissa } = require('../Utils/Ethereum');
 
-const { makeComptroller, makeCToken, makePriceOracle } = require('../Utils/Compound');
+const { makeNiutroller, makeCToken, makePriceOracle } = require('../Utils/Niural');
 
 describe('ComptrollerV1', function() {
   let root, accounts;

@@ -4,7 +4,7 @@ function printUsage() {
   console.log(`
 usage: npx saddle script token:match address {tokenConfig}
 
-This checks to see if the deployed byte-code matches this version of the Compound Protocol.
+This checks to see if the deployed byte-code matches this version of the Niural Protocol.
 
 example:
 
@@ -13,7 +13,7 @@ npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D680
   "comptroller": "$Comptroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
-  "name": "Compound Kyber Network Crystal",
+  "name": "Niural Kyber Network Crystal",
   "symbol": "cKNC",
   "decimals": "8",
   "admin": "$Timelock"

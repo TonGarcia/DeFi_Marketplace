@@ -8,7 +8,7 @@ const {
 const {
   makeCToken,
   makePriceOracle,
-} = require('./Utils/Compound');
+} = require('./Utils/Niural');
 
 describe('PriceOracleProxy', () => {
   let root, accounts;

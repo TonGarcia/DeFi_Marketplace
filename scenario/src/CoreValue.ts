@@ -1004,7 +1004,7 @@ const fetchers = [
 
 let contractFetchers = [
   { contract: "Counter", implicit: false },
-  { contract: "CompoundLens", implicit: false },
+  { contract: "NiuralLens", implicit: false },
   { contract: "Reservoir", implicit: true }
 ];
 

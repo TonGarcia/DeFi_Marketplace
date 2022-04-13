@@ -10,7 +10,7 @@ const {
 } = require('./Ethereum');
 const BigNumber = require('bignumber.js');
 
-async function makeComptroller(opts = {}) {
+async function makeNiutroller(opts = {}) {
   const {
     root = saddle.account,
     kind = 'unitroller'
@@ -125,7 +125,7 @@ async function makeCToken(opts = {}) {
     kind = 'cerc20'
   } = opts || {};
 
-  const comptroller = opts.comptroller || await makeComptroller(opts.comptrollerOpts);
+  const comptroller = opts.comptroller || await makeNiutroller(opts.comptrollerOpts);
   const interestRateModel = opts.interestRateModel || await makeInterestRateModel(opts.interestRateModelOpts);
   const exchangeRate = etherMantissa(dfn(opts.exchangeRate, 1));
   const decimals = etherUnsigned(dfn(opts.decimals, 8));
@@ -455,7 +455,7 @@ async function pretendBorrow(cToken, borrower, accountIndex, marketIndex, princi
 }
 
 module.exports = {
-  makeComptroller,
+  makeNiutroller,
   makeCToken,
   makeInterestRateModel,
   makePriceOracle,

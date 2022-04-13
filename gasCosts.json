@@ -198,19 +198,19 @@
      "fee": 96782,
      "opcodes": {}
     },
-    "unitroller-g6 second mint with comp accrued": {
+    "unitroller-g6 second mint with niu accrued": {
      "fee": 140079,
      "opcodes": {}
     },
-    "unitroller-g6 claim comp": {
+    "unitroller-g6 claim niu": {
      "fee": 142304,
      "opcodes": {}
     },
-    "unitroller second mint with comp accrued": {
+    "unitroller second mint with niu accrued": {
      "fee": 118632,
      "opcodes": {}
     },
-    "unitroller claim comp": {
+    "unitroller claim niu": {
      "fee": 157456,
      "opcodes": {}
     }

@@ -5,7 +5,7 @@ const {
   etherExp
 } = require('../Utils/Ethereum');
 
-const {fastForward, makeCToken, getBalances, adjustBalances} = require('../Utils/Compound');
+const {fastForward, makeCToken, getBalances, adjustBalances} = require('../Utils/Niural');
 
 const factor = etherMantissa(.02);
 
