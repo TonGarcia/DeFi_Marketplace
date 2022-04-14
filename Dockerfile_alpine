@@ -1,11 +1,7 @@
-FROM ubuntu:jammy
+FROM mhart/alpine-node:14.17.3
 
-RUN apt-get update
-RUN apt-get -y install libdigest-sha-perl
-RUN apt-get -y install nodejs npm python3 wget
-RUN apt-get -y install perl make
-RUN npm install --global yarn
-
+RUN apk update && apk add --no-cache --virtual build-dependencies git python g++ make
+RUN apk upgrade
 RUN wget https://github.com/ethereum/solidity/releases/download/v0.5.16/solc-static-linux -O /bin/solc && chmod +x /bin/solc
 
 RUN mkdir -p /protocol
@@ -22,6 +18,10 @@ ADD . /protocol
 ENV SADDLE_SHELL=/bin/sh
 ENV SADDLE_CONTRACTS="contracts/*.sol contracts/**/*.sol"
 RUN npx saddle compile
+
+RUN apk del build-dependencies
 RUN yarn cache clean
+RUN apk add bash perl make
+RUN perl -MCPAN -e install perl-utils
 
 CMD while :; do sleep 2073600; done
