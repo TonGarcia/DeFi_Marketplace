@@ -247,14 +247,14 @@ contract NTokenInterface is NTokenStorage {
     function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint);
 }
 
-contract CErc20Storage {
+contract NErc20Storage {
     /**
      * @notice Underlying asset for this NToken
      */
     address public underlying;
 }
 
-contract CErc20Interface is CErc20Storage {
+contract NErc20Interface is NErc20Storage {
 
     /*** User Interface ***/
 
@@ -273,14 +273,14 @@ contract CErc20Interface is CErc20Storage {
     function _addReserves(uint addAmount) external returns (uint);
 }
 
-contract CDelegationStorage {
+contract NDelegationStorage {
     /**
      * @notice Implementation address for this contract
      */
     address public implementation;
 }
 
-contract CDelegatorInterface is CDelegationStorage {
+contract NDelegatorInterface is NDelegationStorage {
     /**
      * @notice Emitted when implementation is changed
      */
@@ -295,7 +295,7 @@ contract CDelegatorInterface is CDelegationStorage {
     function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public;
 }
 
-contract CDelegateInterface is CDelegationStorage {
+contract NDelegateInterface is NDelegationStorage {
     /**
      * @notice Called by the delegator on a delegate to initialize it for duty
      * @dev Should revert if any issues arise which make it unfit for delegation
