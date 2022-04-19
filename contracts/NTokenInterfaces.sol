@@ -47,7 +47,7 @@ contract NTokenStorage {
     address payable public pendingAdmin;
 
     /**
-     * @notice Contract which oversees inter-cToken operations
+     * @notice Contract which oversees inter-NToken operations
      */
     NiutrollerInterface public niutroller;
 
@@ -160,7 +160,7 @@ contract NTokenInterface is NTokenStorage {
     /**
      * @notice Event emitted when a borrow is liquidated
      */
-    event LiquidateBorrow(address liquidator, address borrower, uint repayAmount, address cTokenCollateral, uint seizeTokens);
+    event LiquidateBorrow(address liquidator, address borrower, uint repayAmount, address NTokenCollateral, uint seizeTokens);
 
 
     /*** Admin Events ***/
@@ -264,7 +264,7 @@ contract NErc20Interface is NErc20Storage {
     function borrow(uint borrowAmount) external returns (uint);
     function repayBorrow(uint repayAmount) external returns (uint);
     function repayBorrowBehalf(address borrower, uint repayAmount) external returns (uint);
-    function liquidateBorrow(address borrower, uint repayAmount, NTokenInterface cTokenCollateral) external returns (uint);
+    function liquidateBorrow(address borrower, uint repayAmount, NTokenInterface NTokenCollateral) external returns (uint);
     function sweepToken(EIP20NonStandardInterface token) external;
 
 

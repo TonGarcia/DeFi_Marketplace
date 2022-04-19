@@ -11,7 +11,7 @@ const actions: string[] = [
   "From",
   "Invariant",
   "Comptroller",
-  "cToken",
+  "NToken",
   "Erc20",
 ];
 

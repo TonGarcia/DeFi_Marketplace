@@ -5,7 +5,7 @@ import "../../contracts/EIP20NonStandardInterface.sol";
 /**
   * @title Fauceteer
   * @author Niural based on prev readme author
-  * @notice First computer program to be part of The Giving Pledge
+  * @notice First niuuter program to be part of The Giving Pledge
   */
 contract Fauceteer {
 
@@ -25,11 +25,11 @@ contract Fauceteer {
                 case 0 {                       // This is a non-standard ERC-20
                     success := not(0)          // set success to true
                 }
-                case 32 {                      // This is a compliant ERC-20
+                case 32 {                      // This is a niuliant ERC-20
                     returndatacopy(0, 0, 32)
                     success := mload(0)        // Set `success = returndata` of external call
                 }
-                default {                      // This is an excessively non-compliant ERC-20, revert.
+                default {                      // This is an excessively non-niuliant ERC-20, revert.
                     revert(0, 0)
                 }
         }

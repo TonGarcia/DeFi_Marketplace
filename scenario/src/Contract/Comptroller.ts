@@ -6,7 +6,7 @@ interface ComptrollerMethods {
   getAccountLiquidity(string): Callable<{0: number, 1: number, 2: number}>
   getHypotheticalAccountLiquidity(account: string, asset: string, redeemTokens: encodedNumber, borrowAmount: encodedNumber): Callable<{0: number, 1: number, 2: number}>
   membershipLength(string): Callable<string>
-  checkMembership(user: string, cToken: string): Callable<string>
+  checkMembership(user: string, NToken: string): Callable<string>
   getAssetsIn(string): Callable<string[]>
   admin(): Callable<string>
   oracle(): Callable<string>
@@ -60,18 +60,18 @@ interface ComptrollerMethods {
   compSupplySpeeds(string): Callable<string>
   compBorrowSpeeds(string): Callable<string>
   claimComp(holder: string): Sendable<void>
-  claimComp(holder: string, cTokens: string[]): Sendable<void>
+  claimComp(holder: string, NTokens: string[]): Sendable<void>
   updateContributorRewards(account: string): Sendable<void>
   _grantComp(account: string, encodedNumber): Sendable<void>
   _setCompRate(encodedNumber): Sendable<void>
-  _setCompSpeed(cTokens: string, encodedNumber): Sendable<void>
-  _setCompSpeeds(cTokens: string[], supplySpeeds: encodedNumber[], borrowSpeeds: encodedNumber[]): Sendable<void>
+  _setCompSpeed(NTokens: string, encodedNumber): Sendable<void>
+  _setCompSpeeds(NTokens: string[], supplySpeeds: encodedNumber[], borrowSpeeds: encodedNumber[]): Sendable<void>
   _setContributorCompSpeed(account: string, encodedNumber): Sendable<void>
-  _setMarketBorrowCaps(cTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
+  _setMarketBorrowCaps(NTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
   _setBorrowCapGuardian(string): Sendable<void>
   borrowCapGuardian(): Callable<string>
   borrowCaps(string): Callable<string>
-  isDeprecated(cToken: string): Callable<string>
+  isDeprecated(NToken: string): Callable<string>
 }
 
 export interface Comptroller extends Contract {

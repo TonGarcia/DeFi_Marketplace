@@ -10,7 +10,7 @@ usage:
 	npx saddle script -n {network} flywheel:init {
 		batch: number || null, // how many borrowrs to claim comp for at once. default 100 (~2.3M gas)
 		stage: bool || null // use stage API? default false
-		cTokens: string[] || null, // which borrowers to get. defaults to all cTokens
+		NTokens: string[] || null, // which borrowers to get. defaults to all NTokens
 		readFixture: bool || null, // save api response? default false
 		writeFixture: bool || null, // read from saved response? default false
 	}
@@ -41,7 +41,7 @@ let getConfig = (configArgs) => {
 		}
 	}
 	let res = {
-		cTokens: getArray(config, 'cTokens', false) || [],
+		NTokens: getArray(config, 'NTokens', false) || [],
 		readFixture: getBoolean(config, 'readFixture', false) || false,
 		writeFixture: getBoolean(config, 'writeFixture', false) || false,
 		stage: getBoolean(config, 'stage', false) || false,
@@ -51,7 +51,7 @@ let getConfig = (configArgs) => {
 	return res;
 };
 
-let getCTokenAddresses = (cTokenArgs) => {
+let getNTokenAddresses = (NTokenArgs) => {
 	let all = [
 		'cUSDC',
 		'cDAI',
@@ -63,7 +63,7 @@ let getCTokenAddresses = (cTokenArgs) => {
 		'cZRX',
 		'cWBTC',
 	];
-	let list = cTokenArgs.length == 0 ? all : cTokenArgs;
+	let list = NTokenArgs.length == 0 ? all : NTokenArgs;
 	let map = {};
 	for(let val of list) {
 		let addr = eval(`$${val}`).toLowerCase();
@@ -140,22 +140,22 @@ let accountRequest = async (network, opts) => {
 	return JSON.parse(res).accounts;
 };
 
-let filterInitialized = async (borrowersByCToken) => {
+let filterInitialized = async (borrowersByNToken) => {
 	let res = {}
 	let batchSize = 75;
 	console.log(`Calling compBorrowerIndex for borrowers in batches of ${batchSize}...\n`);
-	for(let cTokenAddr of Object.keys(borrowersByCToken)) {
-		let supplySpeed = await call(Comptroller, 'compSupplySpeeds', [cTokenAddr]);
-		let borrowSpeed = await call(Comptroller, 'compBorrowSpeeds', [cTokenAddr]);
+	for(let NTokenAddr of Object.keys(borrowersByNToken)) {
+		let supplySpeed = await call(Comptroller, 'compSupplySpeeds', [NTokenAddr]);
+		let borrowSpeed = await call(Comptroller, 'compBorrowSpeeds', [NTokenAddr]);
 		if (Number(supplySpeed) != 0 || Number(borrowSpeed) != 0){
-			for (let borrowerChunk of getChunks(borrowersByCToken[cTokenAddr], batchSize)) {
+			for (let borrowerChunk of getChunks(borrowersByNToken[NTokenAddr], batchSize)) {
 				try {
 					let indices = await Promise.all(borrowerChunk.map(
 						async(borrower) => {
-							return await call(Comptroller, 'compBorrowerIndex',[cTokenAddr, borrower])
+							return await call(Comptroller, 'compBorrowerIndex',[NTokenAddr, borrower])
 					}));
 					let uninitialized = borrowerChunk.filter((borrower, i) => Number(indices[i]) == 0);
-					res[cTokenAddr] = res[cTokenAddr] ? res[cTokenAddr].concat(uninitialized) : uninitialized;
+					res[NTokenAddr] = res[NTokenAddr] ? res[NTokenAddr].concat(uninitialized) : uninitialized;
 				} catch(e) {
 					console.error(`Web3 calls failed with ${e}`);
 					throw `Web3 calls failed w ${e}`;
@@ -166,40 +166,40 @@ let filterInitialized = async (borrowersByCToken) => {
 	return res;
 };
 
-// {[ctokenAddr] : borrowers}
-let filterBorrowers = (apiAccounts, cTokenList) => {
+// {[NTokenAddr] : borrowers}
+let filterBorrowers = (apiAccounts, NTokenList) => {
 	return apiAccounts.reduce((acc, account) => {
 		let validBorrowers = account.tokens.filter(
-			(accountCToken) =>
-				cTokenList.includes(accountCToken.address) &&
-				accountCToken.borrow_balance_underlying.value > 0
+			(accountNToken) =>
+				NTokenList.includes(accountNToken.address) &&
+				accountNToken.borrow_balance_underlying.value > 0
 		);
 		for (let borrower of validBorrowers) {
-			let ctokenAddr = borrower.address;
-			acc[ctokenAddr] = acc[ctokenAddr]
-				? acc[ctokenAddr].concat(account.address)
+			let NTokenAddr = borrower.address;
+			acc[NTokenAddr] = acc[NTokenAddr]
+				? acc[NTokenAddr].concat(account.address)
 				: [account.address];
 		}
 		return acc;
 	}, {});
 };
 
-let claimCompBatch = async (borrowersByCToken, opts) => {
-	for (let cTokenAddr of Object.keys(borrowersByCToken)) {
-		let borrowers = borrowersByCToken[cTokenAddr];
+let claimCompBatch = async (borrowersByNToken, opts) => {
+	for (let NTokenAddr of Object.keys(borrowersByNToken)) {
+		let borrowers = borrowersByNToken[NTokenAddr];
 		for (let chunk of getChunks(borrowers, opts.batch)) {
 			if (chunk.length == 0) {
-				console.log(`No borrowers to claim for ${cTokenAddr}`);
+				console.log(`No borrowers to claim for ${NTokenAddr}`);
 			} else {
 				console.log(
-					`Sending tx to claim ${cTokenAddr.toString()} borrows for ${JSON.stringify(
+					`Sending tx to claim ${NTokenAddr.toString()} borrows for ${JSON.stringify(
 						chunk
 					)}\n`
 				);
 				try {
 					let tx = await send(Comptroller, 'claimComp', [
 						chunk,
-						[cTokenAddr],
+						[NTokenAddr],
 						true,
 						false,
 					]);
@@ -215,25 +215,25 @@ let claimCompBatch = async (borrowersByCToken, opts) => {
 };
 
 (async () => {
-	let borrowersByCToken;
-	let cTokenMap; // symbol => addrs
+	let borrowersByNToken;
+	let NTokenMap; // symbol => addrs
 	let opts = getConfig(args[0]);
 	if (network == 'development') {
-		borrowersByCToken = getTestData();
+		borrowersByNToken = getTestData();
 	} else if (isKnownNetwork(network)) {
 		let apiAccounts = opts.readFixture
 			? await readFixture()
 			: await accountRequest(network, opts);
-		let cTokenAddresses = Object.values(getCTokenAddresses(opts.cTokens));
-		borrowersByCToken = filterBorrowers(apiAccounts, cTokenAddresses);
+		let NTokenAddresses = Object.values(getNTokenAddresses(opts.NTokens));
+		borrowersByNToken = filterBorrowers(apiAccounts, NTokenAddresses);
 		if (opts.writeFixture) await writeFixture(apiAccounts);
 	} else {
 		printUsage();
 	}
-	let unInit = await filterInitialized(borrowersByCToken);
+	let unInit = await filterInitialized(borrowersByNToken);
 	print('Uninitialized accounts before: ', unInit);
 
 	await claimCompBatch(unInit, opts);
-	unInit = await filterInitialized(borrowersByCToken);
+	unInit = await filterInitialized(borrowersByNToken);
 	print('Uninitialized accounts after: ', unInit);
 })();

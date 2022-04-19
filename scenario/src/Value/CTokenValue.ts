@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { CToken } from '../Contract/CToken';
+import { NToken } from '../Contract/NToken';
 import { CErc20Delegator } from '../Contract/CErc20Delegator';
 import { Erc20 } from '../Contract/Erc20';
 import {
@@ -16,25 +16,25 @@ import {
   Value,
   StringV
 } from '../Value';
-import { getWorldContractByAddress, getCTokenAddress } from '../ContractLookup';
+import { getWorldContractByAddress, getNTokenAddress } from '../ContractLookup';
 
-export async function getCTokenV(world: World, event: Event): Promise<CToken> {
+export async function getNTokenV(world: World, event: Event): Promise<NToken> {
   const address = await mapValue<AddressV>(
     world,
     event,
-    (str) => new AddressV(getCTokenAddress(world, str)),
+    (str) => new AddressV(getNTokenAddress(world, str)),
     getCoreValue,
     AddressV
   );
 
-  return getWorldContractByAddress<CToken>(world, address.val);
+  return getWorldContractByAddress<NToken>(world, address.val);
 }
 
 export async function getCErc20DelegatorV(world: World, event: Event): Promise<CErc20Delegator> {
   const address = await mapValue<AddressV>(
     world,
     event,
-    (str) => new AddressV(getCTokenAddress(world, str)),
+    (str) => new AddressV(getNTokenAddress(world, str)),
     getCoreValue,
     AddressV
   );
@@ -42,330 +42,330 @@ export async function getCErc20DelegatorV(world: World, event: Event): Promise<C
   return getWorldContractByAddress<CErc20Delegator>(world, address.val);
 }
 
-async function getInterestRateModel(world: World, cToken: CToken): Promise<AddressV> {
-  return new AddressV(await cToken.methods.interestRateModel().call());
+async function getInterestRateModel(world: World, NToken: NToken): Promise<AddressV> {
+  return new AddressV(await NToken.methods.interestRateModel().call());
 }
 
-async function cTokenAddress(world: World, cToken: CToken): Promise<AddressV> {
-  return new AddressV(cToken._address);
+async function NTokenAddress(world: World, NToken: NToken): Promise<AddressV> {
+  return new AddressV(NToken._address);
 }
 
-async function getCTokenAdmin(world: World, cToken: CToken): Promise<AddressV> {
-  return new AddressV(await cToken.methods.admin().call());
+async function getNTokenAdmin(world: World, NToken: NToken): Promise<AddressV> {
+  return new AddressV(await NToken.methods.admin().call());
 }
 
-async function getCTokenPendingAdmin(world: World, cToken: CToken): Promise<AddressV> {
-  return new AddressV(await cToken.methods.pendingAdmin().call());
+async function getNTokenPendingAdmin(world: World, NToken: NToken): Promise<AddressV> {
+  return new AddressV(await NToken.methods.pendingAdmin().call());
 }
 
-async function balanceOfUnderlying(world: World, cToken: CToken, user: string): Promise<NumberV> {
-  return new NumberV(await cToken.methods.balanceOfUnderlying(user).call());
+async function balanceOfUnderlying(world: World, NToken: NToken, user: string): Promise<NumberV> {
+  return new NumberV(await NToken.methods.balanceOfUnderlying(user).call());
 }
 
-async function getBorrowBalance(world: World, cToken: CToken, user): Promise<NumberV> {
-  return new NumberV(await cToken.methods.borrowBalanceCurrent(user).call());
+async function getBorrowBalance(world: World, NToken: NToken, user): Promise<NumberV> {
+  return new NumberV(await NToken.methods.borrowBalanceCurrent(user).call());
 }
 
-async function getBorrowBalanceStored(world: World, cToken: CToken, user): Promise<NumberV> {
-  return new NumberV(await cToken.methods.borrowBalanceStored(user).call());
+async function getBorrowBalanceStored(world: World, NToken: NToken, user): Promise<NumberV> {
+  return new NumberV(await NToken.methods.borrowBalanceStored(user).call());
 }
 
-async function getTotalBorrows(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.totalBorrows().call());
+async function getTotalBorrows(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.totalBorrows().call());
 }
 
-async function getTotalBorrowsCurrent(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.totalBorrowsCurrent().call());
+async function getTotalBorrowsCurrent(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.totalBorrowsCurrent().call());
 }
 
-async function getReserveFactor(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.reserveFactorMantissa().call(), 1.0e18);
+async function getReserveFactor(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.reserveFactorMantissa().call(), 1.0e18);
 }
 
-async function getTotalReserves(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.totalReserves().call());
+async function getTotalReserves(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.totalReserves().call());
 }
 
-async function getComptroller(world: World, cToken: CToken): Promise<AddressV> {
-  return new AddressV(await cToken.methods.comptroller().call());
+async function getComptroller(world: World, NToken: NToken): Promise<AddressV> {
+  return new AddressV(await NToken.methods.comptroller().call());
 }
 
-async function getExchangeRateStored(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.exchangeRateStored().call());
+async function getExchangeRateStored(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.exchangeRateStored().call());
 }
 
-async function getExchangeRate(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.exchangeRateCurrent().call(), 1e18);
+async function getExchangeRate(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.exchangeRateCurrent().call(), 1e18);
 }
 
-async function getCash(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.getCash().call());
+async function getCash(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.getCash().call());
 }
 
-async function getInterestRate(world: World, cToken: CToken): Promise<NumberV> {
-  return new NumberV(await cToken.methods.borrowRatePerBlock().call(), 1.0e18 / 2102400);
+async function getInterestRate(world: World, NToken: NToken): Promise<NumberV> {
+  return new NumberV(await NToken.methods.borrowRatePerBlock().call(), 1.0e18 / 2102400);
 }
 
-async function getImplementation(world: World, cToken: CToken): Promise<AddressV> {
-  return new AddressV(await (cToken as CErc20Delegator).methods.implementation().call());
+async function getImplementation(world: World, NToken: NToken): Promise<AddressV> {
+  return new AddressV(await (NToken as CErc20Delegator).methods.implementation().call());
 }
 
-export function cTokenFetchers() {
+export function NTokenFetchers() {
   return [
-    new Fetcher<{ cToken: CToken }, AddressV>(`
+    new Fetcher<{ NToken: NToken }, AddressV>(`
         #### Address
 
-        * "CToken <CToken> Address" - Returns address of CToken contract
-          * E.g. "CToken cZRX Address" - Returns cZRX's address
+        * "NToken <NToken> Address" - Returns address of NToken contract
+          * E.g. "NToken cZRX Address" - Returns cZRX's address
       `,
       "Address",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => cTokenAddress(world, cToken),
+      (world, { NToken }) => NTokenAddress(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, AddressV>(`
+    new Fetcher<{ NToken: NToken }, AddressV>(`
         #### InterestRateModel
 
-        * "CToken <CToken> InterestRateModel" - Returns the interest rate model of CToken contract
-          * E.g. "CToken cZRX InterestRateModel" - Returns cZRX's interest rate model
+        * "NToken <NToken> InterestRateModel" - Returns the interest rate model of NToken contract
+          * E.g. "NToken cZRX InterestRateModel" - Returns cZRX's interest rate model
       `,
       "InterestRateModel",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getInterestRateModel(world, cToken),
+      (world, { NToken }) => getInterestRateModel(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, AddressV>(`
+    new Fetcher<{ NToken: NToken }, AddressV>(`
         #### Admin
 
-        * "CToken <CToken> Admin" - Returns the admin of CToken contract
-          * E.g. "CToken cZRX Admin" - Returns cZRX's admin
+        * "NToken <NToken> Admin" - Returns the admin of NToken contract
+          * E.g. "NToken cZRX Admin" - Returns cZRX's admin
       `,
       "Admin",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getCTokenAdmin(world, cToken),
+      (world, { NToken }) => getNTokenAdmin(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, AddressV>(`
+    new Fetcher<{ NToken: NToken }, AddressV>(`
         #### PendingAdmin
 
-        * "CToken <CToken> PendingAdmin" - Returns the pending admin of CToken contract
-          * E.g. "CToken cZRX PendingAdmin" - Returns cZRX's pending admin
+        * "NToken <NToken> PendingAdmin" - Returns the pending admin of NToken contract
+          * E.g. "NToken cZRX PendingAdmin" - Returns cZRX's pending admin
       `,
       "PendingAdmin",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getCTokenPendingAdmin(world, cToken),
+      (world, { NToken }) => getNTokenPendingAdmin(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, AddressV>(`
+    new Fetcher<{ NToken: NToken }, AddressV>(`
         #### Underlying
 
-        * "CToken <CToken> Underlying" - Returns the underlying asset (if applicable)
-          * E.g. "CToken cZRX Underlying"
+        * "NToken <NToken> Underlying" - Returns the underlying asset (if applicable)
+          * E.g. "NToken cZRX Underlying"
       `,
       "Underlying",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      async (world, { cToken }) => new AddressV(await cToken.methods.underlying().call()),
+      async (world, { NToken }) => new AddressV(await NToken.methods.underlying().call()),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken, address: AddressV }, NumberV>(`
+    new Fetcher<{ NToken: NToken, address: AddressV }, NumberV>(`
         #### UnderlyingBalance
 
-        * "CToken <CToken> UnderlyingBalance <User>" - Returns a user's underlying balance (based on given exchange rate)
-          * E.g. "CToken cZRX UnderlyingBalance Geoff"
+        * "NToken <NToken> UnderlyingBalance <User>" - Returns a user's underlying balance (based on given exchange rate)
+          * E.g. "NToken cZRX UnderlyingBalance Geoff"
       `,
       "UnderlyingBalance",
       [
-        new Arg("cToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg<AddressV>("address", getAddressV)
       ],
-      (world, { cToken, address }) => balanceOfUnderlying(world, cToken, address.val),
+      (world, { NToken, address }) => balanceOfUnderlying(world, NToken, address.val),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken, address: AddressV }, NumberV>(`
+    new Fetcher<{ NToken: NToken, address: AddressV }, NumberV>(`
         #### BorrowBalance
 
-        * "CToken <CToken> BorrowBalance <User>" - Returns a user's borrow balance (including interest)
-          * E.g. "CToken cZRX BorrowBalance Geoff"
+        * "NToken <NToken> BorrowBalance <User>" - Returns a user's borrow balance (including interest)
+          * E.g. "NToken cZRX BorrowBalance Geoff"
       `,
       "BorrowBalance",
       [
-        new Arg("cToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg("address", getAddressV)
       ],
-      (world, { cToken, address }) => getBorrowBalance(world, cToken, address.val),
+      (world, { NToken, address }) => getBorrowBalance(world, NToken, address.val),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken, address: AddressV }, NumberV>(`
+    new Fetcher<{ NToken: NToken, address: AddressV }, NumberV>(`
         #### BorrowBalanceStored
 
-        * "CToken <CToken> BorrowBalanceStored <User>" - Returns a user's borrow balance (without specifically re-accruing interest)
-          * E.g. "CToken cZRX BorrowBalanceStored Geoff"
+        * "NToken <NToken> BorrowBalanceStored <User>" - Returns a user's borrow balance (without specifically re-accruing interest)
+          * E.g. "NToken cZRX BorrowBalanceStored Geoff"
       `,
       "BorrowBalanceStored",
       [
-        new Arg("cToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg("address", getAddressV)
       ],
-      (world, { cToken, address }) => getBorrowBalanceStored(world, cToken, address.val),
+      (world, { NToken, address }) => getBorrowBalanceStored(world, NToken, address.val),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### TotalBorrows
 
-        * "CToken <CToken> TotalBorrows" - Returns the cToken's total borrow balance
-          * E.g. "CToken cZRX TotalBorrows"
+        * "NToken <NToken> TotalBorrows" - Returns the NToken's total borrow balance
+          * E.g. "NToken cZRX TotalBorrows"
       `,
       "TotalBorrows",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getTotalBorrows(world, cToken),
+      (world, { NToken }) => getTotalBorrows(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### TotalBorrowsCurrent
 
-        * "CToken <CToken> TotalBorrowsCurrent" - Returns the cToken's total borrow balance with interest
-          * E.g. "CToken cZRX TotalBorrowsCurrent"
+        * "NToken <NToken> TotalBorrowsCurrent" - Returns the NToken's total borrow balance with interest
+          * E.g. "NToken cZRX TotalBorrowsCurrent"
       `,
       "TotalBorrowsCurrent",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getTotalBorrowsCurrent(world, cToken),
+      (world, { NToken }) => getTotalBorrowsCurrent(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### Reserves
 
-        * "CToken <CToken> Reserves" - Returns the cToken's total reserves
-          * E.g. "CToken cZRX Reserves"
+        * "NToken <NToken> Reserves" - Returns the NToken's total reserves
+          * E.g. "NToken cZRX Reserves"
       `,
       "Reserves",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getTotalReserves(world, cToken),
+      (world, { NToken }) => getTotalReserves(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### ReserveFactor
 
-        * "CToken <CToken> ReserveFactor" - Returns reserve factor of CToken contract
-          * E.g. "CToken cZRX ReserveFactor" - Returns cZRX's reserve factor
+        * "NToken <NToken> ReserveFactor" - Returns reserve factor of NToken contract
+          * E.g. "NToken cZRX ReserveFactor" - Returns cZRX's reserve factor
       `,
       "ReserveFactor",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getReserveFactor(world, cToken),
+      (world, { NToken }) => getReserveFactor(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, AddressV>(`
+    new Fetcher<{ NToken: NToken }, AddressV>(`
         #### Comptroller
 
-        * "CToken <CToken> Comptroller" - Returns the cToken's comptroller
-          * E.g. "CToken cZRX Comptroller"
+        * "NToken <NToken> Comptroller" - Returns the NToken's comptroller
+          * E.g. "NToken cZRX Comptroller"
       `,
       "Comptroller",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getComptroller(world, cToken),
+      (world, { NToken }) => getComptroller(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### ExchangeRateStored
 
-        * "CToken <CToken> ExchangeRateStored" - Returns the cToken's exchange rate (based on balances stored)
-          * E.g. "CToken cZRX ExchangeRateStored"
+        * "NToken <NToken> ExchangeRateStored" - Returns the NToken's exchange rate (based on balances stored)
+          * E.g. "NToken cZRX ExchangeRateStored"
       `,
       "ExchangeRateStored",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getExchangeRateStored(world, cToken),
+      (world, { NToken }) => getExchangeRateStored(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### ExchangeRate
 
-        * "CToken <CToken> ExchangeRate" - Returns the cToken's current exchange rate
-          * E.g. "CToken cZRX ExchangeRate"
+        * "NToken <NToken> ExchangeRate" - Returns the NToken's current exchange rate
+          * E.g. "NToken cZRX ExchangeRate"
       `,
       "ExchangeRate",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getExchangeRate(world, cToken),
+      (world, { NToken }) => getExchangeRate(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### Cash
 
-        * "CToken <CToken> Cash" - Returns the cToken's current cash
-          * E.g. "CToken cZRX Cash"
+        * "NToken <NToken> Cash" - Returns the NToken's current cash
+          * E.g. "NToken cZRX Cash"
       `,
       "Cash",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getCash(world, cToken),
+      (world, { NToken }) => getCash(world, NToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ cToken: CToken }, NumberV>(`
+    new Fetcher<{ NToken: NToken }, NumberV>(`
         #### InterestRate
 
-        * "CToken <CToken> InterestRate" - Returns the cToken's current interest rate
-          * E.g. "CToken cZRX InterestRate"
+        * "NToken <NToken> InterestRate" - Returns the NToken's current interest rate
+          * E.g. "NToken cZRX InterestRate"
       `,
       "InterestRate",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, {cToken}) => getInterestRate(world, cToken),
+      (world, {NToken}) => getInterestRate(world, NToken),
       {namePos: 1}
     ),
-    new Fetcher<{cToken: CToken, signature: StringV}, NumberV>(`
+    new Fetcher<{NToken: NToken, signature: StringV}, NumberV>(`
         #### CallNum
 
-        * "CToken <CToken> Call <signature>" - Simple direct call method, for now with no parameters
-          * E.g. "CToken cZRX Call \"borrowIndex()\""
+        * "NToken <NToken> Call <signature>" - Simple direct call method, for now with no parameters
+          * E.g. "NToken cZRX Call \"borrowIndex()\""
       `,
       "CallNum",
       [
-        new Arg("cToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg("signature", getStringV),
       ],
-      async (world, {cToken, signature}) => {
+      async (world, {NToken, signature}) => {
         const res = await world.web3.eth.call({
-            to: cToken._address,
+            to: NToken._address,
             data: world.web3.eth.abi.encodeFunctionSignature(signature.val)
           })
         const resNum : any = world.web3.eth.abi.decodeParameter('uint256',res);
@@ -374,22 +374,22 @@ export function cTokenFetchers() {
       ,
       {namePos: 1}
     ),
-    new Fetcher<{ cToken: CToken }, AddressV>(`
+    new Fetcher<{ NToken: NToken }, AddressV>(`
         #### Implementation
 
-        * "CToken <CToken> Implementation" - Returns the cToken's current implementation
-          * E.g. "CToken cDAI Implementation"
+        * "NToken <NToken> Implementation" - Returns the NToken's current implementation
+          * E.g. "NToken cDAI Implementation"
       `,
       "Implementation",
       [
-        new Arg("cToken", getCTokenV)
+        new Arg("NToken", getNTokenV)
       ],
-      (world, { cToken }) => getImplementation(world, cToken),
+      (world, { NToken }) => getImplementation(world, NToken),
       { namePos: 1 }
     )
   ];
 }
 
-export async function getCTokenValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("cToken", cTokenFetchers(), world, event);
+export async function getNTokenValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("NToken", NTokenFetchers(), world, event);
 }

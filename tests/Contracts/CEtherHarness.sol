@@ -1,7 +1,7 @@
 pragma solidity ^0.5.16;
 
 import "../../contracts/CEther.sol";
-import "./ComptrollerScenario.sol";
+import "./NiutrollerScenario.sol";
 
 contract CEtherHarness is CEther {
     uint harnessExchangeRate;
@@ -9,7 +9,7 @@ contract CEtherHarness is CEther {
 
     mapping (address => bool) public failTransferToAddresses;
 
-    constructor(ComptrollerInterface comptroller_,
+    constructor(NiutrollerInterface niutroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa,
                 string memory name_,
@@ -17,7 +17,7 @@ contract CEtherHarness is CEther {
                 uint8 decimals_,
                 address payable admin_)
     CEther(
-    comptroller_,
+    niutroller_,
     interestRateModel_,
     initialExchangeRateMantissa,
     name_,
@@ -88,8 +88,8 @@ contract CEtherHarness is CEther {
         return err;
     }
 
-    function harnessRedeemFresh(address payable account, uint cTokenAmount, uint underlyingAmount) public returns (uint) {
-        return super.redeemFresh(account, cTokenAmount, underlyingAmount);
+    function harnessRedeemFresh(address payable account, uint NTokenAmount, uint underlyingAmount) public returns (uint) {
+        return super.redeemFresh(account, NTokenAmount, underlyingAmount);
     }
 
     function harnessAccountBorrows(address account) public view returns (uint principal, uint interestIndex) {
@@ -114,8 +114,8 @@ contract CEtherHarness is CEther {
         return err;
     }
 
-    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, CToken cTokenCollateral) public returns (uint) {
-        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, cTokenCollateral);
+    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, NToken NTokenCollateral) public returns (uint) {
+        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, NTokenCollateral);
         return err;
     }
 
@@ -163,10 +163,10 @@ contract CEtherScenario is CEther {
                 string memory symbol_,
                 uint8 decimals_,
                 address payable admin_,
-                ComptrollerInterface comptroller_,
+                NiutrollerInterface niutroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa)
-        CEther(comptroller_,
+        CEther(niutroller_,
                interestRateModel_,
                initialExchangeRateMantissa,
                name_,
@@ -188,7 +188,7 @@ contract CEtherScenario is CEther {
     }
 
     function getBlockNumber() internal view returns (uint) {
-        ComptrollerScenario comptrollerScenario = ComptrollerScenario(address(comptroller));
-        return comptrollerScenario.blockNumber();
+        NiutrollerScenario niutrollerScenario = NiutrollerScenario(address(niutroller));
+        return niutrollerScenario.blockNumber();
     }
 }

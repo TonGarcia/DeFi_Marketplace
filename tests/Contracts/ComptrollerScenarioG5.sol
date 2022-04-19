@@ -1,23 +1,23 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/ComptrollerG5.sol";
+import "../../contracts/NiutrollerG5.sol";
 
-contract ComptrollerScenarioG5 is ComptrollerG5 {
+contract NiutrollerScenarioG5 is NiutrollerG5 {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
-    constructor() ComptrollerG5() public {}
+    constructor() NiutrollerG5() public {}
 
-    function setCompAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setNiuAddress(address niuAddress_) public {
+        niuAddress = niuAddress_;
     }
 
-    function getCompAddress() public view returns (address) {
-        return compAddress;
+    function getNiuAddress() public view returns (address) {
+        return niuAddress;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(NToken NToken) public view returns (uint) {
+        return accountAssets[address(NToken)].length;
     }
 
     function fastForward(uint blocks) public returns (uint) {
@@ -34,26 +34,26 @@ contract ComptrollerScenarioG5 is ComptrollerG5 {
         return blockNumber;
     }
 
-    function getCompMarkets() public view returns (address[] memory) {
+    function getNiuMarkets() public view returns (address[] memory) {
         uint m = allMarkets.length;
         uint n = 0;
         for (uint i = 0; i < m; i++) {
-            if (markets[address(allMarkets[i])].isComped) {
+            if (markets[address(allMarkets[i])].isNiued) {
                 n++;
             }
         }
 
-        address[] memory compMarkets = new address[](n);
+        address[] memory niuMarkets = new address[](n);
         uint k = 0;
         for (uint i = 0; i < m; i++) {
-            if (markets[address(allMarkets[i])].isComped) {
-                compMarkets[k++] = address(allMarkets[i]);
+            if (markets[address(allMarkets[i])].isNiued) {
+                niuMarkets[k++] = address(allMarkets[i]);
             }
         }
-        return compMarkets;
+        return niuMarkets;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(NToken NToken) public {
+        markets[address(NToken)].isListed = false;
     }
 }

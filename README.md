@@ -5,6 +5,16 @@ Marketplace of DeFi giving traditional financial access to the descentralized ma
 
 [![CircleCI](https://circleci.com/gh/niural-finance/niural-protocol.svg?style=svg&circle-token=)](https://circleci.com/gh/niural-finance/niural-protocol) [![codecov](https://codecov.io/gh/niural-finance/niural-protocol/branch/master/graph/badge.svg?token=q4UvsvVzOX)](https://codecov.io/gh/niural-finance/niural-protocol)
 
+
+Compiling
+=============
+
+Single file flatten working and the main file is the: NiutrollerGN.sol (N is the version number)
+To launch it is necessary to add the initial address account which gonna hold all the supply balance
+
+# TODO
+Change "getNiuAddress" adding admin check to populate "setNiuAddress" or try to figure out how to set it address as fixed on the blockchain to launch it together
+
 Niural Protocol
 =================
 
@@ -198,7 +208,7 @@ This command will start a saddle console conencted to Goerli testnet (see [Saddl
     '10000000000000000000000000'
 ```
 
-Deploying a CToken from Source
+Deploying a NToken from Source
 ------------------------------
 
 Note: you will need to set `~/.ethereum/<network>` with your private key or assign your private key to the environment variable `ACCOUNT`.
@@ -250,7 +260,7 @@ npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D680
 }'
 ```
 
-## Deploying a CToken from Docker Build
+## Deploying a NToken from Docker Build
 ---------------------------------------
 
 To deploy a specific version of the Niural Protocol, you can use the `token:deploy` script through Docker:

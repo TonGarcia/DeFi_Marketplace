@@ -69,7 +69,7 @@ contract FaucetTokenReEntrantHarness {
 
     modifier reEnter(string memory funName) {
         string memory _reEntryFun = reEntryFun;
-        if (compareStrings(_reEntryFun, funName)) {
+        if (niuareStrings(_reEntryFun, funName)) {
             reEntryFun = ""; // Clear re-entry fun
             (bool success, bytes memory returndata) = msg.sender.call(reEntryCallData);
             assembly {
@@ -82,7 +82,7 @@ contract FaucetTokenReEntrantHarness {
         _;
     }
 
-    function compareStrings(string memory a, string memory b) internal pure returns (bool) {
+    function niuareStrings(string memory a, string memory b) internal pure returns (bool) {
         return keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b)));
     }
 

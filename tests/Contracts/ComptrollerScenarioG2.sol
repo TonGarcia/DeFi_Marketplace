@@ -1,12 +1,12 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/ComptrollerG2.sol";
+import "../../contracts/NiutrollerG2.sol";
 
-contract ComptrollerScenarioG2 is ComptrollerG2 {
+contract NiutrollerScenarioG2 is NiutrollerG2 {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
-    constructor() ComptrollerG2() public {}
+    constructor() NiutrollerG2() public {}
 
     function fastForward(uint blocks) public returns (uint) {
         blockNumber += blocks;

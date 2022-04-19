@@ -40,7 +40,7 @@ contract NErc20 is NToken, NErc20Interface {
     /*** User Interface ***/
 
     /**
-     * @notice Sender supplies assets into the market and receives cTokens in exchange
+     * @notice Sender supplies assets into the market and receives NTokens in exchange
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param mintAmount The amount of the underlying asset to supply
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
@@ -51,9 +51,9 @@ contract NErc20 is NToken, NErc20Interface {
     }
 
     /**
-     * @notice Sender redeems cTokens in exchange for the underlying asset
+     * @notice Sender redeems NTokens in exchange for the underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
-     * @param redeemTokens The number of cTokens to redeem into underlying
+     * @param redeemTokens The number of NTokens to redeem into underlying
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
     function redeem(uint redeemTokens) external returns (uint) {
@@ -61,7 +61,7 @@ contract NErc20 is NToken, NErc20Interface {
     }
 
     /**
-     * @notice Sender redeems cTokens in exchange for a specified amount of underlying asset
+     * @notice Sender redeems NTokens in exchange for a specified amount of underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param redeemAmount The amount of underlying to redeem
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
@@ -103,13 +103,13 @@ contract NErc20 is NToken, NErc20Interface {
     /**
      * @notice The sender liquidates the borrowers collateral.
      *  The collateral seized is transferred to the liquidator.
-     * @param borrower The borrower of this cToken to be liquidated
+     * @param borrower The borrower of this NToken to be liquidated
      * @param repayAmount The amount of the underlying borrowed asset to repay
-     * @param cTokenCollateral The market in which to seize collateral from the borrower
+     * @param NTokenCollateral The market in which to seize collateral from the borrower
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
-    function liquidateBorrow(address borrower, uint repayAmount, NTokenInterface cTokenCollateral) external returns (uint) {
-        (uint err,) = liquidateBorrowInternal(borrower, repayAmount, cTokenCollateral);
+    function liquidateBorrow(address borrower, uint repayAmount, NTokenInterface NTokenCollateral) external returns (uint) {
+        (uint err,) = liquidateBorrowInternal(borrower, repayAmount, NTokenCollateral);
         return err;
     }
 
@@ -164,11 +164,11 @@ contract NErc20 is NToken, NErc20Interface {
                 case 0 {                       // This is a non-standard ERC-20
                     success := not(0)          // set success to true
                 }
-                case 32 {                      // This is a compliant ERC-20
+                case 32 {                      // This is a niuliant ERC-20
                     returndatacopy(0, 0, 32)
                     success := mload(0)        // Set `success = returndata` of external call
                 }
-                default {                      // This is an excessively non-compliant ERC-20, revert.
+                default {                      // This is an excessively non-niuliant ERC-20, revert.
                     revert(0, 0)
                 }
         }
@@ -199,11 +199,11 @@ contract NErc20 is NToken, NErc20Interface {
                 case 0 {                      // This is a non-standard ERC-20
                     success := not(0)          // set success to true
                 }
-                case 32 {                     // This is a compliant ERC-20
+                case 32 {                     // This is a niuliant ERC-20
                     returndatacopy(0, 0, 32)
                     success := mload(0)        // Set `success = returndata` of external call
                 }
-                default {                     // This is an excessively non-compliant ERC-20, revert.
+                default {                     // This is an excessively non-niuliant ERC-20, revert.
                     revert(0, 0)
                 }
         }
@@ -212,11 +212,11 @@ contract NErc20 is NToken, NErc20Interface {
 
     /**
     * @notice Admin call to delegate the votes of the COMP-like underlying
-    * @param compLikeDelegatee The address to delegate votes to
+    * @param niuLikeDelegatee The address to delegate votes to
     * @dev NTokens whose underlying are not NiuLike should revert here
     */
-    function _delegateNiuLikeTo(address compLikeDelegatee) external {
-        require(msg.sender == admin, "only the admin may set the comp-like delegate");
-        NiuLike(underlying).delegate(compLikeDelegatee);
+    function _delegateNiuLikeTo(address niuLikeDelegatee) external {
+        require(msg.sender == admin, "only the admin may set the niu-like delegate");
+        NiuLike(underlying).delegate(niuLikeDelegatee);
     }
 }

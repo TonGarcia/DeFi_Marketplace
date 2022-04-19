@@ -1,24 +1,24 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/Comptroller.sol";
+import "../../contracts/Niutroller.sol";
 
-contract ComptrollerScenario is Comptroller {
+contract NiutrollerScenario is Niutroller {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
-    constructor() Comptroller() public {}
+    constructor() Niutroller() public {}
 
     function fastForward(uint blocks) public returns (uint) {
         blockNumber += blocks;
         return blockNumber;
     }
 
-    function setCompAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setNiuAddress(address niuAddress_) public {
+        niuAddress = niuAddress_;
     }
 
-    function getCompAddress() public view returns (address) {
-        return compAddress;
+    function getNiuAddress() public view returns (address) {
+        return niuAddress;
     }
 
     function setBlockNumber(uint number) public {
@@ -29,51 +29,51 @@ contract ComptrollerScenario is Comptroller {
         return blockNumber;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(NToken NToken) public view returns (uint) {
+        return accountAssets[address(NToken)].length;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(NToken NToken) public {
+        markets[address(NToken)].isListed = false;
     }
 
-    function setCompBorrowerIndex(address cToken, address borrower, uint index) public {
-        compBorrowerIndex[cToken][borrower] = index;
+    function setNiuBorrowerIndex(address NToken, address borrower, uint index) public {
+        niuBorrowerIndex[NToken][borrower] = index;
     }
 
-    function setCompSupplierIndex(address cToken, address supplier, uint index) public {
-        compSupplierIndex[cToken][supplier] = index;
+    function setNiuSupplierIndex(address NToken, address supplier, uint index) public {
+        niuSupplierIndex[NToken][supplier] = index;
     }
 
     /**
      * @notice Recalculate and update COMP speeds for all COMP markets
      */
-    function refreshCompSpeeds() public {
-        CToken[] memory allMarkets_ = allMarkets;
+    function refreshNiuSpeeds() public {
+        NToken[] memory allMarkets_ = allMarkets;
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets_[i];
-            Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-            updateCompSupplyIndex(address(cToken));
-            updateCompBorrowIndex(address(cToken), borrowIndex);
+            NToken NToken = allMarkets_[i];
+            Exp memory borrowIndex = Exp({mantissa: NToken.borrowIndex()});
+            updateNiuSupplyIndex(address(NToken));
+            updateNiuBorrowIndex(address(NToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
         Exp[] memory utilities = new Exp[](allMarkets_.length);
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets_[i];
-            if (compSupplySpeeds[address(cToken)] > 0 || compBorrowSpeeds[address(cToken)] > 0) {
-                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(cToken)});
-                Exp memory utility = mul_(assetPrice, cToken.totalBorrows());
+            NToken NToken = allMarkets_[i];
+            if (niuSupplySpeeds[address(NToken)] > 0 || niuBorrowSpeeds[address(NToken)] > 0) {
+                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(NToken)});
+                Exp memory utility = mul_(assetPrice, NToken.totalBorrows());
                 utilities[i] = utility;
                 totalUtility = add_(totalUtility, utility);
             }
         }
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(compRate, div_(utilities[i], totalUtility)) : 0;
-            setCompSpeedInternal(cToken, newSpeed, newSpeed);
+            NToken NToken = allMarkets[i];
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(niuRate, div_(utilities[i], totalUtility)) : 0;
+            setNiuSpeedInternal(NToken, newSpeed, newSpeed);
         }
     }
 }

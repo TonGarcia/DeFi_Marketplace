@@ -3,7 +3,7 @@
 set -eo pipefail
 
 dir=`dirname $0`
-proj_root="$dir/.."
+proj_root="/protocol"
 network=${NETWORK:-test}
 verbose=${verbose:-}
 
@@ -11,8 +11,7 @@ debug_args="-n --inspect" #add "debugger" statements to javascript and interact 
 [[ -z $DEBUG ]] && debug_args=""
 
 # Compile scenario runner
-echo $proj_root
-[[ -z $NO_TSC ]] && "/protocol/scenario/script/tsc"
+[[ -z $NO_TSC ]] && "$proj_root/scenario/script/tsc"
 
 # Build scenario stubs
 [[ -z $NO_BUILD_STUB ]] && "$proj_root/script/compile"

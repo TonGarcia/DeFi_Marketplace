@@ -10,13 +10,13 @@ import {
   AddressV,
   Value,
 } from '../Value';
-import { getWorldContractByAddress, getCTokenDelegateAddress } from '../ContractLookup';
+import { getWorldContractByAddress, getNTokenDelegateAddress } from '../ContractLookup';
 
-export async function getCTokenDelegateV(world: World, event: Event): Promise<CErc20Delegate> {
+export async function getNTokenDelegateV(world: World, event: Event): Promise<CErc20Delegate> {
   const address = await mapValue<AddressV>(
     world,
     event,
-    (str) => new AddressV(getCTokenDelegateAddress(world, str)),
+    (str) => new AddressV(getNTokenDelegateAddress(world, str)),
     getCoreValue,
     AddressV
   );
@@ -24,28 +24,28 @@ export async function getCTokenDelegateV(world: World, event: Event): Promise<CE
   return getWorldContractByAddress<CErc20Delegate>(world, address.val);
 }
 
-async function cTokenDelegateAddress(world: World, cTokenDelegate: CErc20Delegate): Promise<AddressV> {
-  return new AddressV(cTokenDelegate._address);
+async function NTokenDelegateAddress(world: World, NTokenDelegate: CErc20Delegate): Promise<AddressV> {
+  return new AddressV(NTokenDelegate._address);
 }
 
-export function cTokenDelegateFetchers() {
+export function NTokenDelegateFetchers() {
   return [
-    new Fetcher<{ cTokenDelegate: CErc20Delegate }, AddressV>(`
+    new Fetcher<{ NTokenDelegate: CErc20Delegate }, AddressV>(`
         #### Address
 
-        * "CTokenDelegate <CTokenDelegate> Address" - Returns address of CTokenDelegate contract
-          * E.g. "CTokenDelegate cDaiDelegate Address" - Returns cDaiDelegate's address
+        * "NTokenDelegate <NTokenDelegate> Address" - Returns address of NTokenDelegate contract
+          * E.g. "NTokenDelegate cDaiDelegate Address" - Returns cDaiDelegate's address
       `,
       "Address",
       [
-        new Arg("cTokenDelegate", getCTokenDelegateV)
+        new Arg("NTokenDelegate", getNTokenDelegateV)
       ],
-      (world, { cTokenDelegate }) => cTokenDelegateAddress(world, cTokenDelegate),
+      (world, { NTokenDelegate }) => NTokenDelegateAddress(world, NTokenDelegate),
       { namePos: 1 }
     ),
   ];
 }
 
-export async function getCTokenDelegateValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("CTokenDelegate", cTokenDelegateFetchers(), world, event);
+export async function getNTokenDelegateValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("NTokenDelegate", NTokenDelegateFetchers(), world, event);
 }

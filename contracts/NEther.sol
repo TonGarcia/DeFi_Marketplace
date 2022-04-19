@@ -10,7 +10,7 @@ import "./NToken.sol";
 contract NEther is NToken {
     /**
      * @notice Construct a new NEther money market
-     * @param comptroller_ The address of the Niutroller
+     * @param niutroller_ The address of the Niutroller
      * @param interestRateModel_ The address of the interest rate model
      * @param initialExchangeRateMantissa_ The initial exchange rate, scaled by 1e18
      * @param name_ ERC-20 name of this token
@@ -18,7 +18,7 @@ contract NEther is NToken {
      * @param decimals_ ERC-20 decimal precision of this token
      * @param admin_ Address of the administrator of this token
      */
-    constructor(NiutrollerInterface comptroller_,
+    constructor(NiutrollerInterface niutroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa_,
                 string memory name_,
@@ -28,7 +28,7 @@ contract NEther is NToken {
         // Creator of the contract is admin during initialization
         admin = msg.sender;
 
-        initialize(comptroller_, interestRateModel_, initialExchangeRateMantissa_, name_, symbol_, decimals_);
+        initialize(niutroller_, interestRateModel_, initialExchangeRateMantissa_, name_, symbol_, decimals_);
 
         // Set the proper admin now that initialization is done
         admin = admin_;

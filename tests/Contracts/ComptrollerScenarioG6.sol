@@ -1,24 +1,24 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/ComptrollerG6.sol";
+import "../../contracts/NiutrollerG6.sol";
 
-contract ComptrollerScenarioG6 is ComptrollerG6 {
+contract NiutrollerScenarioG6 is NiutrollerG6 {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
-    constructor() ComptrollerG6() public {}
+    constructor() NiutrollerG6() public {}
 
     function fastForward(uint blocks) public returns (uint) {
         blockNumber += blocks;
         return blockNumber;
     }
 
-    function setCompAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setNiuAddress(address niuAddress_) public {
+        niuAddress = niuAddress_;
     }
 
-    function getCompAddress() public view returns (address) {
-        return compAddress;
+    function getNiuAddress() public view returns (address) {
+        return niuAddress;
     }
 
     function setBlockNumber(uint number) public {
@@ -29,15 +29,15 @@ contract ComptrollerScenarioG6 is ComptrollerG6 {
         return blockNumber;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(NToken NToken) public view returns (uint) {
+        return accountAssets[address(NToken)].length;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(NToken NToken) public {
+        markets[address(NToken)].isListed = false;
     }
 
-    function setCompSpeed(address cToken, uint compSpeed) public {
-        compSpeeds[cToken] = compSpeed;
+    function setNiuSpeed(address NToken, uint niuSpeed) public {
+        niuSpeeds[NToken] = niuSpeed;
     }
 }

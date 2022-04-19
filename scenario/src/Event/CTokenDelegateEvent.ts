@@ -1,7 +1,7 @@
 import { Event } from '../Event';
 import { addAction, describeUser, World } from '../World';
 import { decodeCall, getPastEvents } from '../Contract';
-import { CToken, CTokenScenario } from '../Contract/CToken';
+import { NToken, NTokenScenario } from '../Contract/NToken';
 import { CErc20Delegate } from '../Contract/CErc20Delegate'
 import { invoke, Sendable } from '../Invokation';
 import {
@@ -21,66 +21,66 @@ import {
   StringV
 } from '../Value';
 import { Arg, Command, View, processCommandEvent } from '../Command';
-import { getCTokenDelegateData } from '../ContractLookup';
-import { buildCTokenDelegate } from '../Builder/CTokenDelegateBuilder';
+import { getNTokenDelegateData } from '../ContractLookup';
+import { buildNTokenDelegate } from '../Builder/NTokenDelegateBuilder';
 import { verify } from '../Verify';
 
-async function genCTokenDelegate(world: World, from: string, event: Event): Promise<World> {
-  let { world: nextWorld, cTokenDelegate, delegateData } = await buildCTokenDelegate(world, from, event);
+async function genNTokenDelegate(world: World, from: string, event: Event): Promise<World> {
+  let { world: nextWorld, NTokenDelegate, delegateData } = await buildNTokenDelegate(world, from, event);
   world = nextWorld;
 
   world = addAction(
     world,
-    `Added cToken ${delegateData.name} (${delegateData.contract}) at address ${cTokenDelegate._address}`,
+    `Added NToken ${delegateData.name} (${delegateData.contract}) at address ${NTokenDelegate._address}`,
     delegateData.invokation
   );
 
   return world;
 }
 
-async function verifyCTokenDelegate(world: World, cTokenDelegate: CErc20Delegate, name: string, contract: string, apiKey: string): Promise<World> {
+async function verifyNTokenDelegate(world: World, NTokenDelegate: CErc20Delegate, name: string, contract: string, apiKey: string): Promise<World> {
   if (world.isLocalNetwork()) {
     world.printer.printLine(`Politely declining to verify on local network: ${world.network}.`);
   } else {
-    await verify(world, apiKey, name, contract, cTokenDelegate._address);
+    await verify(world, apiKey, name, contract, NTokenDelegate._address);
   }
 
   return world;
 }
 
-export function cTokenDelegateCommands() {
+export function NTokenDelegateCommands() {
   return [
-    new Command<{ cTokenDelegateParams: EventV }>(`
+    new Command<{ NTokenDelegateParams: EventV }>(`
         #### Deploy
 
-        * "CTokenDelegate Deploy ...cTokenDelegateParams" - Generates a new CTokenDelegate
-          * E.g. "CTokenDelegate Deploy CDaiDelegate cDAIDelegate"
+        * "NTokenDelegate Deploy ...NTokenDelegateParams" - Generates a new NTokenDelegate
+          * E.g. "NTokenDelegate Deploy CDaiDelegate cDAIDelegate"
       `,
       "Deploy",
-      [new Arg("cTokenDelegateParams", getEventV, { variadic: true })],
-      (world, from, { cTokenDelegateParams }) => genCTokenDelegate(world, from, cTokenDelegateParams.val)
+      [new Arg("NTokenDelegateParams", getEventV, { variadic: true })],
+      (world, from, { NTokenDelegateParams }) => genNTokenDelegate(world, from, NTokenDelegateParams.val)
     ),
-    new View<{ cTokenDelegateArg: StringV, apiKey: StringV }>(`
+    new View<{ NTokenDelegateArg: StringV, apiKey: StringV }>(`
         #### Verify
 
-        * "CTokenDelegate <cTokenDelegate> Verify apiKey:<String>" - Verifies CTokenDelegate in Etherscan
-          * E.g. "CTokenDelegate cDaiDelegate Verify "myApiKey"
+        * "NTokenDelegate <NTokenDelegate> Verify apiKey:<String>" - Verifies NTokenDelegate in Etherscan
+          * E.g. "NTokenDelegate cDaiDelegate Verify "myApiKey"
       `,
       "Verify",
       [
-        new Arg("cTokenDelegateArg", getStringV),
+        new Arg("NTokenDelegateArg", getStringV),
         new Arg("apiKey", getStringV)
       ],
-      async (world, { cTokenDelegateArg, apiKey }) => {
-        let [cToken, name, data] = await getCTokenDelegateData(world, cTokenDelegateArg.val);
+      async (world, { NTokenDelegateArg, apiKey }) => {
+        let [NToken, name, data] = await getNTokenDelegateData(world, NTokenDelegateArg.val);
 
-        return await verifyCTokenDelegate(world, cToken, name, data.get('contract')!, apiKey.val);
+        return await verifyNTokenDelegate(world, NToken, name, data.get('contract')!, apiKey.val);
       },
       { namePos: 1 }
     ),
   ];
 }
 
-export async function processCTokenDelegateEvent(world: World, event: Event, from: string | null): Promise<World> {
-  return await processCommandEvent<any>("CTokenDelegate", cTokenDelegateCommands(), world, event, from);
+export async function processNTokenDelegateEvent(world: World, event: Event, from: string | null): Promise<World> {
+  return await processCommandEvent<any>("NTokenDelegate", NTokenDelegateCommands(), world, event, from);
 }

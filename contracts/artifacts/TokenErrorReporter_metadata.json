@@ -1,0 +1,63 @@
+{
+	"compiler": {
+		"version": "0.5.17+commit.d19bba13"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "error",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "info",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "detail",
+						"type": "uint256"
+					}
+				],
+				"name": "Failure",
+				"type": "event"
+			}
+		],
+		"devdoc": {
+			"methods": {}
+		},
+		"userdoc": {
+			"methods": {}
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"NiutrollerG1_flat.sol": "TokenErrorReporter"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"NiutrollerG1_flat.sol": {
+			"keccak256": "0xd4d21f71c694bf428fa05604eeec4b583c6485ea0a72cb4a314348e99bdbe449",
+			"urls": [
+				"bzz-raw://853d9843d2441c3f4c8a736d96b6990a0eafa49ec0af5dc6f90aa7e00c32cfa9",
+				"dweb:/ipfs/QmdHNjqBgR2FYBdVksFNNQ7Z7XzxMBZXsQZqnxCwbsVENa"
+			]
+		}
+	},
+	"version": 1
+}

@@ -1,137 +1,137 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/Comptroller.sol";
+import "../../contracts/Niutroller.sol";
 import "../../contracts/PriceOracle.sol";
 
-contract ComptrollerKovan is Comptroller {
-  function getCompAddress() public view returns (address) {
+contract NiutrollerKovan is Niutroller {
+  function getNiuAddress() public view returns (address) {
     return 0x61460874a7196d6a22D1eE4922473664b3E95270;
   }
 }
 
-contract ComptrollerRopsten is Comptroller {
-  function getCompAddress() public view returns (address) {
+contract NiutrollerRopsten is Niutroller {
+  function getNiuAddress() public view returns (address) {
     return 0xf76D4a441E4ba86A923ce32B89AFF89dBccAA075;
   }
 }
 
-contract ComptrollerHarness is Comptroller {
-    address compAddress;
+contract NiutrollerHarness is Niutroller {
+    address niuAddress;
     uint public blockNumber;
 
-    constructor() Comptroller() public {}
+    constructor() Niutroller() public {}
 
     function setPauseGuardian(address harnessedPauseGuardian) public {
         pauseGuardian = harnessedPauseGuardian;
     }
 
-    function setCompSupplyState(address cToken, uint224 index, uint32 blockNumber_) public {
-        compSupplyState[cToken].index = index;
-        compSupplyState[cToken].block = blockNumber_;
+    function setNiuSupplyState(address NToken, uint224 index, uint32 blockNumber_) public {
+        niuSupplyState[NToken].index = index;
+        niuSupplyState[NToken].block = blockNumber_;
     }
 
-    function setCompBorrowState(address cToken, uint224 index, uint32 blockNumber_) public {
-        compBorrowState[cToken].index = index;
-        compBorrowState[cToken].block = blockNumber_;
+    function setNiuBorrowState(address NToken, uint224 index, uint32 blockNumber_) public {
+        niuBorrowState[NToken].index = index;
+        niuBorrowState[NToken].block = blockNumber_;
     }
 
-    function setCompAccrued(address user, uint userAccrued) public {
-        compAccrued[user] = userAccrued;
+    function setNiuAccrued(address user, uint userAccrued) public {
+        niuAccrued[user] = userAccrued;
     }
 
-    function setCompAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setNiuAddress(address niuAddress_) public {
+        niuAddress = niuAddress_;
     }
 
-    function getCompAddress() public view returns (address) {
-        return compAddress;
+    function getNiuAddress() public view returns (address) {
+        return niuAddress;
     }
 
     /**
      * @notice Set the amount of COMP distributed per block
-     * @param compRate_ The amount of COMP wei per block to distribute
+     * @param niuRate_ The amount of COMP wei per block to distribute
      */
-    function harnessSetCompRate(uint compRate_) public {
-        compRate = compRate_;
+    function harnessSetNiuRate(uint niuRate_) public {
+        niuRate = niuRate_;
     }
 
     /**
      * @notice Recalculate and update COMP speeds for all COMP markets
      */
-    function harnessRefreshCompSpeeds() public {
-        CToken[] memory allMarkets_ = allMarkets;
+    function harnessRefreshNiuSpeeds() public {
+        NToken[] memory allMarkets_ = allMarkets;
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets_[i];
-            Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-            updateCompSupplyIndex(address(cToken));
-            updateCompBorrowIndex(address(cToken), borrowIndex);
+            NToken NToken = allMarkets_[i];
+            Exp memory borrowIndex = Exp({mantissa: NToken.borrowIndex()});
+            updateNiuSupplyIndex(address(NToken));
+            updateNiuBorrowIndex(address(NToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
         Exp[] memory utilities = new Exp[](allMarkets_.length);
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets_[i];
-            if (compSupplySpeeds[address(cToken)] > 0 || compBorrowSpeeds[address(cToken)] > 0) {
-                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(cToken)});
-                Exp memory utility = mul_(assetPrice, cToken.totalBorrows());
+            NToken NToken = allMarkets_[i];
+            if (niuSupplySpeeds[address(NToken)] > 0 || niuBorrowSpeeds[address(NToken)] > 0) {
+                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(NToken)});
+                Exp memory utility = mul_(assetPrice, NToken.totalBorrows());
                 utilities[i] = utility;
                 totalUtility = add_(totalUtility, utility);
             }
         }
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(compRate, div_(utilities[i], totalUtility)) : 0;
-            setCompSpeedInternal(cToken, newSpeed, newSpeed);
+            NToken NToken = allMarkets[i];
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(niuRate, div_(utilities[i], totalUtility)) : 0;
+            setNiuSpeedInternal(NToken, newSpeed, newSpeed);
         }
     }
 
-    function setCompBorrowerIndex(address cToken, address borrower, uint index) public {
-        compBorrowerIndex[cToken][borrower] = index;
+    function setNiuBorrowerIndex(address NToken, address borrower, uint index) public {
+        niuBorrowerIndex[NToken][borrower] = index;
     }
 
-    function setCompSupplierIndex(address cToken, address supplier, uint index) public {
-        compSupplierIndex[cToken][supplier] = index;
+    function setNiuSupplierIndex(address NToken, address supplier, uint index) public {
+        niuSupplierIndex[NToken][supplier] = index;
     }
 
-    function harnessDistributeAllBorrowerComp(address cToken, address borrower, uint marketBorrowIndexMantissa) public {
-        distributeBorrowerComp(cToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
-        compAccrued[borrower] = grantCompInternal(borrower, compAccrued[borrower]);
+    function harnessDistributeAllBorrowerNiu(address NToken, address borrower, uint marketBorrowIndexMantissa) public {
+        distributeBorrowerNiu(NToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
+        niuAccrued[borrower] = grantNiuInternal(borrower, niuAccrued[borrower]);
     }
 
-    function harnessDistributeAllSupplierComp(address cToken, address supplier) public {
-        distributeSupplierComp(cToken, supplier);
-        compAccrued[supplier] = grantCompInternal(supplier, compAccrued[supplier]);
+    function harnessDistributeAllSupplierNiu(address NToken, address supplier) public {
+        distributeSupplierNiu(NToken, supplier);
+        niuAccrued[supplier] = grantNiuInternal(supplier, niuAccrued[supplier]);
     }
 
-    function harnessUpdateCompBorrowIndex(address cToken, uint marketBorrowIndexMantissa) public {
-        updateCompBorrowIndex(cToken, Exp({mantissa: marketBorrowIndexMantissa}));
+    function harnessUpdateNiuBorrowIndex(address NToken, uint marketBorrowIndexMantissa) public {
+        updateNiuBorrowIndex(NToken, Exp({mantissa: marketBorrowIndexMantissa}));
     }
 
-    function harnessUpdateCompSupplyIndex(address cToken) public {
-        updateCompSupplyIndex(cToken);
+    function harnessUpdateNiuSupplyIndex(address NToken) public {
+        updateNiuSupplyIndex(NToken);
     }
 
-    function harnessDistributeBorrowerComp(address cToken, address borrower, uint marketBorrowIndexMantissa) public {
-        distributeBorrowerComp(cToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
+    function harnessDistributeBorrowerNiu(address NToken, address borrower, uint marketBorrowIndexMantissa) public {
+        distributeBorrowerNiu(NToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
     }
 
-    function harnessDistributeSupplierComp(address cToken, address supplier) public {
-        distributeSupplierComp(cToken, supplier);
+    function harnessDistributeSupplierNiu(address NToken, address supplier) public {
+        distributeSupplierNiu(NToken, supplier);
     }
 
-    function harnessTransferComp(address user, uint userAccrued, uint threshold) public returns (uint) {
+    function harnessTransferNiu(address user, uint userAccrued, uint threshold) public returns (uint) {
         if (userAccrued > 0 && userAccrued >= threshold) {
-            return grantCompInternal(user, userAccrued);
+            return grantNiuInternal(user, userAccrued);
         }
         return userAccrued;
     }
 
-    function harnessAddCompMarkets(address[] memory cTokens) public {
-        for (uint i = 0; i < cTokens.length; i++) {
-            // temporarily set compSpeed to 1 (will be fixed by `harnessRefreshCompSpeeds`)
-            setCompSpeedInternal(CToken(cTokens[i]), 1, 1);
+    function harnessAddNiuMarkets(address[] memory NTokens) public {
+        for (uint i = 0; i < NTokens.length; i++) {
+            // temporarily set niuSpeed to 1 (will be fixed by `harnessRefreshNiuSpeeds`)
+            setNiuSpeedInternal(NToken(NTokens[i]), 1, 1);
         }
     }
 
@@ -148,27 +148,27 @@ contract ComptrollerHarness is Comptroller {
         return blockNumber;
     }
 
-    function getCompMarkets() public view returns (address[] memory) {
+    function getNiuMarkets() public view returns (address[] memory) {
         uint m = allMarkets.length;
         uint n = 0;
         for (uint i = 0; i < m; i++) {
-            if (compSupplySpeeds[address(allMarkets[i])] > 0 || compBorrowSpeeds[address(allMarkets[i])] > 0) {
+            if (niuSupplySpeeds[address(allMarkets[i])] > 0 || niuBorrowSpeeds[address(allMarkets[i])] > 0) {
                 n++;
             }
         }
 
-        address[] memory compMarkets = new address[](n);
+        address[] memory niuMarkets = new address[](n);
         uint k = 0;
         for (uint i = 0; i < m; i++) {
-            if (compSupplySpeeds[address(allMarkets[i])] > 0 || compBorrowSpeeds[address(allMarkets[i])] > 0) {
-                compMarkets[k++] = address(allMarkets[i]);
+            if (niuSupplySpeeds[address(allMarkets[i])] > 0 || niuBorrowSpeeds[address(allMarkets[i])] > 0) {
+                niuMarkets[k++] = address(allMarkets[i]);
             }
         }
-        return compMarkets;
+        return niuMarkets;
     }
 }
 
-contract ComptrollerBorked {
+contract NiutrollerBorked {
     function _become(Unitroller unitroller, PriceOracle _oracle, uint _closeFactorMantissa, uint _maxAssets, bool _reinitializing) public {
         _oracle;
         _closeFactorMantissa;
@@ -180,7 +180,7 @@ contract ComptrollerBorked {
     }
 }
 
-contract BoolComptroller is ComptrollerInterface {
+contract BoolNiutroller is NiutrollerInterface {
     bool allowMint = true;
     bool allowRedeem = true;
     bool allowBorrow = true;
@@ -205,69 +205,69 @@ contract BoolComptroller is ComptrollerInterface {
 
     /*** Assets You Are In ***/
 
-    function enterMarkets(address[] calldata _cTokens) external returns (uint[] memory) {
-        _cTokens;
+    function enterMarkets(address[] calldata _NTokens) external returns (uint[] memory) {
+        _NTokens;
         uint[] memory ret;
         return ret;
     }
 
-    function exitMarket(address _cToken) external returns (uint) {
-        _cToken;
+    function exitMarket(address _NToken) external returns (uint) {
+        _NToken;
         return noError;
     }
 
     /*** Policy Hooks ***/
 
-    function mintAllowed(address _cToken, address _minter, uint _mintAmount) public returns (uint) {
-        _cToken;
+    function mintAllowed(address _NToken, address _minter, uint _mintAmount) public returns (uint) {
+        _NToken;
         _minter;
         _mintAmount;
         return allowMint ? noError : opaqueError;
     }
 
-    function mintVerify(address _cToken, address _minter, uint _mintAmount, uint _mintTokens) external {
-        _cToken;
+    function mintVerify(address _NToken, address _minter, uint _mintAmount, uint _mintTokens) external {
+        _NToken;
         _minter;
         _mintAmount;
         _mintTokens;
         require(verifyMint, "mintVerify rejected mint");
     }
 
-    function redeemAllowed(address _cToken, address _redeemer, uint _redeemTokens) public returns (uint) {
-        _cToken;
+    function redeemAllowed(address _NToken, address _redeemer, uint _redeemTokens) public returns (uint) {
+        _NToken;
         _redeemer;
         _redeemTokens;
         return allowRedeem ? noError : opaqueError;
     }
 
-    function redeemVerify(address _cToken, address _redeemer, uint _redeemAmount, uint _redeemTokens) external {
-        _cToken;
+    function redeemVerify(address _NToken, address _redeemer, uint _redeemAmount, uint _redeemTokens) external {
+        _NToken;
         _redeemer;
         _redeemAmount;
         _redeemTokens;
         require(verifyRedeem, "redeemVerify rejected redeem");
     }
 
-    function borrowAllowed(address _cToken, address _borrower, uint _borrowAmount) public returns (uint) {
-        _cToken;
+    function borrowAllowed(address _NToken, address _borrower, uint _borrowAmount) public returns (uint) {
+        _NToken;
         _borrower;
         _borrowAmount;
         return allowBorrow ? noError : opaqueError;
     }
 
-    function borrowVerify(address _cToken, address _borrower, uint _borrowAmount) external {
-        _cToken;
+    function borrowVerify(address _NToken, address _borrower, uint _borrowAmount) external {
+        _NToken;
         _borrower;
         _borrowAmount;
         require(verifyBorrow, "borrowVerify rejected borrow");
     }
 
     function repayBorrowAllowed(
-        address _cToken,
+        address _NToken,
         address _payer,
         address _borrower,
         uint _repayAmount) public returns (uint) {
-        _cToken;
+        _NToken;
         _payer;
         _borrower;
         _repayAmount;
@@ -275,12 +275,12 @@ contract BoolComptroller is ComptrollerInterface {
     }
 
     function repayBorrowVerify(
-        address _cToken,
+        address _NToken,
         address _payer,
         address _borrower,
         uint _repayAmount,
         uint _borrowerIndex) external {
-        _cToken;
+        _NToken;
         _payer;
         _borrower;
         _repayAmount;
@@ -289,13 +289,13 @@ contract BoolComptroller is ComptrollerInterface {
     }
 
     function liquidateBorrowAllowed(
-        address _cTokenBorrowed,
-        address _cTokenCollateral,
+        address _NTokenBorrowed,
+        address _NTokenCollateral,
         address _liquidator,
         address _borrower,
         uint _repayAmount) public returns (uint) {
-        _cTokenBorrowed;
-        _cTokenCollateral;
+        _NTokenBorrowed;
+        _NTokenCollateral;
         _liquidator;
         _borrower;
         _repayAmount;
@@ -303,14 +303,14 @@ contract BoolComptroller is ComptrollerInterface {
     }
 
     function liquidateBorrowVerify(
-        address _cTokenBorrowed,
-        address _cTokenCollateral,
+        address _NTokenBorrowed,
+        address _NTokenCollateral,
         address _liquidator,
         address _borrower,
         uint _repayAmount,
         uint _seizeTokens) external {
-        _cTokenBorrowed;
-        _cTokenCollateral;
+        _NTokenBorrowed;
+        _NTokenCollateral;
         _liquidator;
         _borrower;
         _repayAmount;
@@ -319,13 +319,13 @@ contract BoolComptroller is ComptrollerInterface {
     }
 
     function seizeAllowed(
-        address _cTokenCollateral,
-        address _cTokenBorrowed,
+        address _NTokenCollateral,
+        address _NTokenBorrowed,
         address _borrower,
         address _liquidator,
         uint _seizeTokens) public returns (uint) {
-        _cTokenCollateral;
-        _cTokenBorrowed;
+        _NTokenCollateral;
+        _NTokenBorrowed;
         _liquidator;
         _borrower;
         _seizeTokens;
@@ -333,13 +333,13 @@ contract BoolComptroller is ComptrollerInterface {
     }
 
     function seizeVerify(
-        address _cTokenCollateral,
-        address _cTokenBorrowed,
+        address _NTokenCollateral,
+        address _NTokenBorrowed,
         address _liquidator,
         address _borrower,
         uint _seizeTokens) external {
-        _cTokenCollateral;
-        _cTokenBorrowed;
+        _NTokenCollateral;
+        _NTokenBorrowed;
         _liquidator;
         _borrower;
         _seizeTokens;
@@ -347,11 +347,11 @@ contract BoolComptroller is ComptrollerInterface {
     }
 
     function transferAllowed(
-        address _cToken,
+        address _NToken,
         address _src,
         address _dst,
         uint _transferTokens) public returns (uint) {
-        _cToken;
+        _NToken;
         _src;
         _dst;
         _transferTokens;
@@ -359,11 +359,11 @@ contract BoolComptroller is ComptrollerInterface {
     }
 
     function transferVerify(
-        address _cToken,
+        address _NToken,
         address _src,
         address _dst,
         uint _transferTokens) external {
-        _cToken;
+        _NToken;
         _src;
         _dst;
         _transferTokens;
@@ -373,11 +373,11 @@ contract BoolComptroller is ComptrollerInterface {
     /*** Special Liquidation Calculation ***/
 
     function liquidateCalculateSeizeTokens(
-        address _cTokenBorrowed,
-        address _cTokenCollateral,
+        address _NTokenBorrowed,
+        address _NTokenCollateral,
         uint _repayAmount) public view returns (uint, uint) {
-        _cTokenBorrowed;
-        _cTokenCollateral;
+        _NTokenBorrowed;
+        _NTokenCollateral;
         _repayAmount;
         return failCalculateSeizeTokens ? (opaqueError, 0) : (noError, calculatedSeizeTokens);
     }
@@ -453,7 +453,7 @@ contract BoolComptroller is ComptrollerInterface {
     }
 }
 
-contract EchoTypesComptroller is UnitrollerAdminStorage {
+contract EchoTypesNiutroller is UnitrollerAdminStorage {
     function stringy(string memory s) public pure returns(string memory) {
         return s;
     }

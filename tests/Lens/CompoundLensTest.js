@@ -5,7 +5,7 @@ const {
 } = require('../Utils/Ethereum');
 const {
   makeNiutroller,
-  makeCToken,
+  makeNToken,
 } = require('../Utils/Niural');
 
 function cullTuple(tuple) {
@@ -32,7 +32,7 @@ describe('NiuralLens', () => {
 
   describe('nTokenMetadata', () => {
     it('is correct for a nErc20', async () => {
-      let nErc20 = await makeCToken();
+      let nErc20 = await makeNToken();
       expect(
         cullTuple(await call(niuralLens, 'nTokenMetadata', [nErc20._address]))
       ).toEqual(
@@ -59,7 +59,7 @@ describe('NiuralLens', () => {
     });
 
     it('is correct for nEth', async () => {
-      let nEth = await makeCToken({kind: 'cether'});
+      let nEth = await makeNToken({kind: 'cether'});
       expect(
         cullTuple(await call(niuralLens, 'nTokenMetadata', [nEth._address]))
       ).toEqual({
@@ -84,7 +84,7 @@ describe('NiuralLens', () => {
     });
     it('is correct for nErc20 with set niu speeds', async () => {
       let niutroller = await makeNiutroller();
-      let nErc20 = await makeCToken({niutroller, supportMarket: true});
+      let nErc20 = await makeNToken({niutroller, supportMarket: true});
       await send(niutroller, '_setNiuSpeeds', [[nErc20._address], [etherExp(0.25)], [etherExp(0.75)]]);
       expect(
         cullTuple(await call(niuralLens, 'nTokenMetadata', [nErc20._address]))
@@ -114,8 +114,8 @@ describe('NiuralLens', () => {
 
   describe('nTokenMetadataAll', () => {
     it('is correct for a nErc20 and nEther', async () => {
-      let nErc20 = await makeCToken();
-      let nEth = await makeCToken({kind: 'cether'});
+      let nErc20 = await makeNToken();
+      let nEth = await makeNToken({kind: 'cether'});
       expect(
         (await call(niuralLens, 'nTokenMetadataAll', [[nErc20._address, nEth._address]])).map(cullTuple)
       ).toEqual([
@@ -163,7 +163,7 @@ describe('NiuralLens', () => {
 
   describe('nTokenBalances', () => {
     it('is correct for nERC20', async () => {
-      let nErc20 = await makeCToken();
+      let nErc20 = await makeNToken();
       expect(
         cullTuple(await call(niuralLens, 'nTokenBalances', [nErc20._address, acct]))
       ).toEqual(
@@ -179,7 +179,7 @@ describe('NiuralLens', () => {
     });
 
     it('is correct for cETH', async () => {
-      let nEth = await makeCToken({kind: 'cether'});
+      let nEth = await makeNToken({kind: 'cether'});
       let ethBalance = await web3.eth.getBalance(acct);
       expect(
         cullTuple(await call(niuralLens, 'nTokenBalances', [nEth._address, acct], {gasPrice: '0'}))
@@ -198,8 +198,8 @@ describe('NiuralLens', () => {
 
   describe('nTokenBalancesAll', () => {
     it('is correct for nEth and nErc20', async () => {
-      let nErc20 = await makeCToken();
-      let nEth = await makeCToken({kind: 'cether'});
+      let nErc20 = await makeNToken();
+      let nEth = await makeNToken({kind: 'cether'});
       let ethBalance = await web3.eth.getBalance(acct);
       
       expect(
@@ -227,7 +227,7 @@ describe('NiuralLens', () => {
 
   describe('nTokenUnderlyingPrice', () => {
     it('gets correct price for nErc20', async () => {
-      let nErc20 = await makeCToken();
+      let nErc20 = await makeNToken();
       expect(
         cullTuple(await call(niuralLens, 'nTokenUnderlyingPrice', [nErc20._address]))
       ).toEqual(
@@ -239,7 +239,7 @@ describe('NiuralLens', () => {
     });
 
     it('gets correct price for nEth', async () => {
-      let nEth = await makeCToken({kind: 'cether'});
+      let nEth = await makeNToken({kind: 'cether'});
       expect(
         cullTuple(await call(niuralLens, 'nTokenUnderlyingPrice', [nEth._address]))
       ).toEqual(
@@ -253,8 +253,8 @@ describe('NiuralLens', () => {
 
   describe('nTokenUnderlyingPriceAll', () => {
     it('gets correct price for both', async () => {
-      let nErc20 = await makeCToken();
-      let nEth = await makeCToken({kind: 'cether'});
+      let nErc20 = await makeNToken();
+      let nEth = await makeNToken({kind: 'cether'});
       expect(
         (await call(niuralLens, 'nTokenUnderlyingPriceAll', [[nErc20._address, nEth._address]])).map(cullTuple)
       ).toEqual([

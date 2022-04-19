@@ -4,7 +4,7 @@ import "../../contracts/CErc20Immutable.sol";
 import "../../contracts/CErc20Delegator.sol";
 import "../../contracts/CErc20Delegate.sol";
 import "../../contracts/CDaiDelegate.sol";
-import "./ComptrollerScenario.sol";
+import "./NiutrollerScenario.sol";
 
 contract CErc20Harness is CErc20Immutable {
     uint blockNumber = 100000;
@@ -14,7 +14,7 @@ contract CErc20Harness is CErc20Immutable {
     mapping (address => bool) public failTransferToAddresses;
 
     constructor(address underlying_,
-                ComptrollerInterface comptroller_,
+                NiutrollerInterface niutroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa_,
                 string memory name_,
@@ -23,7 +23,7 @@ contract CErc20Harness is CErc20Immutable {
                 address payable admin_)
     CErc20Immutable(
     underlying_,
-    comptroller_,
+    niutroller_,
     interestRateModel_,
     initialExchangeRateMantissa_,
     name_,
@@ -99,8 +99,8 @@ contract CErc20Harness is CErc20Immutable {
         return err;
     }
 
-    function harnessRedeemFresh(address payable account, uint cTokenAmount, uint underlyingAmount) public returns (uint) {
-        return super.redeemFresh(account, cTokenAmount, underlyingAmount);
+    function harnessRedeemFresh(address payable account, uint NTokenAmount, uint underlyingAmount) public returns (uint) {
+        return super.redeemFresh(account, NTokenAmount, underlyingAmount);
     }
 
     function harnessAccountBorrows(address account) public view returns (uint principal, uint interestIndex) {
@@ -125,8 +125,8 @@ contract CErc20Harness is CErc20Immutable {
         return err;
     }
 
-    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, CToken cTokenCollateral) public returns (uint) {
-        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, cTokenCollateral);
+    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, NToken NTokenCollateral) public returns (uint) {
+        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, NTokenCollateral);
         return err;
     }
 
@@ -147,13 +147,13 @@ contract CErc20Harness is CErc20Immutable {
     }
 
     function harnessCallBorrowAllowed(uint amount) public returns (uint) {
-        return comptroller.borrowAllowed(address(this), msg.sender, amount);
+        return niutroller.borrowAllowed(address(this), msg.sender, amount);
     }
 }
 
 contract CErc20Scenario is CErc20Immutable {
     constructor(address underlying_,
-                ComptrollerInterface comptroller_,
+                NiutrollerInterface niutroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa_,
                 string memory name_,
@@ -162,7 +162,7 @@ contract CErc20Scenario is CErc20Immutable {
                 address payable admin_)
     CErc20Immutable(
     underlying_,
-    comptroller_,
+    niutroller_,
     interestRateModel_,
     initialExchangeRateMantissa_,
     name_,
@@ -179,14 +179,14 @@ contract CErc20Scenario is CErc20Immutable {
     }
 
     function getBlockNumber() internal view returns (uint) {
-        ComptrollerScenario comptrollerScenario = ComptrollerScenario(address(comptroller));
-        return comptrollerScenario.blockNumber();
+        NiutrollerScenario niutrollerScenario = NiutrollerScenario(address(niutroller));
+        return niutrollerScenario.blockNumber();
     }
 }
 
 contract CEvil is CErc20Scenario {
     constructor(address underlying_,
-                ComptrollerInterface comptroller_,
+                NiutrollerInterface niutroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa_,
                 string memory name_,
@@ -195,7 +195,7 @@ contract CEvil is CErc20Scenario {
                 address payable admin_)
     CErc20Scenario(
     underlying_,
-    comptroller_,
+    niutroller_,
     interestRateModel_,
     initialExchangeRateMantissa_,
     name_,
@@ -203,14 +203,14 @@ contract CEvil is CErc20Scenario {
     decimals_,
     admin_) public {}
 
-    function evilSeize(CToken treasure, address liquidator, address borrower, uint seizeTokens) public returns (uint) {
+    function evilSeize(NToken treasure, address liquidator, address borrower, uint seizeTokens) public returns (uint) {
         return treasure.seize(liquidator, borrower, seizeTokens);
     }
 }
 
 contract CErc20DelegatorScenario is CErc20Delegator {
     constructor(address underlying_,
-                ComptrollerInterface comptroller_,
+                NiutrollerInterface niutroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa_,
                 string memory name_,
@@ -221,7 +221,7 @@ contract CErc20DelegatorScenario is CErc20Delegator {
                 bytes memory becomeImplementationData)
     CErc20Delegator(
     underlying_,
-    comptroller_,
+    niutroller_,
     interestRateModel_,
     initialExchangeRateMantissa_,
     name_,
@@ -322,8 +322,8 @@ contract CErc20DelegateHarness is CErc20Delegate {
         return err;
     }
 
-    function harnessRedeemFresh(address payable account, uint cTokenAmount, uint underlyingAmount) public returns (uint) {
-        return super.redeemFresh(account, cTokenAmount, underlyingAmount);
+    function harnessRedeemFresh(address payable account, uint NTokenAmount, uint underlyingAmount) public returns (uint) {
+        return super.redeemFresh(account, NTokenAmount, underlyingAmount);
     }
 
     function harnessAccountBorrows(address account) public view returns (uint principal, uint interestIndex) {
@@ -348,8 +348,8 @@ contract CErc20DelegateHarness is CErc20Delegate {
         return err;
     }
 
-    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, CToken cTokenCollateral) public returns (uint) {
-        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, cTokenCollateral);
+    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, NToken NTokenCollateral) public returns (uint) {
+        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, NTokenCollateral);
         return err;
     }
 
@@ -370,7 +370,7 @@ contract CErc20DelegateHarness is CErc20Delegate {
     }
 
     function harnessCallBorrowAllowed(uint amount) public returns (uint) {
-        return comptroller.borrowAllowed(address(this), msg.sender, amount);
+        return niutroller.borrowAllowed(address(this), msg.sender, amount);
     }
 }
 
@@ -386,8 +386,8 @@ contract CErc20DelegateScenario is CErc20Delegate {
     }
 
     function getBlockNumber() internal view returns (uint) {
-        ComptrollerScenario comptrollerScenario = ComptrollerScenario(address(comptroller));
-        return comptrollerScenario.blockNumber();
+        NiutrollerScenario niutrollerScenario = NiutrollerScenario(address(niutroller));
+        return niutrollerScenario.blockNumber();
     }
 }
 
@@ -450,8 +450,8 @@ contract CDaiDelegateScenario is CDaiDelegate {
     }
 
     function getBlockNumber() internal view returns (uint) {
-        ComptrollerScenario comptrollerScenario = ComptrollerScenario(address(comptroller));
-        return comptrollerScenario.blockNumber();
+        NiutrollerScenario niutrollerScenario = NiutrollerScenario(address(niutroller));
+        return niutrollerScenario.blockNumber();
     }
 }
 
