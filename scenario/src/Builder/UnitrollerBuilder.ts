@@ -19,7 +19,7 @@ export async function buildUnitroller(world: World, from: string, event: Event):
     new Fetcher<{}, UnitrollerData>(`
         #### Unitroller
 
-        * "" - The Upgradable Comptroller
+        * "" - The Upgradable Niutroller
           * E.g. "Unitroller Deploy"
       `,
       "Unitroller",

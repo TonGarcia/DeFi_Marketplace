@@ -4,7 +4,7 @@ import "../../contracts/NiutrollerG4.sol";
 
 contract NiutrollerScenarioG4 is NiutrollerG4 {
     uint public blockNumber;
-    address public niuAddress;
+    address public compAddress;
 
     constructor() NiutrollerG4() public {}
 
@@ -17,11 +17,11 @@ contract NiutrollerScenarioG4 is NiutrollerG4 {
         blockNumber = number;
     }
 
-    function membershipLength(NToken NToken) public view returns (uint) {
-        return accountAssets[address(NToken)].length;
+    function membershipLength(CToken cToken) public view returns (uint) {
+        return accountAssets[address(cToken)].length;
     }
 
-    function unlist(NToken NToken) public {
-        markets[address(NToken)].isListed = false;
+    function unlist(CToken cToken) public {
+        markets[address(cToken)].isListed = false;
     }
 }

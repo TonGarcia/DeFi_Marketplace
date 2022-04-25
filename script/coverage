@@ -10,7 +10,7 @@ coverage_root="$dir/../coverage"
 network=${NETWORK:-test}
 verbose=${verbose:-}
 
-# Compile scenario runner
+# Niuile scenario runner
 [[ -z $NO_TSC ]] && "$proj_root/scenario/script/tsc"
 
 # Build scenario stubs

@@ -12,11 +12,11 @@ import { getAddressV, getEventV, getNumberV, getStringV } from './CoreValue';
 import { AddressV, EventV, NothingV, NumberV, StringV, Value } from './Value';
 import { Arg, Command, processCommandEvent, View } from './Command';
 import { assertionCommands, processAssertionEvent } from './Event/AssertionEvent';
-import { comptrollerCommands, processComptrollerEvent } from './Event/ComptrollerEvent';
+import { comptrollerCommands, processNiutrollerEvent } from './Event/NiutrollerEvent';
 import { processUnitrollerEvent, unitrollerCommands } from './Event/UnitrollerEvent';
-import { comptrollerImplCommands, processComptrollerImplEvent } from './Event/ComptrollerImplEvent';
-import { NTokenCommands, processNTokenEvent } from './Event/NTokenEvent';
-import { NTokenDelegateCommands, processNTokenDelegateEvent } from './Event/NTokenDelegateEvent';
+import { comptrollerImplCommands, processNiutrollerImplEvent } from './Event/NiutrollerImplEvent';
+import { cTokenCommands, processCTokenEvent } from './Event/CTokenEvent';
+import { cTokenDelegateCommands, processCTokenDelegateEvent } from './Event/CTokenDelegateEvent';
 import { erc20Commands, processErc20Event } from './Event/Erc20Event';
 import { interestRateModelCommands, processInterestRateModelEvent } from './Event/InterestRateModelEvent';
 import { priceOracleCommands, processPriceOracleEvent } from './Event/PriceOracleEvent';
@@ -25,7 +25,7 @@ import { maximillionCommands, processMaximillionEvent } from './Event/Maximillio
 import { invariantCommands, processInvariantEvent } from './Event/InvariantEvent';
 import { expectationCommands, processExpectationEvent } from './Event/ExpectationEvent';
 import { timelockCommands, processTimelockEvent } from './Event/TimelockEvent';
-import { compCommands, processCompEvent } from './Event/CompEvent';
+import { compCommands, processNiuEvent } from './Event/NiuEvent';
 import { governorCommands, processGovernorEvent } from './Event/GovernorEvent';
 import { governorBravoCommands, processGovernorBravoEvent } from './Event/GovernorBravoEvent';
 import { processTrxEvent, trxCommands } from './Event/TrxEvent';
@@ -222,7 +222,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
         #### Read
 
         * "Read ..." - Reads given value and prints result
-          * E.g. "Read NToken cBAT ExchangeRateStored" - Returns exchange rate of cBAT
+          * E.g. "Read CToken cBAT ExchangeRateStored" - Returns exchange rate of cBAT
       `,
       'Read',
       [new Arg('res', getCoreValue, { variadic: true })],
@@ -447,7 +447,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Block
 
       * "Block 10 (...event)" - Set block to block N and run event
-        * E.g. "Block 10 (Comp Deploy Admin)"
+        * E.g. "Block 10 (Niu Deploy Admin)"
     `,
     'Block',
     [
@@ -514,7 +514,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### From
 
       * "From <User> <Event>" - Runs event as the given user
-        * E.g. "From Geoff (NToken cZRX Mint 5e18)"
+        * E.g. "From Geoff (CToken cZRX Mint 5e18)"
     `,
     'From',
     [new Arg('account', getAddressV), new Arg('event', getEventV)],
@@ -526,7 +526,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Trx
 
       * "Trx ...trxEvent" - Handles event to set details of next transaction
-        * E.g. "Trx Value 1.0e18 (NToken cEth Mint 1.0e18)"
+        * E.g. "Trx Value 1.0e18 (CToken cEth Mint 1.0e18)"
     `,
     'Trx',
     [new Arg('event', getEventV, { variadic: true })],
@@ -539,7 +539,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Invariant
 
       * "Invariant ...invariant" - Adds a new invariant to the world which is checked after each transaction
-        * E.g. "Invariant Static (NToken cZRX TotalSupply)"
+        * E.g. "Invariant Static (CToken cZRX TotalSupply)"
     `,
     'Invariant',
     [new Arg('event', getEventV, { variadic: true })],
@@ -552,7 +552,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Expect
 
       * "Expect ...expectation" - Adds an expectation to hold after the next transaction
-        * E.g. "Expect Changes (NToken cZRX TotalSupply) +10.0e18"
+        * E.g. "Expect Changes (CToken cZRX TotalSupply) +10.0e18"
     `,
     'Expect',
     [new Arg('event', getEventV, { variadic: true })],
@@ -658,7 +658,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Unitroller
 
       * "Unitroller ...event" - Runs given Unitroller event
-        * E.g. "Unitroller SetPendingImpl MyComptrollerImpl"
+        * E.g. "Unitroller SetPendingImpl MyNiutrollerImpl"
     `,
     'Unitroller',
     [new Arg('event', getEventV, { variadic: true })],
@@ -668,54 +668,54 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
 
   new Command<{ event: EventV }>(
     `
-      #### Comptroller
+      #### Niutroller
 
-      * "Comptroller ...event" - Runs given Comptroller event
-        * E.g. "Comptroller _setReserveFactor 0.5"
+      * "Niutroller ...event" - Runs given Niutroller event
+        * E.g. "Niutroller _setReserveFactor 0.5"
     `,
-    'Comptroller',
+    'Niutroller',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processComptrollerEvent(world, event.val, from),
+    (world, from, { event }) => processNiutrollerEvent(world, event.val, from),
     { subExpressions: comptrollerCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### ComptrollerImpl
+      #### NiutrollerImpl
 
-      * "ComptrollerImpl ...event" - Runs given ComptrollerImpl event
-        * E.g. "ComptrollerImpl MyImpl Become"
+      * "NiutrollerImpl ...event" - Runs given NiutrollerImpl event
+        * E.g. "NiutrollerImpl MyImpl Become"
     `,
-    'ComptrollerImpl',
+    'NiutrollerImpl',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processComptrollerImplEvent(world, event.val, from),
+    (world, from, { event }) => processNiutrollerImplEvent(world, event.val, from),
     { subExpressions: comptrollerImplCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### NToken
+      #### CToken
 
-      * "NToken ...event" - Runs given NToken event
-        * E.g. "NToken cZRX Mint 5e18"
+      * "CToken ...event" - Runs given CToken event
+        * E.g. "CToken cZRX Mint 5e18"
     `,
-    'NToken',
+    'CToken',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processNTokenEvent(world, event.val, from),
-    { subExpressions: NTokenCommands() }
+    (world, from, { event }) => processCTokenEvent(world, event.val, from),
+    { subExpressions: cTokenCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### NTokenDelegate
+      #### CTokenDelegate
 
-      * "NTokenDelegate ...event" - Runs given NTokenDelegate event
-        * E.g. "NTokenDelegate Deploy CDaiDelegate cDaiDelegate"
+      * "CTokenDelegate ...event" - Runs given CTokenDelegate event
+        * E.g. "CTokenDelegate Deploy CDaiDelegate cDaiDelegate"
     `,
-    'NTokenDelegate',
+    'CTokenDelegate',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processNTokenDelegateEvent(world, event.val, from),
-    { subExpressions: NTokenDelegateCommands() }
+    (world, from, { event }) => processCTokenDelegateEvent(world, event.val, from),
+    { subExpressions: cTokenDelegateCommands() }
   ),
 
   new Command<{ event: EventV }>(
@@ -762,7 +762,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### PriceOracleProxy
 
       * "PriceOracleProxy ...event" - Runs given Price Oracle event
-      * E.g. "PriceOracleProxy Deploy (Unitroller Address) (PriceOracle Address) (NToken cETH Address)"
+      * E.g. "PriceOracleProxy Deploy (Unitroller Address) (PriceOracle Address) (CToken cETH Address)"
     `,
     'PriceOracleProxy',
     [new Arg('event', getEventV, { variadic: true })],
@@ -777,7 +777,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Maximillion
 
       * "Maximillion ...event" - Runs given Maximillion event
-      * E.g. "Maximillion Deploy (NToken cETH Address)"
+      * E.g. "Maximillion Deploy (CToken cETH Address)"
     `,
     'Maximillion',
     [new Arg('event', getEventV, { variadic: true })],
@@ -804,15 +804,15 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
 
   new Command<{ event: EventV }>(
     `
-      #### Comp
+      #### Niu
 
-      * "Comp ...event" - Runs given comp event
-      * E.g. "Comp Deploy"
+      * "Niu ...event" - Runs given comp event
+      * E.g. "Niu Deploy"
     `,
-    'Comp',
+    'Niu',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
-      return processCompEvent(world, event.val, from);
+      return processNiuEvent(world, event.val, from);
     },
     { subExpressions: compCommands() }
   ),

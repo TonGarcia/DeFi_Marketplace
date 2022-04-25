@@ -16,8 +16,8 @@ function mergeInterface(into, from) {
   return into.concat(from)
 }
 
-function mergeComptroller(abi) {
-  abi.Comptroller = mergeInterface(abi.Unitroller, abi[`Comptroller`])
+function mergeNiutroller(abi) {
+  abi.Niutroller = mergeInterface(abi.Unitroller, abi[`Niutroller`])
   return abi;
 }
 
@@ -27,7 +27,7 @@ function format(abi) {
 
 function main(path) {
   const abi = JSON.parse(fs.readFileSync(path))
-  fs.writeFileSync(path, format(mergeComptroller(abi)))
+  fs.writeFileSync(path, format(mergeNiutroller(abi)))
 }
 
 main('networks/mainnet-abi.json')

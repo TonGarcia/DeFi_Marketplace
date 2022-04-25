@@ -4,7 +4,7 @@ import "../../contracts/NiutrollerG6.sol";
 
 contract NiutrollerScenarioG6 is NiutrollerG6 {
     uint public blockNumber;
-    address public niuAddress;
+    address public compAddress;
 
     constructor() NiutrollerG6() public {}
 
@@ -13,12 +13,12 @@ contract NiutrollerScenarioG6 is NiutrollerG6 {
         return blockNumber;
     }
 
-    function setNiuAddress(address niuAddress_) public {
-        niuAddress = niuAddress_;
+    function setNiuAddress(address compAddress_) public {
+        compAddress = compAddress_;
     }
 
     function getNiuAddress() public view returns (address) {
-        return niuAddress;
+        return compAddress;
     }
 
     function setBlockNumber(uint number) public {
@@ -29,15 +29,15 @@ contract NiutrollerScenarioG6 is NiutrollerG6 {
         return blockNumber;
     }
 
-    function membershipLength(NToken NToken) public view returns (uint) {
-        return accountAssets[address(NToken)].length;
+    function membershipLength(CToken cToken) public view returns (uint) {
+        return accountAssets[address(cToken)].length;
     }
 
-    function unlist(NToken NToken) public {
-        markets[address(NToken)].isListed = false;
+    function unlist(CToken cToken) public {
+        markets[address(cToken)].isListed = false;
     }
 
-    function setNiuSpeed(address NToken, uint niuSpeed) public {
-        niuSpeeds[NToken] = niuSpeed;
+    function setNiuSpeed(address cToken, uint compSpeed) public {
+        compSpeeds[cToken] = compSpeed;
     }
 }

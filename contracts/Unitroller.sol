@@ -4,8 +4,8 @@ import "./ErrorReporter.sol";
 import "./NiutrollerStorage.sol";
 /**
  * @title NiutrollerCore
- * @dev Storage for the niutroller is at this address, while execution is delegated to the `niutrollerImplementation`.
- * NTokens should reference this contract as their niutroller.
+ * @dev Storage for the comptroller is at this address, while execution is delegated to the `comptrollerImplementation`.
+ * CTokens should reference this contract as their comptroller.
  */
 contract Unitroller is UnitrollerAdminStorage, NiutrollerErrorReporter {
 
@@ -15,7 +15,7 @@ contract Unitroller is UnitrollerAdminStorage, NiutrollerErrorReporter {
     event NewPendingImplementation(address oldPendingImplementation, address newPendingImplementation);
 
     /**
-      * @notice Emitted when pendingNiutrollerImplementation is accepted, which means niutroller implementation is updated
+      * @notice Emitted when pendingNiutrollerImplementation is accepted, which means comptroller implementation is updated
       */
     event NewImplementation(address oldImplementation, address newImplementation);
 
@@ -51,7 +51,7 @@ contract Unitroller is UnitrollerAdminStorage, NiutrollerErrorReporter {
     }
 
     /**
-    * @notice Accepts new implementation of niutroller. msg.sender must be pendingImplementation
+    * @notice Accepts new implementation of comptroller. msg.sender must be pendingImplementation
     * @dev Admin function for new implementation to accept it's role as implementation
     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
     */
@@ -62,14 +62,14 @@ contract Unitroller is UnitrollerAdminStorage, NiutrollerErrorReporter {
         }
 
         // Save current values for inclusion in log
-        address oldImplementation = niutrollerImplementation;
+        address oldImplementation = comptrollerImplementation;
         address oldPendingImplementation = pendingNiutrollerImplementation;
 
-        niutrollerImplementation = pendingNiutrollerImplementation;
+        comptrollerImplementation = pendingNiutrollerImplementation;
 
         pendingNiutrollerImplementation = address(0);
 
-        emit NewImplementation(oldImplementation, niutrollerImplementation);
+        emit NewImplementation(oldImplementation, comptrollerImplementation);
         emit NewPendingImplementation(oldPendingImplementation, pendingNiutrollerImplementation);
 
         return uint(Error.NO_ERROR);
@@ -134,7 +134,7 @@ contract Unitroller is UnitrollerAdminStorage, NiutrollerErrorReporter {
      */
     function () payable external {
         // delegate all other functions to current implementation
-        (bool success, ) = niutrollerImplementation.delegatecall(msg.data);
+        (bool success, ) = comptrollerImplementation.delegatecall(msg.data);
 
         assembly {
               let free_mem_ptr := mload(0x40)

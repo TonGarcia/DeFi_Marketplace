@@ -4,7 +4,7 @@ import "./FaucetToken.sol";
 
 /**
   * @title The Niural Evil Test Token
-  * @author Niural based on prev readme author
+  * @author Niural
   * @notice A simple test token that fails certain operations
   */
 contract EvilToken is FaucetToken {

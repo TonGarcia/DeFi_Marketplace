@@ -10,7 +10,7 @@ example:
 
 npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D6809B6 '{
   "underlying": "0x577D296678535e4903D59A4C929B718e1D575e0A",
-  "comptroller": "$Comptroller",
+  "comptroller": "$Niutroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
   "name": "Niural Kyber Network Crystal",
@@ -32,7 +32,7 @@ npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D680
     return printUsage();
   }
 
-  console.log(`Matching NToken at ${address} with ${JSON.stringify(conf)}`);
+  console.log(`Matching cToken at ${address} with ${JSON.stringify(conf)}`);
 
   let deployArgs = [conf.underlying, conf.comptroller, conf.interestRateModel, conf.initialExchangeRateMantissa.toString(), conf.name, conf.symbol, conf.decimals, conf.admin];
 

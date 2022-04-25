@@ -1,47 +1,47 @@
 const {
   makeNiutroller,
-  makeNToken
+  makeCToken
 } = require('../Utils/Niural');
 
-describe('NToken', function () {
+describe('CToken', function () {
   let root, accounts;
-  let NToken, oldComptroller, newComptroller;
+  let cToken, oldNiutroller, newNiutroller;
   beforeEach(async () => {
     [root, ...accounts] = saddle.accounts;
-    NToken = await makeNToken();
-    oldComptroller = NToken.comptroller;
-    newComptroller = await makeNiutroller();
-    expect(newComptroller._address).not.toEqual(oldComptroller._address);
+    cToken = await makeCToken();
+    oldNiutroller = cToken.comptroller;
+    newNiutroller = await makeNiutroller();
+    expect(newNiutroller._address).not.toEqual(oldNiutroller._address);
   });
 
-  describe('_setComptroller', () => {
+  describe('_setNiutroller', () => {
     it("should fail if called by non-admin", async () => {
       expect(
-        await send(NToken, '_setComptroller', [newComptroller._address], { from: accounts[0] })
+        await send(cToken, '_setNiutroller', [newNiutroller._address], { from: accounts[0] })
       ).toHaveTokenFailure('UNAUTHORIZED', 'SET_COMPTROLLER_OWNER_CHECK');
-      expect(await call(NToken, 'comptroller')).toEqual(oldComptroller._address);
+      expect(await call(cToken, 'comptroller')).toEqual(oldNiutroller._address);
     });
 
-    it("reverts if passed a contract that doesn't implement isComptroller", async () => {
-      await expect(send(NToken, '_setComptroller', [NToken.underlying._address])).rejects.toRevert("revert");
-      expect(await call(NToken, 'comptroller')).toEqual(oldComptroller._address);
+    it("reverts if passed a contract that doesn't implement isNiutroller", async () => {
+      await expect(send(cToken, '_setNiutroller', [cToken.underlying._address])).rejects.toRevert("revert");
+      expect(await call(cToken, 'comptroller')).toEqual(oldNiutroller._address);
     });
 
-    it("reverts if passed a contract that implements isComptroller as false", async () => {
+    it("reverts if passed a contract that implements isNiutroller as false", async () => {
       // extremely unlikely to occur, of course, but let's be exhaustive
-      const badComptroller = await makeNiutroller({ kind: 'false-marker' });
-      await expect(send(NToken, '_setComptroller', [badComptroller._address])).rejects.toRevert("revert marker method returned false");
-      expect(await call(NToken, 'comptroller')).toEqual(oldComptroller._address);
+      const badNiutroller = await makeNiutroller({ kind: 'false-marker' });
+      await expect(send(cToken, '_setNiutroller', [badNiutroller._address])).rejects.toRevert("revert marker method returned false");
+      expect(await call(cToken, 'comptroller')).toEqual(oldNiutroller._address);
     });
 
     it("updates comptroller and emits log on success", async () => {
-      const result = await send(NToken, '_setComptroller', [newComptroller._address]);
+      const result = await send(cToken, '_setNiutroller', [newNiutroller._address]);
       expect(result).toSucceed();
-      expect(result).toHaveLog('NewComptroller', {
-        oldComptroller: oldComptroller._address,
-        newComptroller: newComptroller._address
+      expect(result).toHaveLog('NewNiutroller', {
+        oldNiutroller: oldNiutroller._address,
+        newNiutroller: newNiutroller._address
       });
-      expect(await call(NToken, 'comptroller')).toEqual(newComptroller._address);
+      expect(await call(cToken, 'comptroller')).toEqual(newNiutroller._address);
     });
   });
 });

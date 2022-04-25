@@ -3,7 +3,7 @@
 * `name:<Type>` - Helper to describe arguments with names, not actually input this way
 * `<Bool>` - `True` or `False`
 * `<Number>` - A standard number (e.g. `5` or `6.0` or `10.0e18`)
-* `<NToken>` - The local name for a given NToken when created, e.g. `cZRX`
+* `<CToken>` - The local name for a given cToken when created, e.g. `cZRX`
 * `<User>` - One of: `Admin, Bank, Geoff, Torrey, Robert, Coburn, Jared`
 * `<String>` - A string, may be quoted but does not have to be if a single-word (e.g. `"Mint"` or `Mint`)
 * `<Address>` - TODO
@@ -17,22 +17,22 @@
   * E.g. "History"
   * E.g. "History 10"
 * `Read ...` - Reads given value and prints result
-  * E.g. `Read NToken cBAT ExchangeRateStored` - Returns exchange rate of cBAT
+  * E.g. `Read CToken cBAT ExchangeRateStored` - Returns exchange rate of cBAT
 * `Assert <Assertion>` - Validates given assertion, raising an exception if assertion fails
   * E.g. `Assert Equal (Erc20 BAT TokenBalance Geoff) (Exactly 5.0)` - Returns exchange rate of cBAT
-* `FastForward n:<Number> Blocks` - For `NTokenScenario`, moves the block number forward n blocks. Note: in `NTokenScenario` the current block number is mocked (starting at 100000). Thus, this is the only way for the protocol to see a higher block number (for accruing interest).
+* `FastForward n:<Number> Blocks` - For `CTokenScenario`, moves the block number forward n blocks. Note: in `CTokenScenario` the current block number is mocked (starting at 100000). Thus, this is the only way for the protocol to see a higher block number (for accruing interest).
   * E.g. `FastForward 5 Blocks` - Move block number forward 5 blocks.
 * `Inspect` - Prints debugging information about the world
 * `Debug message:<String>` - Same as inspect but prepends with a string
 * `From <User> <Event>` - Runs event as the given user
-  * E.g. `From Geoff (NToken cZRX Mint 5e18)`
+  * E.g. `From Geoff (CToken cZRX Mint 5e18)`
 * `Invariant <Invariant>` - Adds a new invariant to the world which is checked after each transaction
-  * E.g. `Invariant Static (NToken cZRX TotalSupply)`
+  * E.g. `Invariant Static (CToken cZRX TotalSupply)`
 * `WipeInvariants` - Removes all invariants.
-* `Comptroller <ComptrollerEvent>` - Runs given Comptroller event
-  * E.g. `Comptroller _setReserveFactor 0.5`
-* `NToken <NTokenEvent>` - Runs given NToken event
-  * E.g. `NToken cZRX Mint 5e18`
+* `Niutroller <NiutrollerEvent>` - Runs given Niutroller event
+  * E.g. `Niutroller _setReserveFactor 0.5`
+* `CToken <CTokenEvent>` - Runs given CToken event
+  * E.g. `CToken cZRX Mint 5e18`
 * `Erc20 <Erc20Event>` - Runs given Erc20 event
   * E.g. `Erc20 ZRX Facuet Geoff 5e18`
 * `InterestRateModel ...event` - Runs given interest rate model event
@@ -40,48 +40,48 @@
 * `PriceOracle <PriceOracleEvent>` - Runs given Price Oracle event
   * E.g. `PriceOracle SetPrice cZRX 1.5`
 
-## Comptroller Events
+## Niutroller Events
 
-* "Comptroller Deploy ...comptrollerParams" - Generates a new Comptroller
-  * E.g. "Comptroller Deploy Scenario (PriceOracle Address) 0.1 10"
-* `Comptroller SetPaused action:<String> paused:<Bool>` - Pauses or unpaused given NToken function (e.g. Mint)
-  * E.g. `Comptroller SetPaused Mint True`
-* `Comptroller SupportMarket <NToken>` - Adds support in the Comptroller for the given NToken
-  * E.g. `Comptroller SupportMarket cZRX`
-* `Comptroller EnterMarkets <User> <NToken> ...` - User enters the given markets
-  * E.g. `Comptroller EnterMarkets Geoff cZRX cETH`
-* `Comptroller SetMaxAssets <Number>` - Sets (or resets) the max allowed asset count
-  * E.g. `Comptroller SetMaxAssets 4`
-* `NToken <NToken> SetOracle oracle:<Contract>` - Sets the oracle
-  * E.g. `Comptroller SetOracle (Fixed 1.5)`
-* `Comptroller SetCollateralFactor <NToken> <Number>` - Sets the collateral factor for given NToken to number
-  * E.g. `Comptroller SetCollateralFactor cZRX 0.1`
-* `FastForward n:<Number> Blocks` - Moves the block number forward `n` blocks. Note: in `NTokenScenario` and `ComptrollerScenario` the current block number is mocked (starting at 100000). This is the only way for the protocol to see a higher block number (for accruing interest).
-  * E.g. `Comptroller FastForward 5 Blocks` - Move block number forward 5 blocks.
+* "Niutroller Deploy ...comptrollerParams" - Generates a new Niutroller
+  * E.g. "Niutroller Deploy Scenario (PriceOracle Address) 0.1 10"
+* `Niutroller SetPaused action:<String> paused:<Bool>` - Pauses or unpaused given cToken function (e.g. Mint)
+  * E.g. `Niutroller SetPaused Mint True`
+* `Niutroller SupportMarket <CToken>` - Adds support in the Niutroller for the given cToken
+  * E.g. `Niutroller SupportMarket cZRX`
+* `Niutroller EnterMarkets <User> <CToken> ...` - User enters the given markets
+  * E.g. `Niutroller EnterMarkets Geoff cZRX cETH`
+* `Niutroller SetMaxAssets <Number>` - Sets (or resets) the max allowed asset count
+  * E.g. `Niutroller SetMaxAssets 4`
+* `CToken <cToken> SetOracle oracle:<Contract>` - Sets the oracle
+  * E.g. `Niutroller SetOracle (Fixed 1.5)`
+* `Niutroller SetCollateralFactor <CToken> <Number>` - Sets the collateral factor for given cToken to number
+  * E.g. `Niutroller SetCollateralFactor cZRX 0.1`
+* `FastForward n:<Number> Blocks` - Moves the block number forward `n` blocks. Note: in `CTokenScenario` and `NiutrollerScenario` the current block number is mocked (starting at 100000). This is the only way for the protocol to see a higher block number (for accruing interest).
+  * E.g. `Niutroller FastForward 5 Blocks` - Move block number forward 5 blocks.
 
-## NToken Events
+## cToken Events
 
-* `NToken Deploy name:<NToken> underlying:<Contract> comptroller:<Contract> interestRateModel:<Contract> initialExchangeRate:<Number> decimals:<Number> admin:<Address>` - Generates a new comptroller and sets to world global
-  * E.g. `NToken Deploy cZRX (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 18`
-* `NToken <NToken> AccrueInterest` - Accrues interest for given token
-  * E.g. `NToken cZRX AccrueInterest`
-* `NToken <NToken> Mint <User> amount:<Number>` - Mints the given amount of NToken as specified user
-  * E.g. `NToken cZRX Mint Geoff 1.0`
-* `NToken <NToken> Redeem <User> amount:<Number>` - Redeems the given amount of NToken as specified user
-      * E.g. `NToken cZRX Redeem Geoff 1.0e18`
-* `NToken <NToken> Borrow <User> amount:<Number>` - Borrows the given amount of this NToken as specified user
-      * E.g. `NToken cZRX Borrow Geoff 1.0e18`
-* `NToken <NToken> ReduceReserves amount:<Number>` - Reduces the reserves of the NToken
-      * E.g. `NToken cZRX ReduceReserves 1.0e18`
-* `NToken <NToken> SetReserveFactor amount:<Number>` - Sets the reserve factor for the NToken
-      * E.g. `NToken cZRX SetReserveFactor 0.1`
-* `NToken <NToken> SetInterestRateModel interestRateModel:<Contract>` - Sets the interest rate model for the given NToken
-  * E.g. `NToken cZRX SetInterestRateModel (Fixed 1.5)`
-* `NToken <NToken> SetComptroller comptroller:<Contract>` - Sets the comptroller for the given NToken
-  * E.g. `NToken cZRX SetComptroller Comptroller`
-* `NToken <NToken> Mock variable:<String> value:<Number>` - Mocks a given value on NToken. Note: value must be a supported mock and this will only work on a NTokenScenario contract.
-  * E.g. `NToken cZRX Mock totalBorrows 5.0e18`
-  * E.g. `NToken cZRX Mock totalReserves 0.5e18`
+* `CToken Deploy name:<CToken> underlying:<Contract> comptroller:<Contract> interestRateModel:<Contract> initialExchangeRate:<Number> decimals:<Number> admin:<Address>` - Generates a new comptroller and sets to world global
+  * E.g. `CToken Deploy cZRX (Erc20 ZRX Address) (Niutroller Address) (InterestRateModel Address) 1.0 18`
+* `CToken <cToken> AccrueInterest` - Accrues interest for given token
+  * E.g. `CToken cZRX AccrueInterest`
+* `CToken <cToken> Mint <User> amount:<Number>` - Mints the given amount of cToken as specified user
+  * E.g. `CToken cZRX Mint Geoff 1.0`
+* `CToken <cToken> Redeem <User> amount:<Number>` - Redeems the given amount of cToken as specified user
+      * E.g. `CToken cZRX Redeem Geoff 1.0e18`
+* `CToken <cToken> Borrow <User> amount:<Number>` - Borrows the given amount of this cToken as specified user
+      * E.g. `CToken cZRX Borrow Geoff 1.0e18`
+* `CToken <cToken> ReduceReserves amount:<Number>` - Reduces the reserves of the cToken
+      * E.g. `CToken cZRX ReduceReserves 1.0e18`
+* `CToken <cToken> SetReserveFactor amount:<Number>` - Sets the reserve factor for the cToken
+      * E.g. `CToken cZRX SetReserveFactor 0.1`
+* `CToken <cToken> SetInterestRateModel interestRateModel:<Contract>` - Sets the interest rate model for the given cToken
+  * E.g. `CToken cZRX SetInterestRateModel (Fixed 1.5)`
+* `CToken <cToken> SetNiutroller comptroller:<Contract>` - Sets the comptroller for the given cToken
+  * E.g. `CToken cZRX SetNiutroller Niutroller`
+* `CToken <cToken> Mock variable:<String> value:<Number>` - Mocks a given value on cToken. Note: value must be a supported mock and this will only work on a CTokenScenario contract.
+  * E.g. `CToken cZRX Mock totalBorrows 5.0e18`
+  * E.g. `CToken cZRX Mock totalReserves 0.5e18`
 
 ## Erc-20 Events
 
@@ -98,7 +98,7 @@
   * E.g. `PriceOracle Deploy (Fixed 1.0)`
   * E.g. `PriceOracle Deploy Simple`
   * E.g. `PriceOracle Deploy NotPriceOracle`
-* `SetPrice <NToken> <Amount>` - Sets the per-ether price for the given NToken
+* `SetPrice <CToken> <Amount>` - Sets the per-ether price for the given cToken
   * E.g. `PriceOracle SetPrice cZRX 1.0`
 
 ## Interest Rate Model Events
@@ -129,8 +129,8 @@
 * `Default value:<Value> default:<Value>` - Returns value if truthy, otherwise default. Note: this does short-circuit
 * `LastContract` - Returns the address of last constructed contract
 * `User <...>` - Returns User value (see below)
-* `Comptroller <...>` - Returns Comptroller value (see below)
-* `NToken <...>` - Returns NToken value (see below)
+* `Niutroller <...>` - Returns Niutroller value (see below)
+* `CToken <...>` - Returns CToken value (see below)
 * `Erc20 <...>` - Returns Erc20 value (see below)
 * `InterestRateModel <...>` - Returns InterestRateModel value (see below)
 * `PriceOracle <...>` - Returns PriceOracle value (see below)
@@ -140,34 +140,34 @@
 * `User <User> Address` - Returns address of user
   * E.g. `User Geoff Address` - Returns Geoff's address
 
-## Comptroller Values
+## Niutroller Values
 
-* `Comptroller Liquidity <User>` - Returns a given user's trued up liquidity
-  * E.g. `Comptroller Liquidity Geoff`
-* `Comptroller MembershipLength <User>` - Returns a given user's length of membership
-  * E.g. `Comptroller MembershipLength Geoff`
-* `Comptroller CheckMembership <User> <NToken>` - Returns one if user is in asset, zero otherwise.
-  * E.g. `Comptroller CheckMembership Geoff cZRX`
-* "Comptroller CheckListed <NToken>" - Returns true if market is listed, false otherwise.
-  * E.g. "Comptroller CheckListed cZRX"
+* `Niutroller Liquidity <User>` - Returns a given user's trued up liquidity
+  * E.g. `Niutroller Liquidity Geoff`
+* `Niutroller MembershipLength <User>` - Returns a given user's length of membership
+  * E.g. `Niutroller MembershipLength Geoff`
+* `Niutroller CheckMembership <User> <CToken>` - Returns one if user is in asset, zero otherwise.
+  * E.g. `Niutroller CheckMembership Geoff cZRX`
+* "Niutroller CheckListed <CToken>" - Returns true if market is listed, false otherwise.
+  * E.g. "Niutroller CheckListed cZRX"
 
-## NToken Values
-* `NToken <NToken> UnderlyingBalance <User>` - Returns a user's underlying balance (based on given exchange rate)
-  * E.g. `NToken cZRX UnderlyingBalance Geoff`
-* `NToken <NToken> BorrowBalance <User>` - Returns a user's borrow balance (including interest)
-  * E.g. `NToken cZRX BorrowBalance Geoff`
-* `NToken <NToken> TotalBorrowBalance` - Returns the NToken's total borrow balance
-  * E.g. `NToken cZRX TotalBorrowBalance`
-* `NToken <NToken> Reserves` - Returns the NToken's total reserves
-  * E.g. `NToken cZRX Reserves`
-* `NToken <NToken> Comptroller` - Returns the NToken's comptroller
-  * E.g. `NToken cZRX Comptroller`
-* `NToken <NToken> PriceOracle` - Returns the NToken's price oracle
-  * E.g. `NToken cZRX PriceOracle`
-* `NToken <NToken> ExchangeRateStored` - Returns the NToken's exchange rate (based on balances stored)
-  * E.g. `NToken cZRX ExchangeRateStored`
-* `NToken <NToken> ExchangeRate` - Returns the NToken's current exchange rate
-  * E.g. `NToken cZRX ExchangeRate`
+## CToken Values
+* `CToken <CToken> UnderlyingBalance <User>` - Returns a user's underlying balance (based on given exchange rate)
+  * E.g. `CToken cZRX UnderlyingBalance Geoff`
+* `CToken <CToken> BorrowBalance <User>` - Returns a user's borrow balance (including interest)
+  * E.g. `CToken cZRX BorrowBalance Geoff`
+* `CToken <CToken> TotalBorrowBalance` - Returns the cToken's total borrow balance
+  * E.g. `CToken cZRX TotalBorrowBalance`
+* `CToken <CToken> Reserves` - Returns the cToken's total reserves
+  * E.g. `CToken cZRX Reserves`
+* `CToken <CToken> Niutroller` - Returns the cToken's comptroller
+  * E.g. `CToken cZRX Niutroller`
+* `CToken <CToken> PriceOracle` - Returns the cToken's price oracle
+  * E.g. `CToken cZRX PriceOracle`
+* `CToken <CToken> ExchangeRateStored` - Returns the cToken's exchange rate (based on balances stored)
+  * E.g. `CToken cZRX ExchangeRateStored`
+* `CToken <CToken> ExchangeRate` - Returns the cToken's current exchange rate
+  * E.g. `CToken cZRX ExchangeRate`
 
 ## Erc-20 Values
 
@@ -189,7 +189,7 @@
 * `Erc20 <Erc20> Allowance owner:<Address> spender:<Address>` - Returns the ERC-20 allowance from owner to spender
   * E.g. `Erc20 ZRX Allowance Geoff Torrey` - Returns the ZRX allowance of Geoff to Torrey
   * E.g. `Erc20 cZRX Allowance Geoff Coburn` - Returns the cZRX allowance of Geoff to Coburn
-  * E.g. `Erc20 ZRX Allowance Geoff cZRX` - Returns the ZRX allowance of Geoff to the cZRX NToken
+  * E.g. `Erc20 ZRX Allowance Geoff cZRX` - Returns the ZRX allowance of Geoff to the cZRX cToken
 
 ## PriceOracle Values
 
@@ -204,12 +204,12 @@
 
 * `Equal given:<Value> expected:<Value>` - Asserts that given matches expected.
   * E.g. `Assert Equal (Exactly 0) Zero`
-  * E.g. `Assert Equal (NToken cZRX TotalSupply) (Exactly 55)`
-  * E.g. `Assert Equal (NToken cZRX Comptroller) (Comptroller Address)`
+  * E.g. `Assert Equal (CToken cZRX TotalSupply) (Exactly 55)`
+  * E.g. `Assert Equal (CToken cZRX Niutroller) (Niutroller Address)`
 * `True given:<Value>` - Asserts that given is true.
-  * E.g. `Assert True (Comptroller CheckMembership Geoff cETH)`
+  * E.g. `Assert True (Niutroller CheckMembership Geoff cETH)`
 * `False given:<Value>` - Asserts that given is false.
-  * E.g. `Assert False (Comptroller CheckMembership Geoff cETH)`
+  * E.g. `Assert False (Niutroller CheckMembership Geoff cETH)`
 * `Failure error:<String> info:<String> detail:<Number?>` - Asserts that last transaction had a graceful failure with given error, info and detail.
   * E.g. `Assert Failure UNAUTHORIZED SUPPORT_MARKET_OWNER_CHECK`
   * E.g. `Assert Failure MATH_ERROR MINT_CALCULATE_BALANCE 5`

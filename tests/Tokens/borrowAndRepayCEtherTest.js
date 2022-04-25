@@ -6,7 +6,7 @@ const {
 } = require('../Utils/Ethereum');
 
 const {
-  makeNToken,
+  makeCToken,
   balanceOf,
   borrowSnapshot,
   totalBorrows,
@@ -24,116 +24,116 @@ const BigNumber = require('bignumber.js');
 const borrowAmount = etherUnsigned(10e3);
 const repayAmount = etherUnsigned(10e2);
 
-async function preBorrow(NToken, borrower, borrowAmount) {
-  await send(NToken.comptroller, 'setBorrowAllowed', [true]);
-  await send(NToken.comptroller, 'setBorrowVerify', [true]);
-  await send(NToken.interestRateModel, 'setFailBorrowRate', [false]);
-  await send(NToken, 'harnessSetFailTransferToAddress', [borrower, false]);
-  await send(NToken, 'harnessSetAccountBorrows', [borrower, 0, 0]);
-  await send(NToken, 'harnessSetTotalBorrows', [0]);
-  await setEtherBalance(NToken, borrowAmount);
+async function preBorrow(cToken, borrower, borrowAmount) {
+  await send(cToken.comptroller, 'setBorrowAllowed', [true]);
+  await send(cToken.comptroller, 'setBorrowVerify', [true]);
+  await send(cToken.interestRateModel, 'setFailBorrowRate', [false]);
+  await send(cToken, 'harnessSetFailTransferToAddress', [borrower, false]);
+  await send(cToken, 'harnessSetAccountBorrows', [borrower, 0, 0]);
+  await send(cToken, 'harnessSetTotalBorrows', [0]);
+  await setEtherBalance(cToken, borrowAmount);
 }
 
-async function borrowFresh(NToken, borrower, borrowAmount) {
-  return send(NToken, 'harnessBorrowFresh', [borrower, borrowAmount], {from: borrower});
+async function borrowFresh(cToken, borrower, borrowAmount) {
+  return send(cToken, 'harnessBorrowFresh', [borrower, borrowAmount], {from: borrower});
 }
 
-async function borrow(NToken, borrower, borrowAmount, opts = {}) {
-  await send(NToken, 'harnessFastForward', [1]);
-  return send(NToken, 'borrow', [borrowAmount], {from: borrower});
+async function borrow(cToken, borrower, borrowAmount, opts = {}) {
+  await send(cToken, 'harnessFastForward', [1]);
+  return send(cToken, 'borrow', [borrowAmount], {from: borrower});
 }
 
-async function preRepay(NToken, benefactor, borrower, repayAmount) {
+async function preRepay(cToken, benefactor, borrower, repayAmount) {
   // setup either benefactor OR borrower for success in repaying
-  await send(NToken.comptroller, 'setRepayBorrowAllowed', [true]);
-  await send(NToken.comptroller, 'setRepayBorrowVerify', [true]);
-  await send(NToken.interestRateModel, 'setFailBorrowRate', [false]);
-  await pretendBorrow(NToken, borrower, 1, 1, repayAmount);
+  await send(cToken.comptroller, 'setRepayBorrowAllowed', [true]);
+  await send(cToken.comptroller, 'setRepayBorrowVerify', [true]);
+  await send(cToken.interestRateModel, 'setFailBorrowRate', [false]);
+  await pretendBorrow(cToken, borrower, 1, 1, repayAmount);
 }
 
-async function repayBorrowFresh(NToken, payer, borrower, repayAmount) {
-  return send(NToken, 'harnessRepayBorrowFresh', [payer, borrower, repayAmount], {from: payer, value: repayAmount});
+async function repayBorrowFresh(cToken, payer, borrower, repayAmount) {
+  return send(cToken, 'harnessRepayBorrowFresh', [payer, borrower, repayAmount], {from: payer, value: repayAmount});
 }
 
-async function repayBorrow(NToken, borrower, repayAmount) {
-  await send(NToken, 'harnessFastForward', [1]);
-  return send(NToken, 'repayBorrow', [], {from: borrower, value: repayAmount});
+async function repayBorrow(cToken, borrower, repayAmount) {
+  await send(cToken, 'harnessFastForward', [1]);
+  return send(cToken, 'repayBorrow', [], {from: borrower, value: repayAmount});
 }
 
-async function repayBorrowBehalf(NToken, payer, borrower, repayAmount) {
-  await send(NToken, 'harnessFastForward', [1]);
-  return send(NToken, 'repayBorrowBehalf', [borrower], {from: payer, value: repayAmount});
+async function repayBorrowBehalf(cToken, payer, borrower, repayAmount) {
+  await send(cToken, 'harnessFastForward', [1]);
+  return send(cToken, 'repayBorrowBehalf', [borrower], {from: payer, value: repayAmount});
 }
 
 describe('CEther', function () {
-  let NToken, root, borrower, benefactor, accounts;
+  let cToken, root, borrower, benefactor, accounts;
   beforeEach(async () => {
     [root, borrower, benefactor, ...accounts] = saddle.accounts;
-    NToken = await makeNToken({kind: 'cether', comptrollerOpts: {kind: 'bool'}});
+    cToken = await makeCToken({kind: 'cether', comptrollerOpts: {kind: 'bool'}});
   });
 
   describe('borrowFresh', () => {
-    beforeEach(async () => await preBorrow(NToken, borrower, borrowAmount));
+    beforeEach(async () => await preBorrow(cToken, borrower, borrowAmount));
 
     it("fails if comptroller tells it to", async () => {
-      await send(NToken.comptroller, 'setBorrowAllowed', [false]);
-      expect(await borrowFresh(NToken, borrower, borrowAmount)).toHaveTrollReject('BORROW_COMPTROLLER_REJECTION');
+      await send(cToken.comptroller, 'setBorrowAllowed', [false]);
+      expect(await borrowFresh(cToken, borrower, borrowAmount)).toHaveTrollReject('BORROW_COMPTROLLER_REJECTION');
     });
 
     it("proceeds if comptroller tells it to", async () => {
-      await expect(await borrowFresh(NToken, borrower, borrowAmount)).toSucceed();
+      await expect(await borrowFresh(cToken, borrower, borrowAmount)).toSucceed();
     });
 
     it("fails if market not fresh", async () => {
-      await fastForward(NToken);
-      expect(await borrowFresh(NToken, borrower, borrowAmount)).toHaveTokenFailure('MARKET_NOT_FRESH', 'BORROW_FRESHNESS_CHECK');
+      await fastForward(cToken);
+      expect(await borrowFresh(cToken, borrower, borrowAmount)).toHaveTokenFailure('MARKET_NOT_FRESH', 'BORROW_FRESHNESS_CHECK');
     });
 
     it("continues if fresh", async () => {
-      await expect(await send(NToken, 'accrueInterest')).toSucceed();
-      await expect(await borrowFresh(NToken, borrower, borrowAmount)).toSucceed();
+      await expect(await send(cToken, 'accrueInterest')).toSucceed();
+      await expect(await borrowFresh(cToken, borrower, borrowAmount)).toSucceed();
     });
 
     it("fails if protocol has less than borrowAmount of underlying", async () => {
-      expect(await borrowFresh(NToken, borrower, borrowAmount.plus(1))).toHaveTokenFailure('TOKEN_INSUFFICIENT_CASH', 'BORROW_CASH_NOT_AVAILABLE');
+      expect(await borrowFresh(cToken, borrower, borrowAmount.plus(1))).toHaveTokenFailure('TOKEN_INSUFFICIENT_CASH', 'BORROW_CASH_NOT_AVAILABLE');
     });
 
     it("fails if borrowBalanceStored fails (due to non-zero stored principal with zero account index)", async () => {
-      await pretendBorrow(NToken, borrower, 0, 3e18, 5e18);
-      expect(await borrowFresh(NToken, borrower, borrowAmount)).toHaveTokenFailure('MATH_ERROR', 'BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED');
+      await pretendBorrow(cToken, borrower, 0, 3e18, 5e18);
+      expect(await borrowFresh(cToken, borrower, borrowAmount)).toHaveTokenFailure('MATH_ERROR', 'BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED');
     });
 
     it("fails if calculating account new total borrow balance overflows", async () => {
-      await pretendBorrow(NToken, borrower, 1e-18, 1e-18, UInt256Max());
-      expect(await borrowFresh(NToken, borrower, borrowAmount)).toHaveTokenFailure('MATH_ERROR', 'BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED');
+      await pretendBorrow(cToken, borrower, 1e-18, 1e-18, UInt256Max());
+      expect(await borrowFresh(cToken, borrower, borrowAmount)).toHaveTokenFailure('MATH_ERROR', 'BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED');
     });
 
     it("fails if calculation of new total borrow balance overflows", async () => {
-      await send(NToken, 'harnessSetTotalBorrows', [UInt256Max()]);
-      expect(await borrowFresh(NToken, borrower, borrowAmount)).toHaveTokenFailure('MATH_ERROR', 'BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED');
+      await send(cToken, 'harnessSetTotalBorrows', [UInt256Max()]);
+      expect(await borrowFresh(cToken, borrower, borrowAmount)).toHaveTokenFailure('MATH_ERROR', 'BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED');
     });
 
     it("reverts if transfer out fails", async () => {
-      await send(NToken, 'harnessSetFailTransferToAddress', [borrower, true]);
-      await expect(borrowFresh(NToken, borrower, borrowAmount)).rejects.toRevert("revert TOKEN_TRANSFER_OUT_FAILED");
+      await send(cToken, 'harnessSetFailTransferToAddress', [borrower, true]);
+      await expect(borrowFresh(cToken, borrower, borrowAmount)).rejects.toRevert("revert TOKEN_TRANSFER_OUT_FAILED");
     });
 
     xit("reverts if borrowVerify fails", async() => {
-      await send(NToken.comptroller, 'setBorrowVerify', [false]);
-      await expect(borrowFresh(NToken, borrower, borrowAmount)).rejects.toRevert("revert borrowVerify rejected borrow");
+      await send(cToken.comptroller, 'setBorrowVerify', [false]);
+      await expect(borrowFresh(cToken, borrower, borrowAmount)).rejects.toRevert("revert borrowVerify rejected borrow");
     });
 
     it("transfers the underlying cash, tokens, and emits Borrow event", async () => {
-      const beforeBalances = await getBalances([NToken], [borrower]);
-      const beforeProtocolBorrows = await totalBorrows(NToken);
-      const result = await borrowFresh(NToken, borrower, borrowAmount);
-      const afterBalances = await getBalances([NToken], [borrower]);
+      const beforeBalances = await getBalances([cToken], [borrower]);
+      const beforeProtocolBorrows = await totalBorrows(cToken);
+      const result = await borrowFresh(cToken, borrower, borrowAmount);
+      const afterBalances = await getBalances([cToken], [borrower]);
       expect(result).toSucceed();
       expect(afterBalances).toEqual(await adjustBalances(beforeBalances, [
-        [NToken, 'eth', -borrowAmount],
-        [NToken, 'borrows', borrowAmount],
-        [NToken, borrower, 'eth', borrowAmount.minus(await etherGasCost(result))],
-        [NToken, borrower, 'borrows', borrowAmount]
+        [cToken, 'eth', -borrowAmount],
+        [cToken, 'borrows', borrowAmount],
+        [cToken, borrower, 'eth', borrowAmount.minus(await etherGasCost(result))],
+        [cToken, borrower, 'borrows', borrowAmount]
       ]));
       expect(result).toHaveLog('Borrow', {
         borrower: borrower,
@@ -144,40 +144,40 @@ describe('CEther', function () {
     });
 
     it("stores new borrow principal and interest index", async () => {
-      const beforeProtocolBorrows = await totalBorrows(NToken);
-      await pretendBorrow(NToken, borrower, 0, 3, 0);
-      await borrowFresh(NToken, borrower, borrowAmount);
-      const borrowSnap = await borrowSnapshot(NToken, borrower);
+      const beforeProtocolBorrows = await totalBorrows(cToken);
+      await pretendBorrow(cToken, borrower, 0, 3, 0);
+      await borrowFresh(cToken, borrower, borrowAmount);
+      const borrowSnap = await borrowSnapshot(cToken, borrower);
       expect(borrowSnap.principal).toEqualNumber(borrowAmount);
       expect(borrowSnap.interestIndex).toEqualNumber(etherMantissa(3));
-      expect(await totalBorrows(NToken)).toEqualNumber(beforeProtocolBorrows.plus(borrowAmount));
+      expect(await totalBorrows(cToken)).toEqualNumber(beforeProtocolBorrows.plus(borrowAmount));
     });
   });
 
   describe('borrow', () => {
-    beforeEach(async () => await preBorrow(NToken, borrower, borrowAmount));
+    beforeEach(async () => await preBorrow(cToken, borrower, borrowAmount));
 
     it("emits a borrow failure if interest accrual fails", async () => {
-      await send(NToken.interestRateModel, 'setFailBorrowRate', [true]);
-      await send(NToken, 'harnessFastForward', [1]);
-      await expect(borrow(NToken, borrower, borrowAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
+      await send(cToken.interestRateModel, 'setFailBorrowRate', [true]);
+      await send(cToken, 'harnessFastForward', [1]);
+      await expect(borrow(cToken, borrower, borrowAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
     });
 
     it("returns error from borrowFresh without emitting any extra logs", async () => {
-      expect(await borrow(NToken, borrower, borrowAmount.plus(1))).toHaveTokenFailure('TOKEN_INSUFFICIENT_CASH', 'BORROW_CASH_NOT_AVAILABLE');
+      expect(await borrow(cToken, borrower, borrowAmount.plus(1))).toHaveTokenFailure('TOKEN_INSUFFICIENT_CASH', 'BORROW_CASH_NOT_AVAILABLE');
     });
 
     it("returns success from borrowFresh and transfers the correct amount", async () => {
-      const beforeBalances = await getBalances([NToken], [borrower]);
-      await fastForward(NToken);
-      const result = await borrow(NToken, borrower, borrowAmount);
-      const afterBalances = await getBalances([NToken], [borrower]);
+      const beforeBalances = await getBalances([cToken], [borrower]);
+      await fastForward(cToken);
+      const result = await borrow(cToken, borrower, borrowAmount);
+      const afterBalances = await getBalances([cToken], [borrower]);
       expect(result).toSucceed();
       expect(afterBalances).toEqual(await adjustBalances(beforeBalances, [
-        [NToken, 'eth', -borrowAmount],
-        [NToken, 'borrows', borrowAmount],
-        [NToken, borrower, 'eth', borrowAmount.minus(await etherGasCost(result))],
-        [NToken, borrower, 'borrows', borrowAmount]
+        [cToken, 'eth', -borrowAmount],
+        [cToken, 'borrows', borrowAmount],
+        [cToken, borrower, 'eth', borrowAmount.minus(await etherGasCost(result))],
+        [cToken, borrower, 'borrows', borrowAmount]
       ]));
     });
   });
@@ -190,60 +190,60 @@ describe('CEther', function () {
         beforeEach(async () => {
           payer = benefactorPaying ? benefactor : borrower;
 
-          await preRepay(NToken, payer, borrower, repayAmount);
+          await preRepay(cToken, payer, borrower, repayAmount);
         });
 
         it("fails if repay is not allowed", async () => {
-          await send(NToken.comptroller, 'setRepayBorrowAllowed', [false]);
-          expect(await repayBorrowFresh(NToken, payer, borrower, repayAmount)).toHaveTrollReject('REPAY_BORROW_COMPTROLLER_REJECTION', 'MATH_ERROR');
+          await send(cToken.comptroller, 'setRepayBorrowAllowed', [false]);
+          expect(await repayBorrowFresh(cToken, payer, borrower, repayAmount)).toHaveTrollReject('REPAY_BORROW_COMPTROLLER_REJECTION', 'MATH_ERROR');
         });
 
         it("fails if block number ≠ current block number", async () => {
-          await fastForward(NToken);
-          expect(await repayBorrowFresh(NToken, payer, borrower, repayAmount)).toHaveTokenFailure('MARKET_NOT_FRESH', 'REPAY_BORROW_FRESHNESS_CHECK');
+          await fastForward(cToken);
+          expect(await repayBorrowFresh(cToken, payer, borrower, repayAmount)).toHaveTokenFailure('MARKET_NOT_FRESH', 'REPAY_BORROW_FRESHNESS_CHECK');
         });
 
         it("returns an error if calculating account new account borrow balance fails", async () => {
-          await pretendBorrow(NToken, borrower, 1, 1, 1);
-          await expect(repayBorrowFresh(NToken, payer, borrower, repayAmount)).rejects.toRevert('revert REPAY_BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED');
+          await pretendBorrow(cToken, borrower, 1, 1, 1);
+          await expect(repayBorrowFresh(cToken, payer, borrower, repayAmount)).rejects.toRevert('revert REPAY_BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED');
         });
 
         it("returns an error if calculation of new total borrow balance fails", async () => {
-          await send(NToken, 'harnessSetTotalBorrows', [1]);
-          await expect(repayBorrowFresh(NToken, payer, borrower, repayAmount)).rejects.toRevert('revert REPAY_BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED');
+          await send(cToken, 'harnessSetTotalBorrows', [1]);
+          await expect(repayBorrowFresh(cToken, payer, borrower, repayAmount)).rejects.toRevert('revert REPAY_BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED');
         });
 
         it("reverts if checkTransferIn fails", async () => {
           await expect(
-            send(NToken, 'harnessRepayBorrowFresh', [payer, borrower, repayAmount], {from: root, value: repayAmount})
+            send(cToken, 'harnessRepayBorrowFresh', [payer, borrower, repayAmount], {from: root, value: repayAmount})
           ).rejects.toRevert("revert sender mismatch");
           await expect(
-            send(NToken, 'harnessRepayBorrowFresh', [payer, borrower, repayAmount], {from: payer, value: 1})
+            send(cToken, 'harnessRepayBorrowFresh', [payer, borrower, repayAmount], {from: payer, value: 1})
           ).rejects.toRevert("revert value mismatch");
         });
 
         xit("reverts if repayBorrowVerify fails", async() => {
-          await send(NToken.comptroller, 'setRepayBorrowVerify', [false]);
-          await expect(repayBorrowFresh(NToken, payer, borrower, repayAmount)).rejects.toRevert("revert repayBorrowVerify rejected repayBorrow");
+          await send(cToken.comptroller, 'setRepayBorrowVerify', [false]);
+          await expect(repayBorrowFresh(cToken, payer, borrower, repayAmount)).rejects.toRevert("revert repayBorrowVerify rejected repayBorrow");
         });
 
         it("transfers the underlying cash, and emits RepayBorrow event", async () => {
-          const beforeBalances = await getBalances([NToken], [borrower]);
-          const result = await repayBorrowFresh(NToken, payer, borrower, repayAmount);
-          const afterBalances = await getBalances([NToken], [borrower]);
+          const beforeBalances = await getBalances([cToken], [borrower]);
+          const result = await repayBorrowFresh(cToken, payer, borrower, repayAmount);
+          const afterBalances = await getBalances([cToken], [borrower]);
           expect(result).toSucceed();
           if (borrower == payer) {
             expect(afterBalances).toEqual(await adjustBalances(beforeBalances, [
-              [NToken, 'eth', repayAmount],
-              [NToken, 'borrows', -repayAmount],
-              [NToken, borrower, 'borrows', -repayAmount],
-              [NToken, borrower, 'eth', -repayAmount.plus(await etherGasCost(result))]
+              [cToken, 'eth', repayAmount],
+              [cToken, 'borrows', -repayAmount],
+              [cToken, borrower, 'borrows', -repayAmount],
+              [cToken, borrower, 'eth', -repayAmount.plus(await etherGasCost(result))]
             ]));
           } else {
             expect(afterBalances).toEqual(await adjustBalances(beforeBalances, [
-              [NToken, 'eth', repayAmount],
-              [NToken, 'borrows', -repayAmount],
-              [NToken, borrower, 'borrows', -repayAmount],
+              [cToken, 'eth', repayAmount],
+              [cToken, 'borrows', -repayAmount],
+              [cToken, borrower, 'borrows', -repayAmount],
             ]));
           }
           expect(result).toHaveLog('RepayBorrow', {
@@ -256,13 +256,13 @@ describe('CEther', function () {
         });
 
         it("stores new borrow principal and interest index", async () => {
-          const beforeProtocolBorrows = await totalBorrows(NToken);
-          const beforeAccountBorrowSnap = await borrowSnapshot(NToken, borrower);
-          expect(await repayBorrowFresh(NToken, payer, borrower, repayAmount)).toSucceed();
-          const afterAccountBorrows = await borrowSnapshot(NToken, borrower);
+          const beforeProtocolBorrows = await totalBorrows(cToken);
+          const beforeAccountBorrowSnap = await borrowSnapshot(cToken, borrower);
+          expect(await repayBorrowFresh(cToken, payer, borrower, repayAmount)).toSucceed();
+          const afterAccountBorrows = await borrowSnapshot(cToken, borrower);
           expect(afterAccountBorrows.principal).toEqualNumber(beforeAccountBorrowSnap.principal.minus(repayAmount));
           expect(afterAccountBorrows.interestIndex).toEqualNumber(etherMantissa(1));
-          expect(await totalBorrows(NToken)).toEqualNumber(beforeProtocolBorrows.minus(repayAmount));
+          expect(await totalBorrows(cToken)).toEqualNumber(beforeProtocolBorrows.minus(repayAmount));
         });
       });
     });
@@ -270,32 +270,32 @@ describe('CEther', function () {
 
   describe('repayBorrow', () => {
     beforeEach(async () => {
-      await preRepay(NToken, borrower, borrower, repayAmount);
+      await preRepay(cToken, borrower, borrower, repayAmount);
     });
 
     it("reverts if interest accrual fails", async () => {
-      await send(NToken.interestRateModel, 'setFailBorrowRate', [true]);
-      await expect(repayBorrow(NToken, borrower, repayAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
+      await send(cToken.interestRateModel, 'setFailBorrowRate', [true]);
+      await expect(repayBorrow(cToken, borrower, repayAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
     });
 
     it("reverts when repay borrow fresh fails", async () => {
-      await send(NToken.comptroller, 'setRepayBorrowAllowed', [false]);
-      await expect(repayBorrow(NToken, borrower, repayAmount)).rejects.toRevertWithError('COMPTROLLER_REJECTION', "revert repayBorrow failed");
+      await send(cToken.comptroller, 'setRepayBorrowAllowed', [false]);
+      await expect(repayBorrow(cToken, borrower, repayAmount)).rejects.toRevertWithError('COMPTROLLER_REJECTION', "revert repayBorrow failed");
     });
 
     it("returns success from repayBorrowFresh and repays the right amount", async () => {
-      await fastForward(NToken);
-      const beforeAccountBorrowSnap = await borrowSnapshot(NToken, borrower);
-      expect(await repayBorrow(NToken, borrower, repayAmount)).toSucceed();
-      const afterAccountBorrowSnap = await borrowSnapshot(NToken, borrower);
+      await fastForward(cToken);
+      const beforeAccountBorrowSnap = await borrowSnapshot(cToken, borrower);
+      expect(await repayBorrow(cToken, borrower, repayAmount)).toSucceed();
+      const afterAccountBorrowSnap = await borrowSnapshot(cToken, borrower);
       expect(afterAccountBorrowSnap.principal).toEqualNumber(beforeAccountBorrowSnap.principal.minus(repayAmount));
     });
 
     it("reverts if overpaying", async () => {
-      const beforeAccountBorrowSnap = await borrowSnapshot(NToken, borrower);
+      const beforeAccountBorrowSnap = await borrowSnapshot(cToken, borrower);
       let tooMuch = new BigNumber(beforeAccountBorrowSnap.principal).plus(1);
-      await expect(repayBorrow(NToken, borrower, tooMuch)).rejects.toRevert("revert REPAY_BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED");
-      // await assert.toRevertWithError(repayBorrow(NToken, borrower, tooMuch), 'MATH_ERROR', "revert repayBorrow failed");
+      await expect(repayBorrow(cToken, borrower, tooMuch)).rejects.toRevert("revert REPAY_BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED");
+      // await assert.toRevertWithError(repayBorrow(cToken, borrower, tooMuch), 'MATH_ERROR', "revert repayBorrow failed");
     });
   });
 
@@ -304,24 +304,24 @@ describe('CEther', function () {
 
     beforeEach(async () => {
       payer = benefactor;
-      await preRepay(NToken, payer, borrower, repayAmount);
+      await preRepay(cToken, payer, borrower, repayAmount);
     });
 
     it("reverts if interest accrual fails", async () => {
-      await send(NToken.interestRateModel, 'setFailBorrowRate', [true]);
-      await expect(repayBorrowBehalf(NToken, payer, borrower, repayAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
+      await send(cToken.interestRateModel, 'setFailBorrowRate', [true]);
+      await expect(repayBorrowBehalf(cToken, payer, borrower, repayAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
     });
 
     it("reverts from within repay borrow fresh", async () => {
-      await send(NToken.comptroller, 'setRepayBorrowAllowed', [false]);
-      await expect(repayBorrowBehalf(NToken, payer, borrower, repayAmount)).rejects.toRevertWithError('COMPTROLLER_REJECTION', "revert repayBorrowBehalf failed");
+      await send(cToken.comptroller, 'setRepayBorrowAllowed', [false]);
+      await expect(repayBorrowBehalf(cToken, payer, borrower, repayAmount)).rejects.toRevertWithError('COMPTROLLER_REJECTION', "revert repayBorrowBehalf failed");
     });
 
     it("returns success from repayBorrowFresh and repays the right amount", async () => {
-      await fastForward(NToken);
-      const beforeAccountBorrowSnap = await borrowSnapshot(NToken, borrower);
-      expect(await repayBorrowBehalf(NToken, payer, borrower, repayAmount)).toSucceed();
-      const afterAccountBorrowSnap = await borrowSnapshot(NToken, borrower);
+      await fastForward(cToken);
+      const beforeAccountBorrowSnap = await borrowSnapshot(cToken, borrower);
+      expect(await repayBorrowBehalf(cToken, payer, borrower, repayAmount)).toSucceed();
+      const afterAccountBorrowSnap = await borrowSnapshot(cToken, borrower);
       expect(afterAccountBorrowSnap.principal).toEqualNumber(beforeAccountBorrowSnap.principal.minus(repayAmount));
     });
   });

@@ -17,7 +17,7 @@ describe('Unitroller', () => {
   beforeEach(async () => {
     [root, ...accounts] = saddle.accounts;
     oracle = await makePriceOracle();
-    brains = await deploy('ComptrollerG1');
+    brains = await deploy('NiutrollerG1');
     unitroller = await deploy('Unitroller');
   });
 
@@ -29,7 +29,7 @@ describe('Unitroller', () => {
     it("sets admin to caller and addresses to 0", async () => {
       expect(await call(unitroller, 'admin')).toEqual(root);
       expect(await call(unitroller, 'pendingAdmin')).toBeAddressZero();
-      expect(await call(unitroller, 'pendingComptrollerImplementation')).toBeAddressZero();
+      expect(await call(unitroller, 'pendingNiutrollerImplementation')).toBeAddressZero();
       expect(await call(unitroller, 'comptrollerImplementation')).toBeAddressZero();
     });
   });
@@ -46,14 +46,14 @@ describe('Unitroller', () => {
       });
 
       it("does not change pending implementation address", async () => {
-        expect(await call(unitroller, 'pendingComptrollerImplementation')).toBeAddressZero()
+        expect(await call(unitroller, 'pendingNiutrollerImplementation')).toBeAddressZero()
       });
     });
 
     describe("succeeding", () => {
-      it("stores pendingComptrollerImplementation with value newPendingImplementation", async () => {
+      it("stores pendingNiutrollerImplementation with value newPendingImplementation", async () => {
         await setPending(brains, root);
-        expect(await call(unitroller, 'pendingComptrollerImplementation')).toEqual(brains._address);
+        expect(await call(unitroller, 'pendingNiutrollerImplementation')).toEqual(brains._address);
       });
 
       it("emits NewPendingImplementation event", async () => {
@@ -66,7 +66,7 @@ describe('Unitroller', () => {
   });
 
   describe("_acceptImplementation", () => {
-    describe("Check caller is pendingComptrollerImplementation  and pendingComptrollerImplementation ≠ address(0) ", () => {
+    describe("Check caller is pendingNiutrollerImplementation  and pendingNiutrollerImplementation ≠ address(0) ", () => {
       let result;
       beforeEach(async () => {
         await setPending(unitroller, root);
@@ -94,12 +94,12 @@ describe('Unitroller', () => {
         expect(result).toSucceed();
       });
 
-      it("Store comptrollerImplementation with value pendingComptrollerImplementation", async () => {
+      it("Store comptrollerImplementation with value pendingNiutrollerImplementation", async () => {
         expect(await call(unitroller, 'comptrollerImplementation')).toEqual(brains._address);
       });
 
-      it("Unset pendingComptrollerImplementation", async () => {
-        expect(await call(unitroller, 'pendingComptrollerImplementation')).toBeAddressZero();
+      it("Unset pendingNiutrollerImplementation", async () => {
+        expect(await call(unitroller, 'pendingNiutrollerImplementation')).toBeAddressZero();
       });
 
       it.skip("Emit NewImplementation(oldImplementation, newImplementation)", async () => {
@@ -131,7 +131,7 @@ describe('Unitroller', () => {
     describe("fallback delegates to brains", () => {
       let troll;
       beforeEach(async () => {
-        troll = await deploy('EchoTypesComptroller');
+        troll = await deploy('EchoTypesNiutroller');
         unitroller = await deploy('Unitroller');
         await setPending(troll, root);
         await send(troll, 'becomeBrains', [unitroller._address]);

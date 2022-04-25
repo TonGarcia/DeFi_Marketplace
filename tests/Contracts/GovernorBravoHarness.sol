@@ -12,12 +12,12 @@ contract GovernorBravoDelegateHarness is GovernorBravoDelegate {
         initialProposalId = 1;
     }
     
-    function initialize(address timelock_, address niu_, uint votingPeriod_, uint votingDelay_, uint proposalThreshold_) public {
+    function initialize(address timelock_, address comp_, uint votingPeriod_, uint votingDelay_, uint proposalThreshold_) public {
         require(msg.sender == admin, "GovernorBravo::initialize: admin only");
         require(address(timelock) == address(0), "GovernorBravo::initialize: can only initialize once");
         
         timelock = TimelockInterface(timelock_);
-        niu = NiuInterface(niu_);
+        comp = NiuInterface(comp_);
         votingPeriod = votingPeriod_;
         votingDelay = votingDelay_;
         proposalThreshold = proposalThreshold_;

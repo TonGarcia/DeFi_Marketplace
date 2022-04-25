@@ -4,7 +4,7 @@ import "./ERC20.sol";
 
 /**
  * @title The Niural Faucet Test Token
- * @author Niural based on prev readme author
+ * @author Niural
  * @notice A simple test token that lets anyone get more of it.
  */
 contract FaucetToken is StandardToken {
@@ -21,7 +21,7 @@ contract FaucetToken is StandardToken {
 
 /**
  * @title The Niural Faucet Test Token (non-standard)
- * @author Niural based on prev readme author
+ * @author Niural
  * @notice A simple test token that lets anyone get more of it.
  */
 contract FaucetNonStandardToken is NonStandardToken {
@@ -38,7 +38,7 @@ contract FaucetNonStandardToken is NonStandardToken {
 
 /**
  * @title The Niural Faucet Re-Entrant Test Token
- * @author Niural based on prev readme author
+ * @author Niural
  * @notice A test token that is malicious and tries to re-enter callers
  */
 contract FaucetTokenReEntrantHarness {
@@ -69,7 +69,7 @@ contract FaucetTokenReEntrantHarness {
 
     modifier reEnter(string memory funName) {
         string memory _reEntryFun = reEntryFun;
-        if (niuareStrings(_reEntryFun, funName)) {
+        if (compareStrings(_reEntryFun, funName)) {
             reEntryFun = ""; // Clear re-entry fun
             (bool success, bytes memory returndata) = msg.sender.call(reEntryCallData);
             assembly {
@@ -82,7 +82,7 @@ contract FaucetTokenReEntrantHarness {
         _;
     }
 
-    function niuareStrings(string memory a, string memory b) internal pure returns (bool) {
+    function compareStrings(string memory a, string memory b) internal pure returns (bool) {
         return keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b)));
     }
 

@@ -1,7 +1,7 @@
 const { last } = require('./Utils/JS');
 const { address, etherUnsigned } = require('./Utils/Ethereum');
 const { default: diff } = require('jest-diff');
-const { ComptrollerErr, TokenErr, IRErr, MathErr } = require('./Errors');
+const { NiutrollerErr, TokenErr, IRErr, MathErr } = require('./Errors');
 
 function opts(comment) {
   return {
@@ -303,7 +303,7 @@ expect.extend({
   },
 
   toHaveTrollError(actual, expectedErrorName) {
-    return hasError.call(this, actual, expectedErrorName, ComptrollerErr);
+    return hasError.call(this, actual, expectedErrorName, NiutrollerErr);
   },
 
   toHaveTokenError(actual, expectedErrorName) {
@@ -315,7 +315,7 @@ expect.extend({
   },
 
   toHaveTrollFailure(result, err, info, detail=undefined) {
-    return hasFailure.call(this, result, err, info, detail, ComptrollerErr, 'toHaveTrollFailure');
+    return hasFailure.call(this, result, err, info, detail, NiutrollerErr, 'toHaveTrollFailure');
   },
 
   toHaveTokenFailure(result, err, info, detail=undefined) {
@@ -327,11 +327,11 @@ expect.extend({
   },
 
   toHaveTrollReject(result, info, detail) {
-    return hasFailure.call(this, result, 'COMPTROLLER_REJECTION', info, detail && ComptrollerErr.Error[detail], TokenErr, 'toHaveTrollReject');
+    return hasFailure.call(this, result, 'COMPTROLLER_REJECTION', info, detail && NiutrollerErr.Error[detail], TokenErr, 'toHaveTrollReject');
   },
 
   toHaveTrollErrorTuple(result, tuple, cmp=undefined) {
-    return hasErrorTuple.call(this, result, tuple, ComptrollerErr, cmp);
+    return hasErrorTuple.call(this, result, tuple, NiutrollerErr, cmp);
   },
 
   toEqualNumber(actual, expected) {

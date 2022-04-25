@@ -1,0 +1,109 @@
+#!/usr/bin/env -S yarn repl -s
+
+PrintTransactionLogs
+
+-- Token holder addresses for mocking
+Alias NiuHolder "0x7587caefc8096f5f40acb83a09df031a018c66ec"
+Alias CUSDCHolder "0xF977814e90dA44bFA03b6295A0616a897441aceC" -- Binance 8
+Alias DaiHolder "0x5f65f7b609678448494De4C87521CdF6cEf1e932" -- Gemini 4
+
+Alias Timelock "0x6d903f6003cca6255D85CcA4D3B5E5146dC33925"
+
+-- Fork the block prior to proposal 62 executing
+Web3Fork "https://mainnet-eth.compound.finance/@13322797" (NiuHolder CUSDCHolder DaiHolder Timelock)
+UseConfigs mainnet
+
+-- Disable USDC COMP rewards so that these rewards won't mess with our results
+Send Timelock 1e18
+From Timelock (Niutroller SetNiuSpeed cUSDC 0)
+
+-- Send USDC from CUSDCHolder to other accounts
+From CUSDCHolder (Erc20 USDC Transfer Geoff 1000000e6)
+From CUSDCHolder (Erc20 USDC Transfer Torrey 1000000e6)
+From CUSDCHolder (Erc20 USDC Transfer Coburn 1000000e6)
+From CUSDCHolder (Erc20 USDC Transfer Jared 1000000e6)
+
+-- Send DAI from DaiHolder to other accounts
+From DaiHolder (Erc20 DAI Transfer Coburn 1000000e18)
+From DaiHolder (Erc20 DAI Transfer Jared 1000000e18)
+
+-- Pre Proposal 62: Deposit collateral and borrow SUSHI
+From Geoff (Erc20 USDC Approve (Address cUSDC) 1000000e6)
+From Geoff (CToken cUSDC Mint 1000000e6)
+From Geoff (Niutroller EnterMarkets (cUSDC))
+From Geoff (CToken cSUSHI Borrow 1000e18)
+
+From Torrey (Erc20 USDC Approve (Address cUSDC) 1000000e6)
+From Torrey (CToken cUSDC Mint 1000000e6)
+From Torrey (Niutroller EnterMarkets (cUSDC))
+From Torrey (CToken cSUSHI Borrow 1000e18)
+
+-- Execute proposal 62
+GovernorBravo GovernorBravo Proposal LastProposal Execute
+MineBlock
+
+-- Claim COMP for Geoff
+Niutroller ClaimNiu Geoff
+
+-- Check Geoff COMP rewards - invalid accrual & COMP sent
+Assert Equal (Erc20 COMP TokenBalance Geoff) (988792275103122749560) -- Huge amount (988 COMP) -> Bug
+Assert Equal (Niutroller NiuAccrued Geoff) (0)
+
+-- Cause Torrey to accrue COMP without claiming
+From Torrey (CToken cSUSHI Borrow 1e18) -- Causes COMP to be distributed but not claimed
+
+-- Deploy latest Niutroller
+NiutrollerImpl Deploy Standard NewNiutroller
+
+-- Delegate and propose update (containing bug fix)
+From NiuHolder (Niu Delegate NiuHolder)
+From NiuHolder (GovernorBravo GovernorBravo Propose "Upgrade Niutroller" [(Address Unitroller) (Address NewNiutroller)] [0 0] ["_setPendingImplementation(address)" "_become(address)"] [[(Address NewNiutroller)] [(Address Unitroller)]])
+
+-- Fast forward, vote, queue, execute
+MineBlock
+AdvanceBlocks 14000
+From NiuHolder (GovernorBravo GovernorBravo Proposal LastProposal Vote For)
+AdvanceBlocks 20000
+GovernorBravo GovernorBravo Proposal LastProposal Queue
+IncreaseTime 604910
+GovernorBravo GovernorBravo Proposal LastProposal Execute
+MineBlock
+
+-- Claim COMP for Torrey
+Niutroller ClaimNiu Torrey
+
+-- Check Torrey COMP balance changes - invalid accrual & COMP not sent
+Assert Equal (Erc20 COMP TokenBalance Torrey) (0)
+Assert Equal (Niutroller NiuAccrued Torrey) (988792086947769887785) -- Huge amount (988 COMP) -> Bug
+
+-- Post bug fix: Deposit collateral (DAI) and borrow SUSHI - block COMP sending
+From Coburn (Erc20 DAI Approve (Address cDAI) 1000000e18)
+From Coburn (CToken cDAI Mint 1000000e18)
+From Coburn (Niutroller EnterMarkets (cDAI))
+From Coburn (CToken cSUSHI Borrow 1000e18)
+
+-- Post bug fix: Deposit collateral (DAI) and borrow BAT - don't block COMP sending
+From Jared (Erc20 DAI Approve (Address cDAI) 1000000e18)
+From Jared (CToken cDAI Mint 1000000e18)
+From Jared (Niutroller EnterMarkets (cDAI))
+From Jared (CToken cBAT Borrow 1000e18)
+
+-- Accrue rewards (if any)
+MineBlock
+AdvanceBlocks 14000
+
+-- Claim COMP for Coburn
+Niutroller ClaimNiuInMarkets Coburn (cDAI cSUSHI)
+
+-- Claim COMP for Jared
+Niutroller ClaimNiuInMarkets Jared (cDAI cBAT)
+
+-- Check Coburn COMP balance changes - valid accrual & COMP not sent (claim in affected market)
+Assert Equal (Erc20 COMP TokenBalance Coburn) (0)
+Assert Equal (Niutroller NiuAccrued Coburn) (211455443766873733) -- 0.21 COMP accrued
+
+-- Check Jared COMP balance changes - valid accrual & COMP sent (no claim in affected market)
+Assert Equal (Erc20 COMP TokenBalance Jared) (212379370589809042) -- 0.21 COMP claimed
+Assert Equal (Niutroller NiuAccrued Jared) (0)
+
+Print "Done"

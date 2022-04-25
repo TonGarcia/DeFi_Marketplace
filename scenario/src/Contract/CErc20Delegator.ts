@@ -1,9 +1,9 @@
 import { Contract } from '../Contract';
 import { Callable, Sendable } from '../Invokation';
-import { NTokenMethods } from './NToken';
+import { CTokenMethods } from './CToken';
 import { encodedNumber } from '../Encoding';
 
-interface CErc20DelegatorMethods extends NTokenMethods {
+interface CErc20DelegatorMethods extends CTokenMethods {
   implementation(): Callable<string>;
   _setImplementation(
     implementation_: string,

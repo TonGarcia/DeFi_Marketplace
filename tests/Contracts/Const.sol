@@ -8,7 +8,7 @@ contract ConstBase {
     }
 
     function ADD(uint a) public view returns (uint) {
-        // tells niuiler to accept view instead of pure
+        // tells compiler to accept view instead of pure
         if (false) {
             C + now;
         }
@@ -16,7 +16,7 @@ contract ConstBase {
     }
 
     function add(uint a) public view returns (uint) {
-        // tells niuiler to accept view instead of pure
+        // tells compiler to accept view instead of pure
         if (false) {
             C + now;
         }

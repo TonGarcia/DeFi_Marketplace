@@ -4,20 +4,20 @@ import "../../contracts/NiutrollerG5.sol";
 
 contract NiutrollerScenarioG5 is NiutrollerG5 {
     uint public blockNumber;
-    address public niuAddress;
+    address public compAddress;
 
     constructor() NiutrollerG5() public {}
 
-    function setNiuAddress(address niuAddress_) public {
-        niuAddress = niuAddress_;
+    function setNiuAddress(address compAddress_) public {
+        compAddress = compAddress_;
     }
 
     function getNiuAddress() public view returns (address) {
-        return niuAddress;
+        return compAddress;
     }
 
-    function membershipLength(NToken NToken) public view returns (uint) {
-        return accountAssets[address(NToken)].length;
+    function membershipLength(CToken cToken) public view returns (uint) {
+        return accountAssets[address(cToken)].length;
     }
 
     function fastForward(uint blocks) public returns (uint) {
@@ -43,17 +43,17 @@ contract NiutrollerScenarioG5 is NiutrollerG5 {
             }
         }
 
-        address[] memory niuMarkets = new address[](n);
+        address[] memory compMarkets = new address[](n);
         uint k = 0;
         for (uint i = 0; i < m; i++) {
             if (markets[address(allMarkets[i])].isNiued) {
-                niuMarkets[k++] = address(allMarkets[i]);
+                compMarkets[k++] = address(allMarkets[i]);
             }
         }
-        return niuMarkets;
+        return compMarkets;
     }
 
-    function unlist(NToken NToken) public {
-        markets[address(NToken)].isListed = false;
+    function unlist(CToken cToken) public {
+        markets[address(cToken)].isListed = false;
     }
 }

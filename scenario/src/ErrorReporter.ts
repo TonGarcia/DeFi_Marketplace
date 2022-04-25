@@ -1,4 +1,4 @@
-import {ComptrollerErr, TokenErr} from './ErrorReporterConstants';
+import {NiutrollerErr, TokenErr} from './ErrorReporterConstants';
 
 export interface ErrorReporter {
   getError(error: any): string | null
@@ -20,7 +20,7 @@ class NoErrorReporterType implements ErrorReporter {
   }
 }
 
-class NTokenErrorReporterType implements ErrorReporter {
+class CTokenErrorReporterType implements ErrorReporter {
   getError(error: any): string | null {
     if (error === null) {
       return null;
@@ -40,7 +40,7 @@ class NTokenErrorReporterType implements ErrorReporter {
   getDetail(error: any, detail: number): string {
     // Little hack to let us use proper names for cross-contract errors
     if (this.getError(error) === "COMPTROLLER_REJECTION") {
-      let comptrollerError = ComptrollerErrorReporter.getError(detail);
+      let comptrollerError = NiutrollerErrorReporter.getError(detail);
 
       if (comptrollerError) {
         return comptrollerError;
@@ -51,13 +51,13 @@ class NTokenErrorReporterType implements ErrorReporter {
   }
 }
 
-class ComptrollerErrorReporterType implements ErrorReporter {
+class NiutrollerErrorReporterType implements ErrorReporter {
   getError(error: any): string | null {
     if (error === null) {
       return null;
     } else {
       // TODO: This probably isn't right...
-      return ComptrollerErr.ErrorInv[Number(error)];
+      return NiutrollerErr.ErrorInv[Number(error)];
     }
   }
 
@@ -66,13 +66,13 @@ class ComptrollerErrorReporterType implements ErrorReporter {
       return null;
     } else {
       // TODO: This probably isn't right...
-      return ComptrollerErr.FailureInfoInv[Number(info)];
+      return NiutrollerErr.FailureInfoInv[Number(info)];
     }
   }
 
   getDetail(error: any, detail: number): string {
     if (this.getError(error) === "REJECTION") {
-      let comptrollerError = ComptrollerErrorReporter.getError(detail);
+      let comptrollerError = NiutrollerErrorReporter.getError(detail);
 
       if (comptrollerError) {
         return comptrollerError;
@@ -94,5 +94,5 @@ export function formatResult(errorReporter: ErrorReporter, result: any): string 
 
 // Singleton instances
 export const NoErrorReporter = new NoErrorReporterType();
-export const NTokenErrorReporter = new NTokenErrorReporterType();
-export const ComptrollerErrorReporter = new ComptrollerErrorReporterType();
+export const CTokenErrorReporter = new CTokenErrorReporterType();
+export const NiutrollerErrorReporter = new NiutrollerErrorReporterType();

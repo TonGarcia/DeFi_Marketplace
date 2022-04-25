@@ -6,7 +6,7 @@ const {
 
 const {
   makeNiutroller,
-  makeNToken,
+  makeCToken,
   preApprove,
   preSupply,
   quickRedeem,
@@ -34,15 +34,15 @@ const diffStringsUnified = require('jest-diff').default;
 
 
 async function preRedeem(
-  NToken,
+  cToken,
   redeemer,
   redeemTokens,
   redeemAmount,
   exchangeRate
 ) {
-  await preSupply(NToken, redeemer, redeemTokens);
-  await send(NToken.underlying, 'harnessSetBalance', [
-    NToken._address,
+  await preSupply(cToken, redeemer, redeemTokens);
+  await send(cToken.underlying, 'harnessSetBalance', [
+    cToken._address,
     redeemAmount
   ]);
 }
@@ -71,20 +71,20 @@ const recordGasCost = (totalFee, key, filename, opcodes = {}) => {
   fs.writeFileSync(filename, JSON.stringify(fileObj, null, ' '), 'utf-8');
 };
 
-async function mint(NToken, minter, mintAmount, exchangeRate) {
-  expect(await preApprove(NToken, minter, mintAmount, {})).toSucceed();
-  return send(NToken, 'mint', [mintAmount], { from: minter });
+async function mint(cToken, minter, mintAmount, exchangeRate) {
+  expect(await preApprove(cToken, minter, mintAmount, {})).toSucceed();
+  return send(cToken, 'mint', [mintAmount], { from: minter });
 }
 
-async function claimComp(comptroller, holder) {
-  return send(comptroller, 'claimComp', [holder], { from: holder });
+async function claimNiu(comptroller, holder) {
+  return send(comptroller, 'claimNiu', [holder], { from: holder });
 }
 
-/// GAS PROFILER: saves a digest of the gas prices of common NToken operations
+/// GAS PROFILER: saves a digest of the gas prices of common CToken operations
 /// transiently fails, not sure why
 
 describe('Gas report', () => {
-  let root, minter, redeemer, accounts, NToken;
+  let root, minter, redeemer, accounts, cToken;
   const exchangeRate = 50e3;
   const preMintAmount = etherUnsigned(30e4);
   const mintAmount = etherUnsigned(10e4);
@@ -93,10 +93,10 @@ describe('Gas report', () => {
   const redeemAmount = redeemTokens.multipliedBy(exchangeRate);
   const filename = './gasCosts.json';
 
-  describe('NToken', () => {
+  describe('CToken', () => {
     beforeEach(async () => {
       [root, minter, redeemer, ...accounts] = saddle.accounts;
-      NToken = await makeNToken({
+      cToken = await makeCToken({
         comptrollerOpts: { kind: 'bool'}, 
         interestRateModelOpts: { kind: 'white-paper'},
         exchangeRate
@@ -104,20 +104,20 @@ describe('Gas report', () => {
     });
 
     it('first mint', async () => {
-      await send(NToken, 'harnessSetAccrualBlockNumber', [40]);
-      await send(NToken, 'harnessSetBlockNumber', [41]);
+      await send(cToken, 'harnessSetAccrualBlockNumber', [40]);
+      await send(cToken, 'harnessSetBlockNumber', [41]);
 
-      const trxReceipt = await mint(NToken, minter, mintAmount, exchangeRate);
+      const trxReceipt = await mint(cToken, minter, mintAmount, exchangeRate);
       recordGasCost(trxReceipt.gasUsed, 'first mint', filename);
     });
 
     it('second mint', async () => {
-      await mint(NToken, minter, mintAmount, exchangeRate);
+      await mint(cToken, minter, mintAmount, exchangeRate);
 
-      await send(NToken, 'harnessSetAccrualBlockNumber', [40]);
-      await send(NToken, 'harnessSetBlockNumber', [41]);
+      await send(cToken, 'harnessSetAccrualBlockNumber', [40]);
+      await send(cToken, 'harnessSetBlockNumber', [41]);
 
-      const mint2Receipt = await mint(NToken, minter, mintAmount, exchangeRate);
+      const mint2Receipt = await mint(cToken, minter, mintAmount, exchangeRate);
       expect(Object.keys(mint2Receipt.events)).toEqual(['AccrueInterest', 'Transfer', 'Mint']);
 
       console.log(mint2Receipt.gasUsed);
@@ -136,12 +136,12 @@ describe('Gas report', () => {
     });
 
     it('second mint, no interest accrued', async () => {
-      await mint(NToken, minter, mintAmount, exchangeRate);
+      await mint(cToken, minter, mintAmount, exchangeRate);
 
-      await send(NToken, 'harnessSetAccrualBlockNumber', [40]);
-      await send(NToken, 'harnessSetBlockNumber', [40]);
+      await send(cToken, 'harnessSetAccrualBlockNumber', [40]);
+      await send(cToken, 'harnessSetBlockNumber', [40]);
 
-      const mint2Receipt = await mint(NToken, minter, mintAmount, exchangeRate);
+      const mint2Receipt = await mint(cToken, minter, mintAmount, exchangeRate);
       expect(Object.keys(mint2Receipt.events)).toEqual(['Transfer', 'Mint']);
       recordGasCost(mint2Receipt.gasUsed, 'second mint, no interest accrued', filename);
 
@@ -156,14 +156,14 @@ describe('Gas report', () => {
     });
 
     it('redeem', async () => {
-      await preRedeem(NToken, redeemer, redeemTokens, redeemAmount, exchangeRate);
-      const trxReceipt = await quickRedeem(NToken, redeemer, redeemTokens);
+      await preRedeem(cToken, redeemer, redeemTokens, redeemAmount, exchangeRate);
+      const trxReceipt = await quickRedeem(cToken, redeemer, redeemTokens);
       recordGasCost(trxReceipt.gasUsed, 'redeem', filename);
     });
 
     it.skip('print mint opcode list', async () => {
-      await preMint(NToken, minter, mintAmount, mintTokens, exchangeRate);
-      const trxReceipt = await quickMint(NToken, minter, mintAmount);
+      await preMint(cToken, minter, mintAmount, mintTokens, exchangeRate);
+      const trxReceipt = await quickMint(cToken, minter, mintAmount);
       const opcodeCount = {};
       await saddle.trace(trxReceipt, {
         execLog: log => {
@@ -177,44 +177,44 @@ describe('Gas report', () => {
   describe.each([
     ['unitroller-g6'],
     ['unitroller']
-  ])('Comp claims %s', (patch) => {
+  ])('Niu claims %s', (patch) => {
     beforeEach(async () => {
       [root, minter, redeemer, ...accounts] = saddle.accounts;
       comptroller = await makeNiutroller({ kind: patch });
       let interestRateModelOpts = {borrowRate: 0.000001};
-      NToken = await makeNToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
+      cToken = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
       if (patch == 'unitroller') {
-        await send(comptroller, '_setCompSpeeds', [[NToken._address], [etherExp(0.05)], [etherExp(0.05)]]);
+        await send(comptroller, '_setNiuSpeeds', [[cToken._address], [etherExp(0.05)], [etherExp(0.05)]]);
       } else {
-        await send(comptroller, '_addCompMarkets', [[NToken].map(c => c._address)]);
-        await send(comptroller, 'setCompSpeed', [NToken._address, etherExp(0.05)]);
+        await send(comptroller, '_addNiuMarkets', [[cToken].map(c => c._address)]);
+        await send(comptroller, 'setNiuSpeed', [cToken._address, etherExp(0.05)]);
       }
       await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
     });
 
     it(`${patch} second mint with comp accrued`, async () => {
-      await mint(NToken, minter, mintAmount, exchangeRate);
+      await mint(cToken, minter, mintAmount, exchangeRate);
 
       await fastForwardPatch(patch, comptroller, 10);
 
-      console.log('Comp balance before mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued before mint', (await compAccrued(comptroller, minter)).toString());
-      const mint2Receipt = await mint(NToken, minter, mintAmount, exchangeRate);
-      console.log('Comp balance after mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued after mint', (await compAccrued(comptroller, minter)).toString());
+      console.log('Niu balance before mint', (await compBalance(comptroller, minter)).toString());
+      console.log('Niu accrued before mint', (await compAccrued(comptroller, minter)).toString());
+      const mint2Receipt = await mint(cToken, minter, mintAmount, exchangeRate);
+      console.log('Niu balance after mint', (await compBalance(comptroller, minter)).toString());
+      console.log('Niu accrued after mint', (await compAccrued(comptroller, minter)).toString());
       recordGasCost(mint2Receipt.gasUsed, `${patch} second mint with comp accrued`, filename);
     });
 
     it(`${patch} claim comp`, async () => {
-      await mint(NToken, minter, mintAmount, exchangeRate);
+      await mint(cToken, minter, mintAmount, exchangeRate);
 
       await fastForwardPatch(patch, comptroller, 10);
 
-      console.log('Comp balance before claim', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued before claim', (await compAccrued(comptroller, minter)).toString());
-      const claimReceipt = await claimComp(comptroller, minter);
-      console.log('Comp balance after claim', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued after claim', (await compAccrued(comptroller, minter)).toString());
+      console.log('Niu balance before claim', (await compBalance(comptroller, minter)).toString());
+      console.log('Niu accrued before claim', (await compAccrued(comptroller, minter)).toString());
+      const claimReceipt = await claimNiu(comptroller, minter);
+      console.log('Niu balance after claim', (await compBalance(comptroller, minter)).toString());
+      console.log('Niu accrued after claim', (await compAccrued(comptroller, minter)).toString());
       recordGasCost(claimReceipt.gasUsed, `${patch} claim comp`, filename);
     });
   });

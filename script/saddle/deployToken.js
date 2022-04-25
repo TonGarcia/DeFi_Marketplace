@@ -10,7 +10,7 @@ example:
 
 npx saddle -n mainnet script token:deploy '{
   "underlying": "0x514910771af9ca656af840dff83e8264ecf986ca",
-  "comptroller": "$Comptroller",
+  "comptroller": "$Niutroller",
   "interestRateModel": "0xd956188795ca6f4a74092ddca33e0ea4ca3a1395",
   "initialExchangeRateMantissa": "2.0e26",
   "name": "Niural ChainLink Token",
@@ -41,7 +41,7 @@ function sleep(timeout) {
     return printUsage();
   }
 
-  console.log(`Deploying NToken with ${JSON.stringify(conf)}`);
+  console.log(`Deploying cToken with ${JSON.stringify(conf)}`);
 
   let deployArgs = [conf.underlying, conf.comptroller, conf.interestRateModel, conf.initialExchangeRateMantissa.toString(), conf.name, conf.symbol, conf.decimals, conf.admin, conf.implementation, conf.becomeImplementationData];
   let contract = await saddle.deploy('CErc20Delegator', deployArgs);

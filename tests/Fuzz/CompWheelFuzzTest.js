@@ -40,7 +40,7 @@ expect.extend({
   }
 });
 
-describe.skip('CompWheelFuzzTest', () => {
+describe.skip('NiuWheelFuzzTest', () => {
   // This whole test is fake, but we're testing to see if our equations match reality.
 
   // First, we're going to build a simple simulator of the Niural protocol
@@ -80,7 +80,7 @@ describe.skip('CompWheelFuzzTest', () => {
 
   let initialState = globals => {
     return {
-      // NToken
+      // ctoken
       accrualBlockNumber: globals.blockNumber,
       borrowIndex: new bn(1),
       totalCash: new bn(0),
@@ -143,7 +143,7 @@ describe.skip('CompWheelFuzzTest', () => {
   };
 
   // only used after events are run to test invariants
-  let trueUpComp = (globals, state) => {
+  let trueUpNiu = (globals, state) => {
     state = accrueInterest(globals, state);
 
     state = Object.keys(state.compSupplyIndexSnapshots).reduce(
@@ -656,7 +656,7 @@ describe.skip('CompWheelFuzzTest', () => {
 
   let runEvents = (globals, initState, events) => {
     let state = events.reduce(executeAction.bind(null, globals), initState);
-    return trueUpComp(globals, state);
+    return trueUpNiu(globals, state);
   };
 
   let generateEvent = globals => {

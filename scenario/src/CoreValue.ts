@@ -18,11 +18,11 @@ import {
 } from './Value';
 import { Arg, Fetcher, getFetcherValue } from './Command';
 import { getUserValue, userFetchers } from './Value/UserValue';
-import { comptrollerFetchers, getComptrollerValue } from './Value/ComptrollerValue';
-import { comptrollerImplFetchers, getComptrollerImplValue } from './Value/ComptrollerImplValue';
+import { comptrollerFetchers, getNiutrollerValue } from './Value/NiutrollerValue';
+import { comptrollerImplFetchers, getNiutrollerImplValue } from './Value/NiutrollerImplValue';
 import { getUnitrollerValue, unitrollerFetchers } from './Value/UnitrollerValue';
-import { NTokenFetchers, getNTokenValue } from './Value/NTokenValue';
-import { NTokenDelegateFetchers, getNTokenDelegateValue } from './Value/NTokenDelegateValue';
+import { cTokenFetchers, getCTokenValue } from './Value/CTokenValue';
+import { cTokenDelegateFetchers, getCTokenDelegateValue } from './Value/CTokenDelegateValue';
 import { erc20Fetchers, getErc20Value } from './Value/Erc20Value';
 import { mcdFetchers, getMCDValue } from './Value/MCDValue';
 import { getInterestRateModelValue, interestRateModelFetchers } from './Value/InterestRateModelValue';
@@ -31,7 +31,7 @@ import { getPriceOracleProxyValue, priceOracleProxyFetchers } from './Value/Pric
 import { getAnchoredViewValue, anchoredViewFetchers } from './Value/AnchoredViewValue';
 import { getTimelockValue, timelockFetchers, getTimelockAddress } from './Value/TimelockValue';
 import { getMaximillionValue, maximillionFetchers } from './Value/MaximillionValue';
-import { getCompValue, compFetchers } from './Value/CompValue';
+import { getNiuValue, compFetchers } from './Value/NiuValue';
 import { getGovernorValue, governorFetchers } from './Value/GovernorValue';
 import { getGovernorBravoValue, governorBravoFetchers } from './Value/GovernorBravoValue';
 import { getAddress } from './ContractLookup';
@@ -484,14 +484,14 @@ const fetchers = [
           let newKeyTwo = sha3(paddedKey + paddedSlot);
           let userInMarket = await world.web3.eth.getStorageAt(addr.val, newKeyTwo);
 
-          let isCompKey = '0x' + toBN(newKey).add(toBN(3)).toString(16);
-          let isCompStr = await world.web3.eth.getStorageAt(addr.val, isCompKey);
+          let isNiuKey = '0x' + toBN(newKey).add(toBN(3)).toString(16);
+          let isNiuStr = await world.web3.eth.getStorageAt(addr.val, isNiuKey);
 
           return new ListV([
             new BoolV(isListed),
             new ExpNumberV(collateralFactor.toString(), 1e18),
             new BoolV(areEqual(userInMarket, 1)),
-            new BoolV(areEqual(isCompStr, 1))
+            new BoolV(areEqual(isNiuStr, 1))
           ]);
         default:
           return new NothingV();
@@ -790,8 +790,8 @@ const fetchers = [
 
       * "Equal given:<Value> expected:<Value>" - Returns true if given values are equal
         * E.g. "Equal (Exactly 0) Zero"
-        * E.g. "Equal (NToken cZRX TotalSupply) (Exactly 55)"
-        * E.g. "Equal (NToken cZRX Comptroller) (Comptroller Address)"
+        * E.g. "Equal (CToken cZRX TotalSupply) (Exactly 55)"
+        * E.g. "Equal (CToken cZRX Niutroller) (Niutroller Address)"
     `,
     'Equal',
     [new Arg('given', getCoreValue), new Arg('expected', getCoreValue)],
@@ -837,47 +837,47 @@ const fetchers = [
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### Comptroller
+      #### Niutroller
 
-      * "Comptroller ...comptrollerArgs" - Returns comptroller value
+      * "Niutroller ...comptrollerArgs" - Returns comptroller value
     `,
-    'Comptroller',
-    [new Arg('res', getComptrollerValue, { variadic: true })],
+    'Niutroller',
+    [new Arg('res', getNiutrollerValue, { variadic: true })],
     async (world, { res }) => res,
     { subExpressions: comptrollerFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### ComptrollerImpl
+      #### NiutrollerImpl
 
-      * "ComptrollerImpl ...comptrollerImplArgs" - Returns comptroller implementation value
+      * "NiutrollerImpl ...comptrollerImplArgs" - Returns comptroller implementation value
     `,
-    'ComptrollerImpl',
-    [new Arg('res', getComptrollerImplValue, { variadic: true })],
+    'NiutrollerImpl',
+    [new Arg('res', getNiutrollerImplValue, { variadic: true })],
     async (world, { res }) => res,
     { subExpressions: comptrollerImplFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### NToken
+      #### CToken
 
-      * "NToken ...NTokenArgs" - Returns NToken value
+      * "CToken ...cTokenArgs" - Returns cToken value
     `,
-    'NToken',
-    [new Arg('res', getNTokenValue, { variadic: true })],
+    'CToken',
+    [new Arg('res', getCTokenValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: NTokenFetchers() }
+    { subExpressions: cTokenFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### NTokenDelegate
+      #### CTokenDelegate
 
-      * "NTokenDelegate ...NTokenDelegateArgs" - Returns NToken delegate value
+      * "CTokenDelegate ...cTokenDelegateArgs" - Returns cToken delegate value
     `,
-    'NTokenDelegate',
-    [new Arg('res', getNTokenDelegateValue, { variadic: true })],
+    'CTokenDelegate',
+    [new Arg('res', getCTokenDelegateValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: NTokenDelegateFetchers() }
+    { subExpressions: cTokenDelegateFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
@@ -969,12 +969,12 @@ const fetchers = [
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### Comp
+      #### Niu
 
-      * "Comp ...compArgs" - Returns Comp value
+      * "Niu ...compArgs" - Returns Niu value
     `,
-    'Comp',
-    [new Arg('res', getCompValue, { variadic: true })],
+    'Niu',
+    [new Arg('res', getNiuValue, { variadic: true })],
     async (world, { res }) => res,
     { subExpressions: compFetchers() }
   ),

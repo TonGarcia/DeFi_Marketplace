@@ -3,6 +3,7 @@ FROM ubuntu:jammy
 RUN apt-get update
 RUN apt-get -y install libdigest-sha-perl
 RUN apt-get -y install nodejs npm python3 wget
+RUN apt-get -y install libusb-1.0-0-dev
 RUN apt-get -y install perl make
 RUN apt -y install libudev-dev
 #RUN npm install -g node@12.9.1

@@ -1,0 +1,51 @@
+#!/usr/bin/env yarn repl -s
+
+PrintTransactionLogs
+
+Alias NiuHolder "0x7587caefc8096f5f40acb83a09df031a018c66ec" -- Niural Team 2
+Alias NiuHolder2 "0x5608169973d639649196A84EE4085a708bcBf397" -- Niural Team 3
+Alias NiuProposer "0xb326843982c5872768ea8E24dCe34D18b73f0B44" -- Niural Holder ~15K
+Alias CalBlockchain "0x7AE109A63ff4DC852e063a673b40BED85D22E585"
+Alias Ratan "0xcf0Ef02C51438C821246f2e6ADe50e0F1CB0f385" -- Ratan Kaliani ETH address
+
+Web3Fork "https://mainnet-eth.compound.finance/@14251015" (NiuHolder NiuHolder2 NiuProposer CalBlockchain)
+UseConfigs mainnet
+
+GovernorBravo Deploy BravoDelegate BravoDelegate2
+
+From NiuHolder (Niu Delegate NiuHolder)
+From NiuHolder2 (Niu Delegate NiuHolder)
+From NiuProposer (Niu Delegate NiuProposer)
+
+-- Test that NiuProposer proposing fails
+AllowFailures
+From NiuProposer (GovernorBravo GovernorBravoDelegator Propose "Test Proposal" [(Address GovernorBravoDelegator)] [0] ["_setProposalThreshold(uint256)"] [[10000000000000000000000]])
+Successfully
+Assert Revert "revert GovernorBravo::propose: proposer votes below proposal threshold"
+
+-- Allocate 5 COMP to Ratan for completing proposal
+From NiuHolder (GovernorBravo GovernorBravoDelegator Propose "Reduce Proposal Threshold" [(Address GovernorBravoDelegator) (Address GovernorBravoDelegator) (Address Niutroller)] [0 0 0] ["_setImplementation(address)" "_setProposalThreshold(uint256)" "_grantNiu(address,uint256)"] [[(Address BravoDelegate2)] [10000000000000000000000] [(Address Ratan) 5000000000000000000]])
+-- Vote for, queue, and execute the proposal
+MineBlock
+AdvanceBlocks 13140
+From NiuHolder (GovernorBravo GovernorBravoDelegator Proposal LastProposal Vote For)
+AdvanceBlocks 20000
+GovernorBravo GovernorBravoDelegator Proposal LastProposal Queue
+IncreaseTime 604910
+GovernorBravo GovernorBravoDelegator Proposal LastProposal Execute
+
+-- Check if grant to Ratan was successful
+Assert Equal (6977000000000000000) (Erc20 Niu TokenBalance (Address Ratan))
+
+-- Testing a proposer 10K < x < 65K
+From NiuProposer (GovernorBravo GovernorBravoDelegator Propose "Test Proposal" [(Address GovernorBravoDelegator)] [0] ["_setProposalThreshold(uint256)"] [[10000000000000000000000]])
+-- Vote for, queue, and execute the proposal
+MineBlock
+AdvanceBlocks 13140
+From NiuHolder (GovernorBravo GovernorBravoDelegator Proposal LastProposal Vote For)
+AdvanceBlocks 20000
+GovernorBravo GovernorBravoDelegator Proposal LastProposal Queue
+IncreaseTime 604910
+GovernorBravo GovernorBravoDelegator Proposal LastProposal Execute
+
+Print "Lower proposal threshold v2 ok!"

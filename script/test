@@ -3,14 +3,14 @@
 set -eo pipefail
 
 dir=`dirname $0`
-proj_root="/protocol"
+proj_root="$dir/.."
 network=${NETWORK:-test}
 verbose=${verbose:-}
 
 debug_args="-n --inspect" #add "debugger" statements to javascript and interact with running code in repl found at chrome://inspect
 [[ -z $DEBUG ]] && debug_args=""
 
-# Compile scenario runner
+# Niuile scenario runner
 [[ -z $NO_TSC ]] && "$proj_root/scenario/script/tsc"
 
 # Build scenario stubs

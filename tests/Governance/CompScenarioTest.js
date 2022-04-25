@@ -1,11 +1,11 @@
 
-describe('CompScenario', () => {
+describe('NiuScenario', () => {
   let root, accounts;
   let comp;
 
   beforeEach(async () => {
     [root, ...accounts] = saddle.accounts;
-    comp = await deploy('CompScenario', [root]);
+    comp = await deploy('NiuScenario', [root]);
   });
 
   describe('lookup curve', () => {

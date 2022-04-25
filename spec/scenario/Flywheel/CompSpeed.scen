@@ -1,0 +1,231 @@
+-- Tests setting COMP (borrow/supply) speeds work properly
+-- Ensures setting various COMP speeds doesn't break the COMP distribution mechanisms
+-- Note: Ensuring the right amounts of COMP distributed is out of scope of these scenario tests (this is in the scope of flywheel scenario tests)
+
+Macro FlywheelNiutroller price=1.0 compInitAmount=5000000e18
+    Unitroller Deploy
+    PriceOracle Deploy Fixed price
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero)
+    -- Deploy Niutroller
+    NiutrollerImpl Deploy Scenario NiutrollerScen
+    Unitroller SetPendingImpl NiutrollerScen
+    NiutrollerImpl NiutrollerScen Become
+    -- Configure Niutroller
+    Niutroller SetPriceOracle (PriceOracleProxy Address)
+    Niutroller SetCloseFactor 0.5
+    Niutroller LiquidationIncentive 1.1
+    -- Add markets
+    NewCToken ZRX cZRX
+    NewCToken BAT cBAT
+    Support cZRX collateralFactor:0.5
+    Support cBAT collateralFactor:0.5
+    -- Setup COMP token
+    Erc20 Deploy Standard COMP "COMP Token" 18
+    Give (Address Niutroller) compInitAmount COMP
+    Niutroller Send "setNiuAddress(address)" (Address COMP)
+
+Macro InitUsage
+    Prep Geoff 100e18 ZRX cZRX
+    Mint Geoff 50e18 cZRX--tokenbalance = 50e18 / 2e9 = 2.5e10
+    Prep Coburn Some BAT cBAT
+    Mint Coburn 6e18 cBAT--tokenbalance = 6e18 / 2e9 = 3e9
+    EnterMarkets Coburn cBAT
+    Borrow Coburn 1e18 cZRX
+
+Macro UseEnvironment1
+    FlywheelNiutroller
+    InitUsage
+
+Macro ClaimNiuForAll
+    Niutroller ClaimNiu Geoff
+    Niutroller ClaimNiu Coburn
+
+Macro VerifyNiuSpeeds cToken supplySpeed borrowSpeed
+    Assert Equal (Niutroller NiuSupplySpeed cToken) supplySpeed
+    Assert Equal (Niutroller NiuBorrowSpeed cToken) borrowSpeed
+
+Macro SetAndVerifyNiuSpeeds cToken supplySpeed borrowSpeed
+    Niutroller SetNiuSpeeds (cToken) ((Number supplySpeed)) ((Number borrowSpeed))
+    VerifyNiuSpeeds cToken supplySpeed borrowSpeed
+    MineBlock -- Ensures we accrue COMP
+    ClaimNiuForAll -- Ensures setting the COMP speeds didn't break the distribution mechanisms
+
+Test "COMP supply speed can be set"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 0e18
+
+Test "COMP supply speed can be set then unset"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 0e18
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+
+Test "COMP supply speed can be set then set again"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 0e18
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+    SetAndVerifyNiuSpeeds cZRX 2e18 0e18
+
+Test "COMP supply speed can be set w/ borrow speed"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 1e18
+
+Test "COMP supply speed can be set then unset w/ borrow speed"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 1e18
+    SetAndVerifyNiuSpeeds cZRX 0e18 1e18
+
+Test "COMP supply speed can be set then set, unset, and set again w/ borrow speed"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 1e18
+    SetAndVerifyNiuSpeeds cZRX 0e18 1e18
+    SetAndVerifyNiuSpeeds cZRX 2e18 1e18
+
+Test "COMP borrow speed can be set"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 0e18 2e18
+
+Test "COMP borrow speed can be set then unset"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 0e18 2e18
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+
+Test "COMP borrow speed can be set then set again"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 0e18 2e18
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+    SetAndVerifyNiuSpeeds cZRX 0e18 2e18
+
+Test "COMP borrow speed can be set w/ supply speed"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 1e18 2e18
+
+Test "COMP borrow speed can be set then unset w/ supply speed"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 1e18 2e18
+    SetAndVerifyNiuSpeeds cZRX 1e18 0e18
+
+Test "COMP borrow speed can be set then set, unset, and set again w/ supply speed"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 1e18 2e18
+    SetAndVerifyNiuSpeeds cZRX 1e18 0e18
+    SetAndVerifyNiuSpeeds cZRX 1e18 2e18
+
+Test "Many different COMP supply speeds can be set"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 0e18
+    SetAndVerifyNiuSpeeds cBAT 3e18 0e18
+    VerifyNiuSpeeds cZRX 2e18 0e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP supply speeds can be set then unset"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 0e18
+    SetAndVerifyNiuSpeeds cBAT 3e18 0e18
+    VerifyNiuSpeeds cZRX 2e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 0e18 0e18
+    VerifyNiuSpeeds cZRX 2e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+    VerifyNiuSpeeds cBAT 0e18 0e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP supply speeds can be set, unset, and set again"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 0e18
+    SetAndVerifyNiuSpeeds cBAT 3e18 0e18
+    VerifyNiuSpeeds cZRX 2e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 0e18 0e18
+    VerifyNiuSpeeds cZRX 2e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+    VerifyNiuSpeeds cBAT 0e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 5e18 0e18
+    VerifyNiuSpeeds cBAT 0e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 6e18 0e18
+    VerifyNiuSpeeds cZRX 5e18 0e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP supply speeds can be set w/ borrow speeds"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 1e18
+    SetAndVerifyNiuSpeeds cBAT 3e18 1e18
+    VerifyNiuSpeeds cZRX 2e18 1e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP supply speeds can be set then unset w/ borrow speeds"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 1e18
+    SetAndVerifyNiuSpeeds cBAT 3e18 1e18
+    VerifyNiuSpeeds cZRX 2e18 1e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 0e18 1e18
+    VerifyNiuSpeeds cZRX 2e18 1e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 0e18 1e18
+    VerifyNiuSpeeds cBAT 0e18 1e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP supply speeds can be set, unset, and set again w/ borrow speeds"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 2e18 1e18
+    SetAndVerifyNiuSpeeds cBAT 3e18 1e18
+    VerifyNiuSpeeds cZRX 2e18 1e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 0e18 1e18
+    VerifyNiuSpeeds cZRX 2e18 1e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 0e18 1e18
+    VerifyNiuSpeeds cBAT 0e18 1e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 5e18 1e18
+    VerifyNiuSpeeds cBAT 0e18 1e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 6e18 1e18
+    VerifyNiuSpeeds cZRX 5e18 1e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP borrow speeds can be set"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 0e18 2e18
+    SetAndVerifyNiuSpeeds cBAT 0e18 3e18
+    VerifyNiuSpeeds cZRX 0e18 2e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP borrow speeds can be set then unset"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 0e18 2e18
+    SetAndVerifyNiuSpeeds cBAT 0e18 3e18
+    VerifyNiuSpeeds cZRX 0e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 0e18 0e18
+    VerifyNiuSpeeds cZRX 0e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+    VerifyNiuSpeeds cBAT 0e18 0e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP borrow speeds can be set, unset, and set again"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 0e18 2e18
+    SetAndVerifyNiuSpeeds cBAT 0e18 3e18
+    VerifyNiuSpeeds cZRX 0e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 0e18 0e18
+    VerifyNiuSpeeds cZRX 0e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 0e18 0e18
+    VerifyNiuSpeeds cBAT 0e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 0e18 5e18
+    VerifyNiuSpeeds cBAT 0e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 0e18 6e18
+    VerifyNiuSpeeds cZRX 0e18 5e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP borrow speeds can be set w/ supply speeds"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 1e18 2e18
+    SetAndVerifyNiuSpeeds cBAT 1e18 3e18
+    VerifyNiuSpeeds cZRX 1e18 2e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP borrow speeds can be set then unset w/ supply speeds"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 1e18 2e18
+    SetAndVerifyNiuSpeeds cBAT 1e18 3e18
+    VerifyNiuSpeeds cZRX 1e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 1e18 0e18
+    VerifyNiuSpeeds cZRX 1e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 1e18 0e18
+    VerifyNiuSpeeds cBAT 1e18 0e18 -- Ensure these speeds weren't changed
+
+Test "Many different COMP borrow speeds can be set, unset, and set again w/ supply speeds"
+    UseEnvironment1
+    SetAndVerifyNiuSpeeds cZRX 1e18 2e18
+    SetAndVerifyNiuSpeeds cBAT 1e18 3e18
+    VerifyNiuSpeeds cZRX 1e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 1e18 0e18
+    VerifyNiuSpeeds cZRX 1e18 2e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 1e18 0e18
+    VerifyNiuSpeeds cBAT 1e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cZRX 1e18 5e18
+    VerifyNiuSpeeds cBAT 1e18 0e18 -- Ensure these speeds weren't changed
+    SetAndVerifyNiuSpeeds cBAT 1e18 6e18
+    VerifyNiuSpeeds cZRX 1e18 5e18 -- Ensure these speeds weren't changed

@@ -1,0 +1,114 @@
+-- Tests for the grants and math patch
+
+Macro DeployNiutroller price=1.0
+    Unitroller Deploy
+    PriceOracle Deploy Fixed price
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero)
+    NiutrollerImpl Deploy Scenario NiutrollerScen
+    Unitroller SetPendingImpl NiutrollerScen
+    NiutrollerImpl NiutrollerScen Become
+    Niutroller SetPriceOracle (PriceOracleProxy Address)
+    Niutroller SetCloseFactor 0.5
+    Niutroller LiquidationIncentive 1.1
+
+Macro SetupMarkets
+    NewCToken ZRX cZRX
+    NewCToken BAT cBAT
+    Support cZRX collateralFactor:0.5
+    Support cBAT collateralFactor:0.5
+
+Macro SetupNiuToken compInitAmount=5000000e18
+    Erc20 Deploy Standard COMP "COMP Token" 18
+    Give (Address Niutroller) compInitAmount COMP
+    Niutroller Send "setNiuAddress(address)" (Address COMP)
+
+-- NewNiutroller, but with markets listed so that we can make them comp markets in constructor
+Macro FlywheelNiutroller price=1.0 borrowRate=0.000005 compInitAmount=5000000e18
+    DeployNiutroller price
+    SetupMarkets
+    SetupNiuToken compInitAmount
+
+Macro InitUsage
+    Prep Geoff 100e18 ZRX cZRX
+    Mint Geoff 50e18 cZRX--tokenbalance = 50e18 / 2e9 = 2.5e10
+    Prep Coburn Some BAT cBAT
+    Mint Coburn 6e18 cBAT--tokenbalance = 6e18 / 2e9 = 3e9
+    EnterMarkets Coburn cBAT
+    Borrow Coburn 1e18 cZRX
+
+Macro InitUsageAndSpeeds
+    InitUsage
+    Niutroller SetNiuSpeeds (cZRX cBAT) (1 1) (1 1)
+
+Test "COMP can be granted in combination with liquidity rewards"
+    FlywheelNiutroller
+    InitUsageAndSpeeds
+    Assert Equal (Niutroller NiuAccrued Geoff) 0
+    Assert Equal (Erc20 COMP TokenBalance Geoff) 0
+    FastForward 1000 Blocks
+    Niutroller ClaimNiu Geoff
+    Niutroller Send "_grantNiu(address,uint256)" (Address Geoff) 1000
+    Assert Equal (Niutroller NiuAccrued Geoff) 0
+    Assert Equal (Erc20 COMP TokenBalance Geoff) 2000 -- 1000 (grant) + 1000 (COMP supply rewards)
+
+Test "COMP can be granted"
+    -- Can be granted once
+    FlywheelNiutroller
+    InitUsageAndSpeeds
+    Assert Equal (Niutroller NiuAccrued Geoff) 0
+    Assert Equal (Erc20 COMP TokenBalance Geoff) 0
+    Niutroller Send "_grantNiu(address,uint256)" (Address Geoff) 1000
+    Assert Equal (Niutroller NiuAccrued Geoff) 0
+    Assert Equal (Erc20 COMP TokenBalance Geoff) 1000
+    -- Assert Log NiuGranted (recipient (Address Geoff)) (amount "1000")
+    -- Can be granted multiple times
+    Niutroller Send "_grantNiu(address,uint256)" (Address Geoff) 2000
+    Assert Equal (Niutroller NiuAccrued Geoff) 0
+    Assert Equal (Erc20 COMP TokenBalance Geoff) 3000
+
+Test "COMP can be streamed to contributors"
+    FlywheelNiutroller
+    InitUsageAndSpeeds
+    Assert Equal (Niutroller NiuAccrued Torrey) 0
+    Assert Equal (Erc20 COMP TokenBalance Torrey) 0
+    Niutroller Send "_setContributorNiuSpeed(address,uint256)" (Address Torrey) 300
+    -- Assert Log ContributorNiuSpeedUpdated (recipient (Address Torrey)) (amount "300")
+    FastForward 1000 Blocks
+    -- Just claimNiu does not receive COMP
+    Niutroller ClaimNiu Torrey
+    Assert Equal (Niutroller NiuAccrued Torrey) 0
+    Assert Equal (Erc20 COMP TokenBalance Torrey) 0
+    -- Calling updateContributorRewards and then claimNiu receives COMP
+    Niutroller UpdateContributorRewards Torrey
+    Assert Equal (Niutroller NiuAccrued Torrey) 300000
+    Niutroller ClaimNiu Torrey
+    Assert Equal (Niutroller NiuAccrued Torrey) 0
+    Assert Equal (Erc20 COMP TokenBalance Torrey) 300000
+
+Test "COMP can be streamed in combination with liquidity rewards"
+    FlywheelNiutroller
+    InitUsageAndSpeeds
+    Niutroller Send "_setContributorNiuSpeed(address,uint256)" (Address Geoff) 300
+    FastForward 1000 Blocks
+    -- Just claimNiu does not receive COMP
+    Niutroller UpdateContributorRewards Geoff
+    Assert Equal (Niutroller NiuAccrued Geoff) 300000
+    Niutroller ClaimNiu Geoff
+    Assert Equal (Niutroller NiuAccrued Geoff) 0
+    Assert Equal (Erc20 COMP TokenBalance Geoff) 301000 -- 300000 (contributer grant) + 1000 (COMP supply rewards)
+
+Test "COMP streaming can be changed for contributors"
+    FlywheelNiutroller
+    InitUsageAndSpeeds
+    Niutroller Send "_setContributorNiuSpeed(address,uint256)" (Address Torrey) 300
+    FastForward 1000 Blocks
+    Niutroller Send "_setContributorNiuSpeed(address,uint256)" (Address Torrey) 600
+    FastForward 1000 Blocks
+    Niutroller UpdateContributorRewards Torrey
+    Niutroller ClaimNiu Torrey
+    Assert Equal (Niutroller NiuAccrued Torrey) 0
+    Assert Equal (Erc20 COMP TokenBalance Torrey) 900000
+    Niutroller Send "_setContributorNiuSpeed(address,uint256)" (Address Torrey) 0
+    FastForward 2000 Blocks
+    Assert Equal (Niutroller NiuAccrued Torrey) 0
+    Assert Equal (Erc20 COMP TokenBalance Torrey) 900000

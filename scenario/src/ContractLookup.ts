@@ -6,10 +6,10 @@ import { Contract } from './Contract';
 import { mustString } from './Utils';
 
 import { CErc20Delegate } from './Contract/CErc20Delegate';
-import { Comp } from './Contract/Comp';
-import { Comptroller } from './Contract/Comptroller';
-import { ComptrollerImpl } from './Contract/ComptrollerImpl';
-import { NToken } from './Contract/NToken';
+import { Niu } from './Contract/Niu';
+import { Niutroller } from './Contract/Niutroller';
+import { NiutrollerImpl } from './Contract/NiutrollerImpl';
+import { CToken } from './Contract/CToken';
 import { Governor } from './Contract/Governor';
 import { GovernorBravo } from './Contract/GovernorBravo'
 import { Erc20 } from './Contract/Erc20';
@@ -78,28 +78,28 @@ export async function getTimelock(world: World): Promise<Timelock> {
   return getWorldContract(world, [['Contracts', 'Timelock']]);
 }
 
-export async function getUnitroller(world: World): Promise<Comptroller> {
+export async function getUnitroller(world: World): Promise<Niutroller> {
   return getWorldContract(world, [['Contracts', 'Unitroller']]);
 }
 
-export async function getMaximillion(world: World): Promise<Comptroller> {
+export async function getMaximillion(world: World): Promise<Niutroller> {
   return getWorldContract(world, [['Contracts', 'Maximillion']]);
 }
 
-export async function getComptroller(world: World): Promise<Comptroller> {
-  return getWorldContract(world, [['Contracts', 'Comptroller']]);
+export async function getNiutroller(world: World): Promise<Niutroller> {
+  return getWorldContract(world, [['Contracts', 'Niutroller']]);
 }
 
-export async function getComptrollerImpl(world: World, comptrollerImplArg: Event): Promise<ComptrollerImpl> {
-  return getWorldContract(world, [['Comptroller', mustString(comptrollerImplArg), 'address']]);
+export async function getNiutrollerImpl(world: World, comptrollerImplArg: Event): Promise<NiutrollerImpl> {
+  return getWorldContract(world, [['Niutroller', mustString(comptrollerImplArg), 'address']]);
 }
 
-export function getNTokenAddress(world: World, NTokenArg: string): string {
-  return getContractDataString(world, [['NTokens', NTokenArg, 'address']]);
+export function getCTokenAddress(world: World, cTokenArg: string): string {
+  return getContractDataString(world, [['cTokens', cTokenArg, 'address']]);
 }
 
-export function getNTokenDelegateAddress(world: World, NTokenDelegateArg: string): string {
-  return getContractDataString(world, [['NTokenDelegate', NTokenDelegateArg, 'address']]);
+export function getCTokenDelegateAddress(world: World, cTokenDelegateArg: string): string {
+  return getContractDataString(world, [['CTokenDelegate', cTokenDelegateArg, 'address']]);
 }
 
 export function getErc20Address(world: World, erc20Arg: string): string {
@@ -126,19 +126,19 @@ export async function getPriceOracle(world: World): Promise<PriceOracle> {
   return getWorldContract(world, [['Contracts', 'PriceOracle']]);
 }
 
-export async function getComp(
+export async function getNiu(
   world: World,
   compArg: Event
-): Promise<Comp> {
+): Promise<Niu> {
   return getWorldContract(world, [['COMP', 'address']]);
 }
 
-export async function getCompData(
+export async function getNiuData(
   world: World,
   compArg: string
-): Promise<[Comp, string, Map<string, string>]> {
-  let contract = await getComp(world, <Event>(<any>compArg));
-  let data = getContractData(world, [['Comp', compArg]]);
+): Promise<[Niu, string, Map<string, string>]> {
+  let contract = await getNiu(world, <Event>(<any>compArg));
+  let data = getContractData(world, [['Niu', compArg]]);
 
   return [contract, compArg, <Map<string, string>>(<any>data)];
 }
@@ -180,32 +180,32 @@ export async function getErc20Data(
   return [contract, erc20Arg, <Map<string, string>>(<any>data)];
 }
 
-export async function getNTokenData(
+export async function getCTokenData(
   world: World,
-  NTokenArg: string
-): Promise<[NToken, string, Map<string, string>]> {
-  let contract = getWorldContract<NToken>(world, [['NTokens', NTokenArg, 'address']]);
-  let data = getContractData(world, [['NTokens', NTokenArg]]);
+  cTokenArg: string
+): Promise<[CToken, string, Map<string, string>]> {
+  let contract = getWorldContract<CToken>(world, [['cTokens', cTokenArg, 'address']]);
+  let data = getContractData(world, [['CTokens', cTokenArg]]);
 
-  return [contract, NTokenArg, <Map<string, string>>(<any>data)];
+  return [contract, cTokenArg, <Map<string, string>>(<any>data)];
 }
 
-export async function getNTokenDelegateData(
+export async function getCTokenDelegateData(
   world: World,
-  NTokenDelegateArg: string
+  cTokenDelegateArg: string
 ): Promise<[CErc20Delegate, string, Map<string, string>]> {
-  let contract = getWorldContract<CErc20Delegate>(world, [['NTokenDelegate', NTokenDelegateArg, 'address']]);
-  let data = getContractData(world, [['NTokenDelegate', NTokenDelegateArg]]);
+  let contract = getWorldContract<CErc20Delegate>(world, [['CTokenDelegate', cTokenDelegateArg, 'address']]);
+  let data = getContractData(world, [['CTokenDelegate', cTokenDelegateArg]]);
 
-  return [contract, NTokenDelegateArg, <Map<string, string>>(<any>data)];
+  return [contract, cTokenDelegateArg, <Map<string, string>>(<any>data)];
 }
 
-export async function getComptrollerImplData(
+export async function getNiutrollerImplData(
   world: World,
   comptrollerImplArg: string
-): Promise<[ComptrollerImpl, string, Map<string, string>]> {
-  let contract = await getComptrollerImpl(world, <Event>(<any>comptrollerImplArg));
-  let data = getContractData(world, [['Comptroller', comptrollerImplArg]]);
+): Promise<[NiutrollerImpl, string, Map<string, string>]> {
+  let contract = await getNiutrollerImpl(world, <Event>(<any>comptrollerImplArg));
+  let data = getContractData(world, [['Niutroller', comptrollerImplArg]]);
 
   return [contract, comptrollerImplArg, <Map<string, string>>(<any>data)];
 }
@@ -233,10 +233,10 @@ export function getAddress(world: World, addressArg: string): string {
 
   return getContractDataString(world, [
     ['Contracts', addressArg],
-    ['NTokens', addressArg, 'address'],
-    ['NTokenDelegate', addressArg, 'address'],
+    ['cTokens', addressArg, 'address'],
+    ['CTokenDelegate', addressArg, 'address'],
     ['Tokens', addressArg, 'address'],
-    ['Comptroller', addressArg, 'address']
+    ['Niutroller', addressArg, 'address']
   ]);
 }
 

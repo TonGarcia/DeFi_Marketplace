@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 module.exports = {
   stats: 'verbose',
-  devtool: false, //'source-map'
+  devtool: 'source-map',
   externals: {
     file: '{}',
     fs: '{}',

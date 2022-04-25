@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 
-import "./NToken.sol";
+import "./CToken.sol";
 import "./PriceOracle.sol";
 
 contract UnitrollerAdminStorage {
@@ -17,7 +17,7 @@ contract UnitrollerAdminStorage {
     /**
     * @notice Active brains of Unitroller
     */
-    address public niutrollerImplementation;
+    address public comptrollerImplementation;
 
     /**
     * @notice Pending brains of Unitroller
@@ -50,7 +50,7 @@ contract NiutrollerV1Storage is UnitrollerAdminStorage {
     /**
      * @notice Per-account mapping of "assets you are in", capped by maxAssets
      */
-    mapping(address => NToken[]) public accountAssets;
+    mapping(address => CToken[]) public accountAssets;
 
 }
 
@@ -74,7 +74,7 @@ contract NiutrollerV2Storage is NiutrollerV1Storage {
     }
 
     /**
-     * @notice Official mapping of NTokens -> Market metadata
+     * @notice Official mapping of cTokens -> Market metadata
      * @dev Used e.g. to determine if a market is supported
      */
     mapping(address => Market) public markets;
@@ -96,7 +96,7 @@ contract NiutrollerV2Storage is NiutrollerV1Storage {
 
 contract NiutrollerV3Storage is NiutrollerV2Storage {
     struct NiuMarketState {
-        /// @notice The market's last updated niuBorrowIndex or niuSupplyIndex
+        /// @notice The market's last updated compBorrowIndex or compSupplyIndex
         uint224 index;
 
         /// @notice The block number the index was last updated at
@@ -104,52 +104,52 @@ contract NiutrollerV3Storage is NiutrollerV2Storage {
     }
 
     /// @notice A list of all markets
-    NToken[] public allMarkets;
+    CToken[] public allMarkets;
 
     /// @notice The rate at which the flywheel distributes COMP, per block
-    uint public niuRate;
+    uint public compRate;
 
-    /// @notice The portion of niuRate that each market currently receives
-    mapping(address => uint) public niuSpeeds;
+    /// @notice The portion of compRate that each market currently receives
+    mapping(address => uint) public compSpeeds;
 
     /// @notice The COMP market supply state for each market
-    mapping(address => NiuMarketState) public niuSupplyState;
+    mapping(address => NiuMarketState) public compSupplyState;
 
     /// @notice The COMP market borrow state for each market
-    mapping(address => NiuMarketState) public niuBorrowState;
+    mapping(address => NiuMarketState) public compBorrowState;
 
     /// @notice The COMP borrow index for each market for each supplier as of the last time they accrued COMP
-    mapping(address => mapping(address => uint)) public niuSupplierIndex;
+    mapping(address => mapping(address => uint)) public compSupplierIndex;
 
     /// @notice The COMP borrow index for each market for each borrower as of the last time they accrued COMP
-    mapping(address => mapping(address => uint)) public niuBorrowerIndex;
+    mapping(address => mapping(address => uint)) public compBorrowerIndex;
 
     /// @notice The COMP accrued but not yet transferred to each user
-    mapping(address => uint) public niuAccrued;
+    mapping(address => uint) public compAccrued;
 }
 
 contract NiutrollerV4Storage is NiutrollerV3Storage {
     // @notice The borrowCapGuardian can set borrowCaps to any number for any market. Lowering the borrow cap could disable borrowing on the given market.
     address public borrowCapGuardian;
 
-    // @notice Borrow caps enforced by borrowAllowed for each NToken address. Defaults to zero which corresponds to unlimited borrowing.
+    // @notice Borrow caps enforced by borrowAllowed for each cToken address. Defaults to zero which corresponds to unlimited borrowing.
     mapping(address => uint) public borrowCaps;
 }
 
 contract NiutrollerV5Storage is NiutrollerV4Storage {
     /// @notice The portion of COMP that each contributor receives per block
-    mapping(address => uint) public niuContributorSpeeds;
+    mapping(address => uint) public compContributorSpeeds;
 
     /// @notice Last block at which a contributor's COMP rewards have been allocated
     mapping(address => uint) public lastContributorBlock;
 }
 
 contract NiutrollerV6Storage is NiutrollerV5Storage {
-    /// @notice The rate at which niu is distributed to the corresponding borrow market (per block)
-    mapping(address => uint) public niuBorrowSpeeds;
+    /// @notice The rate at which comp is distributed to the corresponding borrow market (per block)
+    mapping(address => uint) public compBorrowSpeeds;
 
-    /// @notice The rate at which niu is distributed to the corresponding supply market (per block)
-    mapping(address => uint) public niuSupplySpeeds;
+    /// @notice The rate at which comp is distributed to the corresponding supply market (per block)
+    mapping(address => uint) public compSupplySpeeds;
 }
 
 contract NiutrollerV7Storage is NiutrollerV6Storage {
@@ -157,5 +157,5 @@ contract NiutrollerV7Storage is NiutrollerV6Storage {
     bool public proposal65FixExecuted;
 
     /// @notice Accounting storage mapping account addresses to how much COMP they owe the protocol.
-    mapping(address => uint) public niuReceivable;
+    mapping(address => uint) public compReceivable;
 }

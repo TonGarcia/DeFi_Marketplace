@@ -11,7 +11,7 @@ import {
 import {throwExpect} from './Assert';
 import {Macros} from './Macro';
 import {formatEvent} from './Formatter';
-import {complete} from './Completer';
+import {complete} from './Niuleter';
 import {loadContracts} from './Networks';
 import {accountAliases, loadAccounts} from './Accounts';
 import {getNetworkPath, readFile} from './File';

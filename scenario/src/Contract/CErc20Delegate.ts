@@ -1,13 +1,13 @@
 import { Contract } from '../Contract';
 import { Sendable } from '../Invokation';
-import { NTokenMethods, NTokenScenarioMethods } from './NToken';
+import { CTokenMethods, CTokenScenarioMethods } from './CToken';
 
-interface CErc20DelegateMethods extends NTokenMethods {
+interface CErc20DelegateMethods extends CTokenMethods {
   _becomeImplementation(data: string): Sendable<void>;
   _resignImplementation(): Sendable<void>;
 }
 
-interface CErc20DelegateScenarioMethods extends NTokenScenarioMethods {
+interface CErc20DelegateScenarioMethods extends CTokenScenarioMethods {
   _becomeImplementation(data: string): Sendable<void>;
   _resignImplementation(): Sendable<void>;
 }

@@ -1,7 +1,7 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/NErc20.sol";
-import "../../contracts/NToken.sol";
+import "../../contracts/CErc20.sol";
+import "../../contracts/CToken.sol";
 import "../../contracts/PriceOracle.sol";
 
 interface V1PriceOracleInterface {
@@ -19,19 +19,19 @@ contract PriceOracleProxy is PriceOracle {
     address public guardian;
 
     /// @notice Address of the cEther contract, which has a constant price
-    address public nEthAddress;
+    address public cEthAddress;
 
     /// @notice Address of the cUSDC contract, which we hand pick a key for
-    address public nUsdcAddress;
+    address public cUsdcAddress;
 
     /// @notice Address of the cUSDT contract, which uses the cUSDC price
-    address public nUsdtAddress;
+    address public cUsdtAddress;
 
     /// @notice Address of the cSAI contract, which may have its price set
-    address public nSaiAddress;
+    address public cSaiAddress;
 
     /// @notice Address of the cDAI contract, which we hand pick a key for
-    address public nDaiAddress;
+    address public cDaiAddress;
 
     /// @notice Handpicked key for USDC
     address public constant usdcOracleKey = address(1);
@@ -45,57 +45,57 @@ contract PriceOracleProxy is PriceOracle {
     /**
      * @param guardian_ The address of the guardian, which may set the SAI price once
      * @param v1PriceOracle_ The address of the v1 price oracle, which will continue to operate and hold prices for collateral assets
-     * @param nEthAddress_ The address of cETH, which will return a constant 1e18, since all prices relative to ether
-     * @param nUsdcAddress_ The address of cUSDC, which will be read from a special oracle key
-     * @param nSaiAddress_ The address of cSAI, which may be read directly from storage
-     * @param nDaiAddress_ The address of cDAI, which will be read from a special oracle key
-     * @param nUsdtAddress_ The address of cUSDT, which uses the cUSDC price
+     * @param cEthAddress_ The address of cETH, which will return a constant 1e18, since all prices relative to ether
+     * @param cUsdcAddress_ The address of cUSDC, which will be read from a special oracle key
+     * @param cSaiAddress_ The address of cSAI, which may be read directly from storage
+     * @param cDaiAddress_ The address of cDAI, which will be read from a special oracle key
+     * @param cUsdtAddress_ The address of cUSDT, which uses the cUSDC price
      */
     constructor(address guardian_,
                 address v1PriceOracle_,
-                address nEthAddress_,
-                address nUsdcAddress_,
-                address nSaiAddress_,
-                address nDaiAddress_,
-                address nUsdtAddress_) public {
+                address cEthAddress_,
+                address cUsdcAddress_,
+                address cSaiAddress_,
+                address cDaiAddress_,
+                address cUsdtAddress_) public {
         guardian = guardian_;
         v1PriceOracle = V1PriceOracleInterface(v1PriceOracle_);
 
-        nEthAddress = nEthAddress_;
-        nUsdcAddress = nUsdcAddress_;
-        nSaiAddress = nSaiAddress_;
-        nDaiAddress = nDaiAddress_;
-        nUsdtAddress = nUsdtAddress_;
+        cEthAddress = cEthAddress_;
+        cUsdcAddress = cUsdcAddress_;
+        cSaiAddress = cSaiAddress_;
+        cDaiAddress = cDaiAddress_;
+        cUsdtAddress = cUsdtAddress_;
     }
 
     /**
-     * @notice Get the underlying price of a listed NToken asset
-     * @param NToken The NToken to get the underlying price of
-     * @return underlying asset price mantissa (scaled by 1e18)
+     * @notice Get the underlying price of a listed cToken asset
+     * @param cToken The cToken to get the underlying price of
+     * @return The underlying asset price mantissa (scaled by 1e18)
      */
-    function getUnderlyingPrice(NToken NToken) public view returns (uint) {
-        address NTokenAddress = address(NToken);
+    function getUnderlyingPrice(CToken cToken) public view returns (uint) {
+        address cTokenAddress = address(cToken);
 
-        if (NTokenAddress == nEthAddress) {
+        if (cTokenAddress == cEthAddress) {
             // ether always worth 1
             return 1e18;
         }
 
-        if (NTokenAddress == nUsdcAddress || NTokenAddress == nUsdtAddress) {
+        if (cTokenAddress == cUsdcAddress || cTokenAddress == cUsdtAddress) {
             return v1PriceOracle.assetPrices(usdcOracleKey);
         }
 
-        if (NTokenAddress == nDaiAddress) {
+        if (cTokenAddress == cDaiAddress) {
             return v1PriceOracle.assetPrices(daiOracleKey);
         }
 
-        if (NTokenAddress == nSaiAddress) {
+        if (cTokenAddress == cSaiAddress) {
             // use the frozen SAI price if set, otherwise use the DAI price
             return saiPrice > 0 ? saiPrice : v1PriceOracle.assetPrices(daiOracleKey);
         }
 
         // otherwise just read from v1 oracle
-        address underlying = NErc20(NTokenAddress).underlying();
+        address underlying = CErc20(cTokenAddress).underlying();
         return v1PriceOracle.assetPrices(underlying);
     }
 

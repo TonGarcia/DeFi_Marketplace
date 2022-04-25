@@ -1,7 +1,7 @@
 import { Event } from '../Event';
 import { World } from '../World';
 import { CErc20Delegate, CErc20DelegateScenario } from '../Contract/CErc20Delegate';
-import { NToken } from '../Contract/NToken';
+import { CToken } from '../Contract/CToken';
 import { Invokation } from '../Invokation';
 import { getStringV } from '../CoreValue';
 import { AddressV, NumberV, StringV } from '../Value';
@@ -15,25 +15,25 @@ const CErc20DelegateContract = getContract('CErc20Delegate');
 const CErc20DelegateScenarioContract = getTestContract('CErc20DelegateScenario');
 
 
-export interface NTokenDelegateData {
+export interface CTokenDelegateData {
   invokation: Invokation<CErc20Delegate>;
   name: string;
   contract: string;
   description?: string;
 }
 
-export async function buildNTokenDelegate(
+export async function buildCTokenDelegate(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; NTokenDelegate: CErc20Delegate; delegateData: NTokenDelegateData }> {
+): Promise<{ world: World; cTokenDelegate: CErc20Delegate; delegateData: CTokenDelegateData }> {
   const fetchers = [
-    new Fetcher<{ name: StringV; }, NTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, CTokenDelegateData>(
       `
         #### CDaiDelegate
 
         * "CDaiDelegate name:<String>"
-          * E.g. "NTokenDelegate Deploy CDaiDelegate cDAIDelegate"
+          * E.g. "CTokenDelegate Deploy CDaiDelegate cDAIDelegate"
       `,
       'CDaiDelegate',
       [
@@ -52,12 +52,12 @@ export async function buildNTokenDelegate(
       }
     ),
 
-    new Fetcher<{ name: StringV; }, NTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, CTokenDelegateData>(
       `
         #### CDaiDelegateScenario
 
         * "CDaiDelegateScenario name:<String>" - A CDaiDelegate Scenario for local testing
-          * E.g. "NTokenDelegate Deploy CDaiDelegateScenario cDAIDelegate"
+          * E.g. "CTokenDelegate Deploy CDaiDelegateScenario cDAIDelegate"
       `,
       'CDaiDelegateScenario',
       [
@@ -76,12 +76,12 @@ export async function buildNTokenDelegate(
       }
     ),
 
-    new Fetcher<{ name: StringV; }, NTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, CTokenDelegateData>(
       `
         #### CErc20Delegate
 
         * "CErc20Delegate name:<String>"
-          * E.g. "NTokenDelegate Deploy CErc20Delegate cDAIDelegate"
+          * E.g. "CTokenDelegate Deploy CErc20Delegate cDAIDelegate"
       `,
       'CErc20Delegate',
       [
@@ -100,12 +100,12 @@ export async function buildNTokenDelegate(
       }
     ),
 
-    new Fetcher<{ name: StringV; }, NTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, CTokenDelegateData>(
       `
         #### CErc20DelegateScenario
 
         * "CErc20DelegateScenario name:<String>" - A CErc20Delegate Scenario for local testing
-          * E.g. "NTokenDelegate Deploy CErc20DelegateScenario cDAIDelegate"
+          * E.g. "CTokenDelegate Deploy CErc20DelegateScenario cDAIDelegate"
       `,
       'CErc20DelegateScenario',
       [
@@ -125,7 +125,7 @@ export async function buildNTokenDelegate(
     )
   ];
 
-  let delegateData = await getFetcherValue<any, NTokenDelegateData>("DeployNToken", fetchers, world, params);
+  let delegateData = await getFetcherValue<any, CTokenDelegateData>("DeployCToken", fetchers, world, params);
   let invokation = delegateData.invokation;
   delete delegateData.invokation;
 
@@ -133,18 +133,18 @@ export async function buildNTokenDelegate(
     throw invokation.error;
   }
 
-  const NTokenDelegate = invokation.value!;
+  const cTokenDelegate = invokation.value!;
 
   world = await storeAndSaveContract(
     world,
-    NTokenDelegate,
+    cTokenDelegate,
     delegateData.name,
     invokation,
     [
       {
-        index: ['NTokenDelegate', delegateData.name],
+        index: ['CTokenDelegate', delegateData.name],
         data: {
-          address: NTokenDelegate._address,
+          address: cTokenDelegate._address,
           contract: delegateData.contract,
           description: delegateData.description
         }
@@ -152,5 +152,5 @@ export async function buildNTokenDelegate(
     ]
   );
 
-  return { world, NTokenDelegate, delegateData };
+  return { world, cTokenDelegate, delegateData };
 }

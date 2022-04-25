@@ -6,7 +6,7 @@ const {
 
 const {
   makeNiutroller,
-  makeNToken,
+  makeCToken,
   makePriceOracle,
   pretendBorrow,
   borrowSnapshot
@@ -17,7 +17,7 @@ describe('Maximillion', () => {
   let maximillion, cEther;
   beforeEach(async () => {
     [root, borrower] = saddle.accounts;
-    cEther = await makeNToken({kind: "cether", supportMarket: true});
+    cEther = await makeCToken({kind: "cether", supportMarket: true});
     maximillion = await deploy('Maximillion', [cEther._address]);
   });
 

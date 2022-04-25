@@ -17,12 +17,12 @@ async function getUnitrollerPendingAdmin(world: World, unitroller: Unitroller): 
   return new AddressV(await unitroller.methods.pendingAdmin().call());
 }
 
-async function getComptrollerImplementation(world: World, unitroller: Unitroller): Promise<AddressV> {
+async function getNiutrollerImplementation(world: World, unitroller: Unitroller): Promise<AddressV> {
   return new AddressV(await unitroller.methods.comptrollerImplementation().call());
 }
 
-async function getPendingComptrollerImplementation(world: World, unitroller: Unitroller): Promise<AddressV> {
-  return new AddressV(await unitroller.methods.pendingComptrollerImplementation().call());
+async function getPendingNiutrollerImplementation(world: World, unitroller: Unitroller): Promise<AddressV> {
+  return new AddressV(await unitroller.methods.pendingNiutrollerImplementation().call());
 }
 
 export function unitrollerFetchers() {
@@ -68,18 +68,18 @@ export function unitrollerFetchers() {
       `,
       'Implementation',
       [new Arg('unitroller', getUnitroller, { implicit: true })],
-      (world, { unitroller }) => getComptrollerImplementation(world, unitroller)
+      (world, { unitroller }) => getNiutrollerImplementation(world, unitroller)
     ),
     new Fetcher<{ unitroller: Unitroller }, AddressV>(
       `
         #### PendingImplementation
 
         * "Unitroller PendingImplementation" - Returns the pending implementation of Unitroller contract
-          * E.g. "Unitroller PendingImplementation" - Returns address of pendingComptrollerImplementation
+          * E.g. "Unitroller PendingImplementation" - Returns address of pendingNiutrollerImplementation
       `,
       'PendingImplementation',
       [new Arg('unitroller', getUnitroller, { implicit: true })],
-      (world, { unitroller }) => getPendingComptrollerImplementation(world, unitroller)
+      (world, { unitroller }) => getPendingNiutrollerImplementation(world, unitroller)
     )
   ];
 }

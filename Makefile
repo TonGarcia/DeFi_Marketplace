@@ -24,32 +24,32 @@ spec/certora/Math/%.cvl:
 	--verify \
 	 MathCertora:$@
 
-spec/certora/Comp/search.cvl:
+spec/certora/Niu/search.cvl:
 	$(CERTORA_RUN) \
-	spec/certora/contracts/CompCertora.sol \
+	spec/certora/contracts/NiuCertora.sol \
 	--settings -b=4,-graphDrawLimit=0,-assumeUnwindCond,-depth=100 \
 	--solc_args "'--evm-version istanbul'" \
 	--verify \
-	 CompCertora:$@
+	 NiuCertora:$@
 
-spec/certora/Comp/transfer.cvl:
+spec/certora/Niu/transfer.cvl:
 	$(CERTORA_RUN) \
-	spec/certora/contracts/CompCertora.sol \
+	spec/certora/contracts/NiuCertora.sol \
 	--settings -graphDrawLimit=0,-assumeUnwindCond,-depth=100 \
 	--solc_args "'--evm-version istanbul'" \
 	--verify \
-	 CompCertora:$@
+	 NiuCertora:$@
 
 spec/certora/Governor/%.cvl:
 	$(CERTORA_RUN) \
 	 spec/certora/contracts/GovernorAlphaCertora.sol \
 	 spec/certora/contracts/TimelockCertora.sol \
-	 spec/certora/contracts/CompCertora.sol \
+	 spec/certora/contracts/NiuCertora.sol \
 	 --settings -assumeUnwindCond,-enableWildcardInlining=false \
 	 --solc_args "'--evm-version istanbul'" \
 	 --link \
 	 GovernorAlphaCertora:timelock=TimelockCertora \
-	 GovernorAlphaCertora:comp=CompCertora \
+	 GovernorAlphaCertora:comp=NiuCertora \
 	--verify \
 	 GovernorAlphaCertora:$@
 
@@ -84,17 +84,17 @@ spec/certora/cDAI/%.cvl:
 spec/certora/CErc20/%.cvl:
 	$(CERTORA_RUN) \
 	 spec/certora/contracts/CErc20ImmutableCertora.sol \
-	 spec/certora/contracts/NTokenCollateral.sol \
+	 spec/certora/contracts/CTokenCollateral.sol \
 	 spec/certora/contracts/NiutrollerCertora.sol \
 	 spec/certora/contracts/InterestRateModelModel.sol \
 	 spec/certora/contracts/UnderlyingModelNonStandard.sol \
 	--link \
-	 CErc20ImmutableCertora:otherToken=NTokenCollateral \
+	 CErc20ImmutableCertora:otherToken=CTokenCollateral \
 	 CErc20ImmutableCertora:comptroller=NiutrollerCertora \
 	 CErc20ImmutableCertora:underlying=UnderlyingModelNonStandard \
 	 CErc20ImmutableCertora:interestRateModel=InterestRateModelModel \
-	 NTokenCollateral:comptroller=NiutrollerCertora \
-	 NTokenCollateral:underlying=UnderlyingModelNonStandard \
+	 CTokenCollateral:comptroller=NiutrollerCertora \
+	 CTokenCollateral:underlying=UnderlyingModelNonStandard \
 	--verify \
 	 CErc20ImmutableCertora:$@ \
 	--settings -cache=certora-run-cerc20-immutable
@@ -103,18 +103,18 @@ spec/certora/CErc20Delegator/%.cvl:
 	$(CERTORA_RUN) \
 	 spec/certora/contracts/CErc20DelegatorCertora.sol \
 	 spec/certora/contracts/CErc20DelegateCertora.sol \
-	 spec/certora/contracts/NTokenCollateral.sol \
+	 spec/certora/contracts/CTokenCollateral.sol \
 	 spec/certora/contracts/NiutrollerCertora.sol \
 	 spec/certora/contracts/InterestRateModelModel.sol \
 	 spec/certora/contracts/UnderlyingModelNonStandard.sol \
 	--link \
 	 CErc20DelegatorCertora:implementation=CErc20DelegateCertora \
-	 CErc20DelegatorCertora:otherToken=NTokenCollateral \
+	 CErc20DelegatorCertora:otherToken=CTokenCollateral \
 	 CErc20DelegatorCertora:comptroller=NiutrollerCertora \
 	 CErc20DelegatorCertora:underlying=UnderlyingModelNonStandard \
 	 CErc20DelegatorCertora:interestRateModel=InterestRateModelModel \
-	 NTokenCollateral:comptroller=NiutrollerCertora \
-	 NTokenCollateral:underlying=UnderlyingModelNonStandard \
+	 CTokenCollateral:comptroller=NiutrollerCertora \
+	 CTokenCollateral:underlying=UnderlyingModelNonStandard \
 	--verify \
 	 CErc20DelegatorCertora:$@ \
 	--settings -assumeUnwindCond \

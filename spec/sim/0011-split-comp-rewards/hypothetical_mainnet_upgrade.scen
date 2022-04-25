@@ -1,0 +1,269 @@
+#!/usr/bin/env -S yarn repl -s
+
+PrintTransactionLogs
+
+-- Token holder addresses for mocking
+Alias NiuHolder "0x7587caefc8096f5f40acb83a09df031a018c66ec"
+Alias TokenHolder "0x05e793ce0c6027323ac150f6d45c2344d28b6019"
+Alias CUSDCHolder "0x5e34bc93a7506ecc8562ade4d5c8b090247a6349"
+
+Web3Fork "https://mainnet-eth.compound.finance/@13057957" (NiuHolder TokenHolder CUSDCHolder)
+UseConfigs mainnet
+
+-- Verify current borrow state indices
+Assert Equal (Niutroller NiuBorrowState cETH "index") (271900236502310314207275303654594550)
+Assert Equal (Niutroller NiuBorrowState cUSDC "index") (374249356944686866589343968372424802182093834)
+Assert Equal (Niutroller NiuBorrowState cDAI "index") (304681283805461047990696432440416)
+Assert Equal (Niutroller NiuBorrowState cWBTC "index") (57091242808581665886978349924495532483402440045)
+Assert Equal (Niutroller NiuBorrowState cWBTC2 "index") (4737883459778580214958447506665029825205802627436)
+Assert Equal (Niutroller NiuBorrowState cUSDT "index") (423043052052409576153627131768953764641085770)
+Assert Equal (Niutroller NiuBorrowState cCOMP "index") (1090703374692561421496444039421391844)
+Assert Equal (Niutroller NiuBorrowState cUNI "index") (1003224738961829505932781071832714863)
+Assert Equal (Niutroller NiuBorrowState cLINK "index") (1021334963447383149197229014847138287)
+Assert Equal (Niutroller NiuBorrowState cZRX "index") (276469710290458744488056479123899)
+Assert Equal (Niutroller NiuBorrowState cTUSD "index") (0)
+Assert Equal (Niutroller NiuBorrowState cBAT "index") (233011432934823645559082204456702)
+Assert Equal (Niutroller NiuBorrowState cAAVE "index") (0)
+Assert Equal (Niutroller NiuBorrowState cSAI "index") (0)
+Assert Equal (Niutroller NiuBorrowState cSUSHI "index") (0)
+Assert Equal (Niutroller NiuBorrowState cMKR "index") (0)
+Assert Equal (Niutroller NiuBorrowState cREP "index") (2887409755927065791842943220324690)
+Assert Equal (Niutroller NiuBorrowState cYFI "index") (0)
+
+-- Verify current supply state indices
+Assert Equal (Niutroller NiuSupplyState cETH "index") (3266868720475524419878033121250905466535312)
+Assert Equal (Niutroller NiuSupplyState cUSDC "index") (32567188278514519540286631350261809001131)
+Assert Equal (Niutroller NiuSupplyState cDAI "index") (48523828872606782857477338624275950203274)
+Assert Equal (Niutroller NiuSupplyState cWBTC "index") (98873610159998754418561608689329824102859175)
+Assert Equal (Niutroller NiuSupplyState cWBTC2 "index") (551089483977648654874859795061443575084844994561)
+Assert Equal (Niutroller NiuSupplyState cUSDT "index") (50534796386054496931306603320108731513487)
+Assert Equal (Niutroller NiuSupplyState cCOMP "index") (3836027216477076374142846684153643830549513)
+Assert Equal (Niutroller NiuSupplyState cUNI "index") (57432610740828790697901777052414007754599)
+Assert Equal (Niutroller NiuSupplyState cLINK "index") (852011526290128056285332840775220381888746)
+Assert Equal (Niutroller NiuSupplyState cZRX "index") (11697528643270194078002497271204681811028)
+Assert Equal (Niutroller NiuSupplyState cTUSD "index") (0)
+Assert Equal (Niutroller NiuSupplyState cBAT "index") (9278159415477864616059533796790401482787)
+Assert Equal (Niutroller NiuSupplyState cAAVE "index") (0)
+Assert Equal (Niutroller NiuSupplyState cSAI "index") (0)
+Assert Equal (Niutroller NiuSupplyState cSUSHI "index") (0)
+Assert Equal (Niutroller NiuSupplyState cMKR "index") (0)
+Assert Equal (Niutroller NiuSupplyState cREP "index") (10822464444875983176893501598723703991037)
+Assert Equal (Niutroller NiuSupplyState cYFI "index") (0)
+
+-- Verify current supply speeds
+Assert Equal (Niutroller NiuSpeed cETH) (10750000000000000)
+Assert Equal (Niutroller NiuSpeed cUSDC) (67000000000000000)
+Assert Equal (Niutroller NiuSpeed cDAI) (67000000000000000)
+Assert Equal (Niutroller NiuSpeed cWBTC) (0)
+Assert Equal (Niutroller NiuSpeed cWBTC2) (10750000000000000)
+Assert Equal (Niutroller NiuSpeed cUSDT) (9650000000000000)
+Assert Equal (Niutroller NiuSpeed cCOMP) (5000000000000000)
+Assert Equal (Niutroller NiuSpeed cUNI) (1462500000000000)
+Assert Equal (Niutroller NiuSpeed cLINK) (1462500000000000)
+Assert Equal (Niutroller NiuSpeed cZRX) (1462500000000000)
+Assert Equal (Niutroller NiuSpeed cTUSD) (0)
+Assert Equal (Niutroller NiuSpeed cBAT) (1462500000000000)
+Assert Equal (Niutroller NiuSpeed cAAVE) (0)
+Assert Equal (Niutroller NiuSpeed cSAI) (0)
+Assert Equal (Niutroller NiuSpeed cSUSHI) (0)
+Assert Equal (Niutroller NiuSpeed cMKR) (0)
+Assert Equal (Niutroller NiuSpeed cREP) (0)
+Assert Equal (Niutroller NiuSpeed cYFI) (0)
+
+-- Deploy latest Niutroller
+NiutrollerImpl Deploy Standard NiutrollerSplitNiuRewards
+
+-- Delegate and propose update
+From NiuHolder (Niu Delegate NiuHolder)
+From NiuHolder (GovernorBravo GovernorBravo Propose "Upgrade Niutroller" [(Address Unitroller) (Address NiutrollerSplitNiuRewards)] [0 0] ["_setPendingImplementation(address)" "_become(address)"] [[(Address NiutrollerSplitNiuRewards)] [(Address Unitroller)]])
+
+-- Fast forward, vote, queue, execute
+MineBlock
+AdvanceBlocks 14000
+From NiuHolder (GovernorBravo GovernorBravo Proposal LastProposal Vote For)
+AdvanceBlocks 20000
+GovernorBravo GovernorBravo Proposal LastProposal Queue
+IncreaseTime 604910
+GovernorBravo GovernorBravo Proposal LastProposal Execute
+MineBlock
+
+-- Merge ABIs so that we can call the newly introduced functions without an error
+NiutrollerImpl NiutrollerSplitNiuRewards MergeABI
+
+-- Verify new borrow state indices
+Assert Equal (Niutroller NiuBorrowState cETH "index") (271900236502310314207275303654594550)
+Assert Equal (Niutroller NiuBorrowState cUSDC "index") (374249356944686866589343968372424802182093834)
+Assert Equal (Niutroller NiuBorrowState cDAI "index") (304681283805461047990696432440416)
+Assert Equal (Niutroller NiuBorrowState cWBTC "index") (57091242808581665886978349924495532483402440045)
+Assert Equal (Niutroller NiuBorrowState cWBTC2 "index") (4737883459778580214958447506665029825205802627436)
+Assert Equal (Niutroller NiuBorrowState cUSDT "index") (423043052052409576153627131768953764641085770)
+Assert Equal (Niutroller NiuBorrowState cCOMP "index") (1090703374692561421496444039421391844)
+Assert Equal (Niutroller NiuBorrowState cUNI "index") (1003224738961829505932781071832714863)
+Assert Equal (Niutroller NiuBorrowState cLINK "index") (1021334963447383149197229014847138287)
+Assert Equal (Niutroller NiuBorrowState cZRX "index") (276469710290458744488056479123899)
+Assert Equal (Niutroller NiuBorrowState cTUSD "index") (1e36)
+Assert Equal (Niutroller NiuBorrowState cBAT "index") (233011432934823645559082204456702)
+Assert Equal (Niutroller NiuBorrowState cAAVE "index") (1e36)
+Assert Equal (Niutroller NiuBorrowState cSAI "index") (1e36)
+Assert Equal (Niutroller NiuBorrowState cSUSHI "index") (1e36)
+Assert Equal (Niutroller NiuBorrowState cMKR "index") (1e36)
+Assert Equal (Niutroller NiuBorrowState cREP "index") (2887409755927065791842943220324690)
+Assert Equal (Niutroller NiuBorrowState cYFI "index") (1e36)
+
+-- Verify new supply state indices
+Assert Equal (Niutroller NiuSupplyState cETH "index") (3266868720475524419878033121250905466535312)
+Assert Equal (Niutroller NiuSupplyState cUSDC "index") (32567188278514519540286631350261809001131)
+Assert Equal (Niutroller NiuSupplyState cDAI "index") (48523828872606782857477338624275950203274)
+Assert Equal (Niutroller NiuSupplyState cWBTC "index") (98873610159998754418561608689329824102859175)
+Assert Equal (Niutroller NiuSupplyState cWBTC2 "index") (551089483977648654874859795061443575084844994561)
+Assert Equal (Niutroller NiuSupplyState cUSDT "index") (50534796386054496931306603320108731513487)
+Assert Equal (Niutroller NiuSupplyState cCOMP "index") (3836027216477076374142846684153643830549513)
+Assert Equal (Niutroller NiuSupplyState cUNI "index") (57432610740828790697901777052414007754599)
+Assert Equal (Niutroller NiuSupplyState cLINK "index") (852011526290128056285332840775220381888746)
+Assert Equal (Niutroller NiuSupplyState cZRX "index") (11697528643270194078002497271204681811028)
+Assert Equal (Niutroller NiuSupplyState cTUSD "index") (1e36)
+Assert Equal (Niutroller NiuSupplyState cBAT "index") (9278159415477864616059533796790401482787)
+Assert Equal (Niutroller NiuSupplyState cAAVE "index") (1e36)
+Assert Equal (Niutroller NiuSupplyState cSAI "index") (1e36)
+Assert Equal (Niutroller NiuSupplyState cSUSHI "index") (1e36)
+Assert Equal (Niutroller NiuSupplyState cMKR "index") (1e36)
+Assert Equal (Niutroller NiuSupplyState cREP "index") (10822464444875983176893501598723703991037)
+Assert Equal (Niutroller NiuSupplyState cYFI "index") (1e36)
+
+-- Verify old COMP speed storage deleted
+Assert Equal (Niutroller NiuSpeed cETH) (0)
+Assert Equal (Niutroller NiuSpeed cUSDC) (0)
+Assert Equal (Niutroller NiuSpeed cDAI) (0)
+Assert Equal (Niutroller NiuSpeed cWBTC) (0)
+Assert Equal (Niutroller NiuSpeed cWBTC2) (0)
+Assert Equal (Niutroller NiuSpeed cUSDT) (0)
+Assert Equal (Niutroller NiuSpeed cCOMP) (0)
+Assert Equal (Niutroller NiuSpeed cUNI) (0)
+Assert Equal (Niutroller NiuSpeed cLINK) (0)
+Assert Equal (Niutroller NiuSpeed cZRX) (0)
+Assert Equal (Niutroller NiuSpeed cTUSD) (0)
+Assert Equal (Niutroller NiuSpeed cBAT) (0)
+Assert Equal (Niutroller NiuSpeed cAAVE) (0)
+Assert Equal (Niutroller NiuSpeed cSAI) (0)
+Assert Equal (Niutroller NiuSpeed cSUSHI) (0)
+Assert Equal (Niutroller NiuSpeed cMKR) (0)
+Assert Equal (Niutroller NiuSpeed cREP) (0)
+Assert Equal (Niutroller NiuSpeed cYFI) (0)
+
+-- Verify COMP supply speeds equal the previous speeds
+Assert Equal (Niutroller NiuSupplySpeed cETH) (10750000000000000)
+Assert Equal (Niutroller NiuSupplySpeed cUSDC) (67000000000000000)
+Assert Equal (Niutroller NiuSupplySpeed cDAI) (67000000000000000)
+Assert Equal (Niutroller NiuSupplySpeed cWBTC) (0)
+Assert Equal (Niutroller NiuSupplySpeed cWBTC2) (10750000000000000)
+Assert Equal (Niutroller NiuSupplySpeed cUSDT) (9650000000000000)
+Assert Equal (Niutroller NiuSupplySpeed cCOMP) (5000000000000000)
+Assert Equal (Niutroller NiuSupplySpeed cUNI) (1462500000000000)
+Assert Equal (Niutroller NiuSupplySpeed cLINK) (1462500000000000)
+Assert Equal (Niutroller NiuSupplySpeed cZRX) (1462500000000000)
+Assert Equal (Niutroller NiuSupplySpeed cTUSD) (0)
+Assert Equal (Niutroller NiuSupplySpeed cBAT) (1462500000000000)
+Assert Equal (Niutroller NiuSupplySpeed cAAVE) (0)
+Assert Equal (Niutroller NiuSupplySpeed cSAI) (0)
+Assert Equal (Niutroller NiuSupplySpeed cSUSHI) (0)
+Assert Equal (Niutroller NiuSupplySpeed cMKR) (0)
+Assert Equal (Niutroller NiuSupplySpeed cREP) (0)
+Assert Equal (Niutroller NiuSupplySpeed cYFI) (0)
+
+-- Verify COMP borrow speeds equal the previous speeds
+Assert Equal (Niutroller NiuBorrowSpeed cETH) (10750000000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cUSDC) (67000000000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cDAI) (67000000000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cWBTC) (0)
+Assert Equal (Niutroller NiuBorrowSpeed cWBTC2) (10750000000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cUSDT) (9650000000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cCOMP) (5000000000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cUNI) (1462500000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cLINK) (1462500000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cZRX) (1462500000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cTUSD) (0)
+Assert Equal (Niutroller NiuBorrowSpeed cBAT) (1462500000000000)
+Assert Equal (Niutroller NiuBorrowSpeed cAAVE) (0)
+Assert Equal (Niutroller NiuBorrowSpeed cSAI) (0)
+Assert Equal (Niutroller NiuBorrowSpeed cSUSHI) (0)
+Assert Equal (Niutroller NiuBorrowSpeed cMKR) (0)
+Assert Equal (Niutroller NiuBorrowSpeed cREP) (0)
+Assert Equal (Niutroller NiuBorrowSpeed cYFI) (0)
+
+Print "Upgrade ok"
+Print "Verifying exploits/bugs are patched"
+
+-- Mint test
+From TokenHolder (Erc20 MKR Approve (Address cMKR) 1000e18)
+From TokenHolder (CToken cMKR Mint 1000e18)
+
+Niutroller ClaimNiu TokenHolder
+Assert Equal (Erc20 COMP TokenBalance TokenHolder) (0)
+
+-- Fast forward to make us accrue a ton of interest (1 year)
+MineBlock
+AdvanceBlocks 2354250
+
+-- Propose COMP speed update
+From NiuHolder (GovernorBravo GovernorBravo Propose "Exploit rewards bug 1" [(Address Niutroller)] [0] ["_setNiuSpeeds(address[],uint256[],uint256[])"] [[[(address cMKR)] [1] [1]]])
+
+-- Fast forward, vote, queue, execute
+MineBlock
+AdvanceBlocks 14000
+From NiuHolder (GovernorBravo GovernorBravo Proposal LastProposal Vote For)
+AdvanceBlocks 20000
+GovernorBravo GovernorBravo Proposal LastProposal Queue
+IncreaseTime 604910
+GovernorBravo GovernorBravo Proposal LastProposal Execute
+
+-- Ensure accrue interest
+CToken cMKR AccrueInterest
+
+From TokenHolder (Erc20 MKR Approve (Address cMKR) 1000e18)
+From TokenHolder (CToken cMKR Mint 1000e18)
+
+Niutroller ClaimNiu TokenHolder
+Assert Equal (Erc20 COMP TokenBalance TokenHolder) (2)
+
+-- Propose COMP speed update
+From NiuHolder (GovernorBravo GovernorBravo Propose "Exploit rewards bug 2" [(Address Niutroller)] [0] ["_setNiuSpeeds(address[],uint256[],uint256[])"] [[[(address cMKR)] [0] [0]]])
+
+-- Fast forward, vote, queue, execute
+MineBlock
+AdvanceBlocks 14000
+From NiuHolder (GovernorBravo GovernorBravo Proposal LastProposal Vote For)
+AdvanceBlocks 20000
+GovernorBravo GovernorBravo Proposal LastProposal Queue
+IncreaseTime 604910
+GovernorBravo GovernorBravo Proposal LastProposal Execute
+
+CToken cMKR AccrueInterest
+Niutroller ClaimNiu TokenHolder
+Assert Equal (Erc20 COMP TokenBalance TokenHolder) (32056)
+
+-- Fast forward to make us accrue a ton of interest - we shouldn't as the rate is 0 (1 year)
+MineBlock
+AdvanceBlocks 2354250
+
+-- Propose COMP speed update
+From NiuHolder (GovernorBravo GovernorBravo Propose "Exploit rewards bug 3" [(Address Niutroller)] [0] ["_setNiuSpeeds(address[],uint256[],uint256[])"] [[[(address cMKR)] [1] [1]]])
+
+-- Fast forward, vote, queue, execute
+MineBlock
+AdvanceBlocks 14000
+From NiuHolder (GovernorBravo GovernorBravo Proposal LastProposal Vote For)
+AdvanceBlocks 20000
+GovernorBravo GovernorBravo Proposal LastProposal Queue
+IncreaseTime 604910
+GovernorBravo GovernorBravo Proposal LastProposal Execute
+
+-- Ensure accrue interest
+CToken cMKR AccrueInterest
+
+From TokenHolder (Erc20 MKR Approve (Address cMKR) 1000e18)
+From TokenHolder (CToken cMKR Mint 1000e18)
+
+Niutroller ClaimNiu TokenHolder
+Assert Equal (Erc20 COMP TokenBalance TokenHolder) (32058)
+
+Print "COMP rewards bug fix passed"

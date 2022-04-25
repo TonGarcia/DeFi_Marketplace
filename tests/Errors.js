@@ -10,7 +10,7 @@ const solparse = require('solparse');
 const errorReporterPath = path.join(__dirname, '..', 'contracts', 'ErrorReporter.sol');
 const contents = solparse.parseFile(errorReporterPath);
 const [
-  ComptrollerErrorReporter,
+  NiutrollerErrorReporter,
   TokenErrorReporter
 ] = contents.body.filter(k => k.type === 'ContractStatement');
 
@@ -35,7 +35,7 @@ const whitePaperModelPath = path.join(__dirname, '..', 'contracts', 'WhitePaperI
 const whitePaperModel = solparse.parseFile(whitePaperModelPath).body.find(k => k.type === 'ContractStatement');
 
 module.exports = {
-  ComptrollerErr: parse(ComptrollerErrorReporter),
+  NiutrollerErr: parse(NiutrollerErrorReporter),
   TokenErr: parse(TokenErrorReporter),
   MathErr: {
     Error: MathError,

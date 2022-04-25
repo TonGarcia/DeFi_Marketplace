@@ -34,7 +34,7 @@ export async function buildGovernor(
       #### GovernorBravoDelegator
 
       * "GovernorBravo Deploy BravoDelegator name:<String> timelock:<Address> comp:<Address> admin:<Address> implementation<address> votingPeriod:<Number> votingDelay:<Number>" - Deploys Niural Governor Bravo with a given parameters
-        * E.g. "GovernorBravo Deploy BravoDelegator GovernorBravo (Address Timelock) (Address Comp) Admin (Address impl) 17280 1"
+        * E.g. "GovernorBravo Deploy BravoDelegator GovernorBravo (Address Timelock) (Address Niu) Admin (Address impl) 17280 1"
     `,
       "BravoDelegator",
       [
@@ -67,7 +67,7 @@ export async function buildGovernor(
       #### GovernorBravoImmutable
 
       * "GovernorBravoImmut Deploy BravoImmutable name:<String> timelock:<Address> comp:<Address> admin:<Address> votingPeriod:<Number> votingDelay:<Number>" - Deploys Niural Governor Bravo Immutable with a given parameters
-        * E.g. "GovernorBravo Deploy BravoImmutable GovernorBravo (Address Timelock) (Address Comp) Admin 17280 1"
+        * E.g. "GovernorBravo Deploy BravoImmutable GovernorBravo (Address Timelock) (Address Niu) Admin 17280 1"
     `,
       "BravoImmutable",
       [

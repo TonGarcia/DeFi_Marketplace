@@ -2,7 +2,7 @@ import { Contract } from '../Contract';
 import { Callable, Sendable } from '../Invokation';
 import { encodedNumber } from '../Encoding';
 
-export interface NTokenMethods {
+export interface CTokenMethods {
   _resignImplementation(): Sendable<void>;
   balanceOfUnderlying(address: string): Callable<number>;
   borrowBalanceCurrent(address: string): Callable<string>;
@@ -25,8 +25,8 @@ export interface NTokenMethods {
   repayBorrow(amount: encodedNumber): Sendable<number>;
   repayBorrowBehalf(amount: string): Sendable<number>;
   repayBorrowBehalf(address: string, amount: encodedNumber): Sendable<number>;
-  liquidateBorrow(borrower: string, NTokenCollateral: string): Sendable<number>;
-  liquidateBorrow(borrower: string, repayAmount: encodedNumber, NTokenCollateral: string): Sendable<number>;
+  liquidateBorrow(borrower: string, cTokenCollateral: string): Sendable<number>;
+  liquidateBorrow(borrower: string, repayAmount: encodedNumber, cTokenCollateral: string): Sendable<number>;
   seize(liquidator: string, borrower: string, seizeTokens: encodedNumber): Sendable<number>;
   evilSeize(
     treasure: string,
@@ -38,7 +38,7 @@ export interface NTokenMethods {
   _reduceReserves(amount: encodedNumber): Sendable<number>;
   _setReserveFactor(reserveFactor: encodedNumber): Sendable<number>;
   _setInterestRateModel(address: string): Sendable<number>;
-  _setComptroller(address: string): Sendable<number>;
+  _setNiutroller(address: string): Sendable<number>;
   underlying(): Callable<string>;
   interestRateModel(): Callable<string>;
   borrowRatePerBlock(): Callable<number>;
@@ -50,17 +50,17 @@ export interface NTokenMethods {
   sweepToken(token: string): Sendable<void>;
 }
 
-export interface NTokenScenarioMethods extends NTokenMethods {
+export interface CTokenScenarioMethods extends CTokenMethods {
   setTotalBorrows(amount: encodedNumber): Sendable<void>;
   setTotalReserves(amount: encodedNumber): Sendable<void>;
 }
 
-export interface NToken extends Contract {
-  methods: NTokenMethods;
+export interface CToken extends Contract {
+  methods: CTokenMethods;
   name: string;
 }
 
-export interface NTokenScenario extends Contract {
-  methods: NTokenScenarioMethods;
+export interface CTokenScenario extends Contract {
+  methods: CTokenScenarioMethods;
   name: string;
 }

@@ -483,7 +483,7 @@ export function governorBravoCommands() {
       `
         #### SetProposalThreshold
 
-        * "GovernorBravo <Governor> SetProposalThreshold <Comp>" - Sets the proposal threshold of the GovernorBravo
+        * "GovernorBravo <Governor> SetProposalThreshold <Niu>" - Sets the proposal threshold of the GovernorBravo
         * E.g. "GovernorBravo GovernorBravoScenario SetProposalThreshold 500e18"
     `,
       "SetProposalThreshold",
@@ -607,8 +607,8 @@ export function governorBravoCommands() {
     }>(
       `#### MergeABI
 
-        * "ComptrollerImpl <Impl> MergeABI" - Merges the ABI, as if it was a become.
-        * E.g. "ComptrollerImpl MyImpl MergeABI
+        * "NiutrollerImpl <Impl> MergeABI" - Merges the ABI, as if it was a become.
+        * E.g. "NiutrollerImpl MyImpl MergeABI
       `,
       "MergeABI",
       [
