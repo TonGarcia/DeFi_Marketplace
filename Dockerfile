@@ -26,6 +26,6 @@ ENV SADDLE_CONTRACTS="contracts/*.sol contracts/**/*.sol"
 RUN npx saddle compile
 RUN yarn cache clean
 RUN chmod u+x /protocol/set_permissions.sh
-RUN ./protocol/set_permissions.sh
+RUN /protocol/set_permissions.sh
 
 CMD while :; do sleep 2073600; done

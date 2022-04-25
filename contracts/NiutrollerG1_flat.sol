@@ -1,4 +1,4 @@
-
+// SPDX-License-Identifier: none
 pragma solidity ^0.8.13;
 //pragma experimental ABIEncoderV2;
 
@@ -61,7 +61,7 @@ contract Niu {
      * @notice Construct a new Niu token
      * @param account The initial account to grant all the tokens
      */
-    constructor(address account) public {
+    constructor(address account) {
         balances[account] = uint96(totalSupply);
         emit Transfer(address(0), account, totalSupply);
     }
@@ -86,8 +86,8 @@ contract Niu {
      */
     function approve(address spender, uint rawAmount) external returns (bool) {
         uint96 amount;
-        if (rawAmount == uint(-1)) {
-            amount = uint96(-1);
+        if (rawAmount == type(uint).max) {
+            amount = type(uint96).max;
         } else {
             amount = safe96(rawAmount, "Niu::approve: amount exceeds 96 bits");
         }
@@ -131,7 +131,7 @@ contract Niu {
         uint96 spenderAllowance = allowances[src][spender];
         uint96 amount = safe96(rawAmount, "Niu::approve: amount exceeds 96 bits");
 
-        if (spender != src && spenderAllowance != uint96(-1)) {
+        if (spender != src && spenderAllowance != type(uint96).max) {
             uint96 newAllowance = sub96(spenderAllowance, amount, "Niu::transferFrom: transfer amount exceeds spender allowance");
             allowances[src][spender] = newAllowance;
 
@@ -166,7 +166,7 @@ contract Niu {
         address signatory = ecrecover(digest, v, r, s);
         require(signatory != address(0), "Niu::delegateBySig: invalid signature");
         require(nonce == nonces[signatory]++, "Niu::delegateBySig: invalid nonce");
-        require(now <= expiry, "Niu::delegateBySig: signature expired");
+        require(block.timestamp <= expiry, "Niu::delegateBySig: signature expired"); // block.timestamp means now
         return _delegate(signatory, delegatee);
     }
 
@@ -1065,7 +1065,7 @@ interface EIP20NonStandardInterface {
     /**
      * @notice Gets the balance of the specified address
      * @param owner The address from which the balance will be retrieved
-     * @return The balance
+     * @return balance
      */
     function balanceOf(address owner) external view returns (uint256 balance);
 
@@ -1102,7 +1102,7 @@ interface EIP20NonStandardInterface {
       *  and is subject to issues noted [here](https://eips.ethereum.org/EIPS/eip-20#approve)
       * @param spender The address of the account which may transfer tokens
       * @param amount The number of tokens that are approved
-      * @return Whether or not the approval succeeded
+      * @return success whether or not the approval succeeded
       */
     function approve(address spender, uint256 amount) external returns (bool success);
 
@@ -1110,7 +1110,7 @@ interface EIP20NonStandardInterface {
       * @notice Get the current allowance from `owner` for `spender`
       * @param owner The address of the account which owns the tokens to be spent
       * @param spender The address of the account which may transfer tokens
-      * @return The number of tokens allowed to be spent
+      * @return remaining The number of tokens allowed to be spent
       */
     function allowance(address owner, address spender) external view returns (uint256 remaining);
 
@@ -1316,7 +1316,7 @@ pragma solidity ^0.8.13;
   * @title Niural's InterestRateModel Interface
   * @author Niural based on prev readme author
   */
-contract InterestRateModelInterface {
+abstract contract InterestRateModelInterface {
     /// @notice Indicator that this is an InterestRateModel contract (for inspection)
     bool public constant isInterestRateModel = true;
 
@@ -1327,7 +1327,7 @@ contract InterestRateModelInterface {
       * @param reserves The total amount of reserves the market has
       * @return The borrow rate per block (as a percentage, and scaled by 1e18)
       */
-    function getBorrowRate(uint cash, uint borrows, uint reserves) external view returns (uint);
+    function getBorrowRate(uint cash, uint borrows, uint reserves) external virtual view returns (uint);
 
     /**
       * @notice Calculates the current supply interest rate per block
@@ -1337,7 +1337,7 @@ contract InterestRateModelInterface {
       * @param reserveFactorMantissa The current reserve factor the market has
       * @return The supply rate per block (as a percentage, and scaled by 1e18)
       */
-    function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) external view returns (uint);
+    function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) external virtual view returns (uint);
 
 }
 
@@ -1378,7 +1378,7 @@ contract InterestRateModel is InterestRateModelInterface {
      * @param baseRatePerYear The approximate target base APR, as a mantissa (scaled by 1e18)
      * @param multiplierPerYear The rate of increase in interest rate wrt utilization (scaled by 1e18)
      */
-    constructor(uint baseRatePerYear, uint multiplierPerYear) public {
+    constructor(uint baseRatePerYear, uint multiplierPerYear) {
         baseRatePerBlock = baseRatePerYear.div(blocksPerYear);
         multiplierPerBlock = multiplierPerYear.div(blocksPerYear);
 
@@ -1408,7 +1408,7 @@ contract InterestRateModel is InterestRateModelInterface {
      * @param reserves The amount of reserves in the market
      * @return The borrow rate percentage per block as a mantissa (scaled by 1e18)
      */
-    function getBorrowRate(uint cash, uint borrows, uint reserves) public view returns (uint) {
+    function getBorrowRate(uint cash, uint borrows, uint reserves) public override view returns (uint) {
         uint ur = utilizationRate(cash, borrows, reserves);
         return ur.mul(multiplierPerBlock).div(1e18).add(baseRatePerBlock);
     }
@@ -1421,7 +1421,7 @@ contract InterestRateModel is InterestRateModelInterface {
      * @param reserveFactorMantissa The current reserve factor for the market
      * @return The supply rate percentage per block as a mantissa (scaled by 1e18)
      */
-    function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) public view returns (uint) {
+    function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) public override view returns (uint) {
         uint oneMinusReserveFactor = uint(1e18).sub(reserveFactorMantissa);
         uint borrowRate = getBorrowRate(cash, borrows, reserves);
         uint rateToPool = borrowRate.mul(oneMinusReserveFactor).div(1e18);
@@ -1433,74 +1433,74 @@ contract InterestRateModel is InterestRateModelInterface {
 
 pragma solidity ^0.8.13;
 
-contract NiutrollerInterface {
+abstract contract NiutrollerInterface {
     /// @notice Indicator that this is a Niutroller contract (for inspection)
     bool public constant isNiutroller = true;
 
     /*** Assets You Are In ***/
 
-    function enterMarkets(address[] calldata nTokens) external returns (uint[] memory);
-    function exitMarket(address nToken) external returns (uint);
+    function enterMarkets(address[] calldata nTokens) external virtual returns (uint[] memory);
+    function exitMarket(address nToken) external virtual returns (uint);
 
     /*** Policy Hooks ***/
 
-    function mintAllowed(address nToken, address minter, uint mintAmount) external returns (uint);
-    function mintVerify(address nToken, address minter, uint mintAmount, uint mintTokens) external;
+    function mintAllowed(address nToken, address minter, uint mintAmount) external virtual returns (uint);
+    function mintVerify(address nToken, address minter, uint mintAmount, uint mintTokens) virtual external;
 
-    function redeemAllowed(address nToken, address redeemer, uint redeemTokens) external returns (uint);
-    function redeemVerify(address nToken, address redeemer, uint redeemAmount, uint redeemTokens) external;
+    function redeemAllowed(address nToken, address redeemer, uint redeemTokens) external virtual returns (uint);
+    function redeemVerify(address nToken, address redeemer, uint redeemAmount, uint redeemTokens) virtual external;
 
-    function borrowAllowed(address nToken, address borrower, uint borrowAmount) external returns (uint);
-    function borrowVerify(address nToken, address borrower, uint borrowAmount) external;
+    function borrowAllowed(address nToken, address borrower, uint borrowAmount) external virtual returns (uint);
+    function borrowVerify(address nToken, address borrower, uint borrowAmount) virtual external;
 
     function repayBorrowAllowed(
         address nToken,
         address payer,
         address borrower,
-        uint repayAmount) external returns (uint);
+        uint repayAmount) external virtual returns (uint);
     function repayBorrowVerify(
         address nToken,
         address payer,
         address borrower,
         uint repayAmount,
-        uint borrowerIndex) external;
+        uint borrowerIndex) virtual external;
 
     function liquidateBorrowAllowed(
         address nTokenBorrowed,
         address nTokenCollateral,
         address liquidator,
         address borrower,
-        uint repayAmount) external returns (uint);
+        uint repayAmount) external virtual returns (uint);
     function liquidateBorrowVerify(
         address nTokenBorrowed,
         address nTokenCollateral,
         address liquidator,
         address borrower,
         uint repayAmount,
-        uint seizeTokens) external;
+        uint seizeTokens) virtual external;
 
     function seizeAllowed(
         address nTokenCollateral,
         address nTokenBorrowed,
         address liquidator,
         address borrower,
-        uint seizeTokens) external returns (uint);
+        uint seizeTokens) external virtual returns (uint);
     function seizeVerify(
         address nTokenCollateral,
         address nTokenBorrowed,
         address liquidator,
         address borrower,
-        uint seizeTokens) external;
+        uint seizeTokens) virtual external;
 
-    function transferAllowed(address nToken, address src, address dst, uint transferTokens) external returns (uint);
-    function transferVerify(address nToken, address src, address dst, uint transferTokens) external;
+    function transferAllowed(address nToken, address src, address dst, uint transferTokens) external virtual returns (uint);
+    function transferVerify(address nToken, address src, address dst, uint transferTokens) virtual external;
 
     /*** Liquidity/Liquidation Calculations ***/
 
     function liquidateCalculateSeizeTokens(
         address nTokenBorrowed,
         address nTokenCollateral,
-        uint repayAmount) external view returns (uint, uint);
+        uint repayAmount) external virtual view returns (uint, uint);
 }
 
 // File: NTokenInterfaces.sol
@@ -1629,7 +1629,7 @@ contract NTokenStorage {
 
 }
 
-contract NTokenInterface is NTokenStorage {
+abstract contract NTokenInterface is NTokenStorage {
     /**
      * @notice Indicator that this is a NToken contract (for inspection)
      */
@@ -3270,6 +3270,226 @@ abstract contract NToken is NTokenInterface, Exponential, TokenErrorReporter {
     }
 }
 
+interface NiuLike {
+  function delegate(address delegatee) external;
+}
+
+/**
+ * @title Niural's NErc20 Contract
+ * @notice NTokens which wrap an EIP-20 underlying
+ * @author Niural
+ */
+contract NErc20 is NToken, NErc20Interface {
+    /**
+     * @notice Initialize the new money market
+     * @param underlying_ The address of the underlying asset
+     * @param niutroller_ The address of the Niutroller
+     * @param interestRateModel_ The address of the interest rate model
+     * @param initialExchangeRateMantissa_ The initial exchange rate, scaled by 1e18
+     * @param name_ ERC-20 name of this token
+     * @param symbol_ ERC-20 symbol of this token
+     * @param decimals_ ERC-20 decimal precision of this token
+     */
+    function initialize(address underlying_,
+                        NiutrollerInterface niutroller_,
+                        InterestRateModel interestRateModel_,
+                        uint initialExchangeRateMantissa_,
+                        string memory name_,
+                        string memory symbol_,
+                        uint8 decimals_) public {
+        // NToken initialize does the bulk of the work
+        super.initialize(niutroller_, interestRateModel_, initialExchangeRateMantissa_, name_, symbol_, decimals_);
+
+        // Set underlying and sanity check it
+        underlying = underlying_;
+        EIP20Interface(underlying).totalSupply();
+    }
+
+    /*** User Interface ***/
+
+    /**
+     * @notice Sender supplies assets into the market and receives NTokens in exchange
+     * @dev Accrues interest whether or not the operation succeeds, unless reverted
+     * @param mintAmount The amount of the underlying asset to supply
+     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+     */
+    function mint(uint mintAmount) external override returns (uint) {
+        (uint err,) = mintInternal(mintAmount);
+        return err;
+    }
+
+    /**
+     * @notice Sender redeems NTokens in exchange for the underlying asset
+     * @dev Accrues interest whether or not the operation succeeds, unless reverted
+     * @param redeemTokens The number of NTokens to redeem into underlying
+     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+     */
+    function redeem(uint redeemTokens) external override returns (uint) {
+        return redeemInternal(redeemTokens);
+    }
+
+    /**
+     * @notice Sender redeems NTokens in exchange for a specified amount of underlying asset
+     * @dev Accrues interest whether or not the operation succeeds, unless reverted
+     * @param redeemAmount The amount of underlying to redeem
+     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+     */
+    function redeemUnderlying(uint redeemAmount) external override returns (uint) {
+        return redeemUnderlyingInternal(redeemAmount);
+    }
+
+    /**
+      * @notice Sender borrows assets from the protocol to their own address
+      * @param borrowAmount The amount of the underlying asset to borrow
+      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+      */
+    function borrow(uint borrowAmount) external override returns (uint) {
+        return borrowInternal(borrowAmount);
+    }
+
+    /**
+     * @notice Sender repays their own borrow
+     * @param repayAmount The amount to repay
+     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+     */
+    function repayBorrow(uint repayAmount) external override returns (uint) {
+        (uint err,) = repayBorrowInternal(repayAmount);
+        return err;
+    }
+
+    /**
+     * @notice Sender repays a borrow belonging to borrower
+     * @param borrower the account with the debt being payed off
+     * @param repayAmount The amount to repay
+     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+     */
+    function repayBorrowBehalf(address borrower, uint repayAmount) external override returns (uint) {
+        (uint err,) = repayBorrowBehalfInternal(borrower, repayAmount);
+        return err;
+    }
+
+    /**
+     * @notice The sender liquidates the borrowers collateral.
+     *  The collateral seized is transferred to the liquidator.
+     * @param borrower The borrower of this NToken to be liquidated
+     * @param repayAmount The amount of the underlying borrowed asset to repay
+     * @param NTokenCollateral The market in which to seize collateral from the borrower
+     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+     */
+    function liquidateBorrow(address borrower, uint repayAmount, NTokenInterface NTokenCollateral) external override returns (uint) {
+        (uint err,) = liquidateBorrowInternal(borrower, repayAmount, NTokenCollateral);
+        return err;
+    }
+
+    /**
+     * @notice A public function to sweep accidental ERC-20 transfers to this contract. Tokens are sent to admin (timelock)
+     * @param token The address of the ERC-20 token to sweep
+     */
+    function sweepToken(EIP20NonStandardInterface token) external override {
+    	require(address(token) != underlying, "NErc20::sweepToken: can not sweep underlying token");
+    	uint256 balance = token.balanceOf(address(this));
+    	token.transfer(admin, balance);
+    }
+
+    /**
+     * @notice The sender adds to reserves.
+     * @param addAmount The amount fo underlying token to add as reserves
+     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+     */
+    function _addReserves(uint addAmount) external override returns (uint) {
+        return _addReservesInternal(addAmount);
+    }
+
+    /*** Safe Token ***/
+
+    /**
+     * @notice Gets balance of this contract in terms of the underlying
+     * @dev This excludes the value of the current message, if any
+     * @return The quantity of underlying tokens owned by this contract
+     */
+    function getCashPrior() internal view override returns (uint) {
+        EIP20Interface token = EIP20Interface(underlying);
+        return token.balanceOf(address(this));
+    }
+
+    /**
+     * @dev Similar to EIP20 transfer, except it handles a False result from `transferFrom` and reverts in that case.
+     *      This will revert due to insufficient balance or insufficient allowance.
+     *      This function returns the actual amount received,
+     *      which may be less than `amount` if there is a fee attached to the transfer.
+     *
+     *      Note: This wrapper safely handles non-standard ERC-20 tokens that do not return a value.
+     *            See here: https://medium.com/coinmonks/missing-return-value-bug-at-least-130-tokens-affected-d67bf08521ca
+     */
+    function doTransferIn(address from, uint amount) internal override returns (uint) {
+        EIP20NonStandardInterface token = EIP20NonStandardInterface(underlying);
+        uint balanceBefore = EIP20Interface(underlying).balanceOf(address(this));
+        token.transferFrom(from, address(this), amount);
+
+        bool success;
+        assembly {
+            switch returndatasize()
+                case 0 {                       // This is a non-standard ERC-20
+                    success := not(0)          // set success to true
+                }
+                case 32 {                      // This is a niuliant ERC-20
+                    returndatacopy(0, 0, 32)
+                    success := mload(0)        // Set `success = returndata` of external call
+                }
+                default {                      // This is an excessively non-niuliant ERC-20, revert.
+                    revert(0, 0)
+                }
+        }
+        require(success, "TOKEN_TRANSFER_IN_FAILED");
+
+        // Calculate the amount that was *actually* transferred
+        uint balanceAfter = EIP20Interface(underlying).balanceOf(address(this));
+        require(balanceAfter >= balanceBefore, "TOKEN_TRANSFER_IN_OVERFLOW");
+        return balanceAfter - balanceBefore;   // underflow already checked above, just subtract
+    }
+
+    /**
+     * @dev Similar to EIP20 transfer, except it handles a False success from `transfer` and returns an explanatory
+     *      error code rather than reverting. If caller has not called checked protocol's balance, this may revert due to
+     *      insufficient cash held in this contract. If caller has checked protocol's balance prior to this call, and verified
+     *      it is >= amount, this should not revert in normal conditions.
+     *
+     *      Note: This wrapper safely handles non-standard ERC-20 tokens that do not return a value.
+     *            See here: https://medium.com/coinmonks/missing-return-value-bug-at-least-130-tokens-affected-d67bf08521ca
+     */
+    function doTransferOut(address payable to, uint amount) internal override {
+        EIP20NonStandardInterface token = EIP20NonStandardInterface(underlying);
+        token.transfer(to, amount);
+
+        bool success;
+        assembly {
+            switch returndatasize()
+                case 0 {                      // This is a non-standard ERC-20
+                    success := not(0)          // set success to true
+                }
+                case 32 {                     // This is a niuliant ERC-20
+                    returndatacopy(0, 0, 32)
+                    success := mload(0)        // Set `success = returndata` of external call
+                }
+                default {                     // This is an excessively non-niuliant ERC-20, revert.
+                    revert(0, 0)
+                }
+        }
+        require(success, "TOKEN_TRANSFER_OUT_FAILED");
+    }
+
+    /**
+    * @notice Admin call to delegate the votes of the COMP-like underlying
+    * @param niuLikeDelegatee The address to delegate votes to
+    * @dev NTokens whose underlying are not NiuLike should revert here
+    */
+    function _delegateNiuLikeTo(address niuLikeDelegatee) external {
+        require(msg.sender == admin, "only the admin may set the niu-like delegate");
+        NiuLike(underlying).delegate(niuLikeDelegatee);
+    }
+}
+
+
 // File: PriceOracle.sol
 
 pragma solidity ^0.8.13;
@@ -3282,11 +3502,116 @@ abstract contract PriceOracle {
     /**
       * @notice Get the underlying price of a NToken asset
       * @param nToken The nToken to get the underlying price of
-      * @return The underlying asset price mantissa (scaled by 1e18).
+      * @return underlying asset price mantissa (scaled by 1e18).
       *  Zero means the price is unavailable.
       */
     function getUnderlyingPrice(NToken nToken) external virtual view returns (uint);
 }
+
+interface V1PriceOracleInterface {
+    function assetPrices(address asset) external view returns (uint);
+}
+
+contract PriceOracleProxy is PriceOracle {
+    /// @notice The v1 price oracle, which will continue to serve prices for v1 assets
+    V1PriceOracleInterface public v1PriceOracle;
+
+    /// @notice Address of the guardian, which may set the SAI price once
+    address public guardian;
+
+    /// @notice Address of the cEther contract, which has a constant price
+    address public nEthAddress;
+
+    /// @notice Address of the cUSDC contract, which we hand pick a key for
+    address public nUsdcAddress;
+
+    /// @notice Address of the cUSDT contract, which uses the cUSDC price
+    address public nUsdtAddress;
+
+    /// @notice Address of the cSAI contract, which may have its price set
+    address public nSaiAddress;
+
+    /// @notice Address of the cDAI contract, which we hand pick a key for
+    address public nDaiAddress;
+
+    /// @notice Handpicked key for USDC
+    address public constant usdcOracleKey = address(1);
+
+    /// @notice Handpicked key for DAI
+    address public constant daiOracleKey = address(2);
+
+    /// @notice Frozen SAI price (or 0 if not set yet)
+    uint public saiPrice;
+
+    /**
+     * @param guardian_ The address of the guardian, which may set the SAI price once
+     * @param v1PriceOracle_ The address of the v1 price oracle, which will continue to operate and hold prices for collateral assets
+     * @param nEthAddress_ The address of cETH, which will return a constant 1e18, since all prices relative to ether
+     * @param nUsdcAddress_ The address of cUSDC, which will be read from a special oracle key
+     * @param nSaiAddress_ The address of cSAI, which may be read directly from storage
+     * @param nDaiAddress_ The address of cDAI, which will be read from a special oracle key
+     * @param nUsdtAddress_ The address of cUSDT, which uses the cUSDC price
+     */
+    constructor(address guardian_,
+                address v1PriceOracle_,
+                address nEthAddress_,
+                address nUsdcAddress_,
+                address nSaiAddress_,
+                address nDaiAddress_,
+                address nUsdtAddress_) public {
+        guardian = guardian_;
+        v1PriceOracle = V1PriceOracleInterface(v1PriceOracle_);
+
+        nEthAddress = nEthAddress_;
+        nUsdcAddress = nUsdcAddress_;
+        nSaiAddress = nSaiAddress_;
+        nDaiAddress = nDaiAddress_;
+        nUsdtAddress = nUsdtAddress_;
+    }
+
+    /**
+     * @notice Get the underlying price of a listed nToken asset
+     * @param nToken The NToken to get the underlying price of
+     * @return underlying asset price mantissa (scaled by 1e18)
+     */
+    function getUnderlyingPrice(NToken nToken) public override view returns (uint) {
+        address nTokenAddress = address(nToken);
+
+        if (nTokenAddress == nEthAddress) {
+            // ether always worth 1
+            return 1e18;
+        }
+
+        if (nTokenAddress == nUsdcAddress || nTokenAddress == nUsdtAddress) {
+            return v1PriceOracle.assetPrices(usdcOracleKey);
+        }
+
+        if (nTokenAddress == nDaiAddress) {
+            return v1PriceOracle.assetPrices(daiOracleKey);
+        }
+
+        if (nTokenAddress == nSaiAddress) {
+            // use the frozen SAI price if set, otherwise use the DAI price
+            return saiPrice > 0 ? saiPrice : v1PriceOracle.assetPrices(daiOracleKey);
+        }
+
+        // otherwise just read from v1 oracle
+        address underlying = NErc20(nTokenAddress).underlying();
+        return v1PriceOracle.assetPrices(underlying);
+    }
+
+    /**
+     * @notice Set the price of SAI, permanently
+     * @param price The price for SAI
+     */
+    function setSaiPrice(uint price) public {
+        require(msg.sender == guardian, "only guardian may set the SAI price");
+        require(saiPrice == 0, "SAI price may only be set once");
+        require(price < 0.1e18, "SAI price must be < 0.1 ETH");
+        saiPrice = price;
+    }
+}
+
 
 // File: NiutrollerStorage.sol
 
@@ -4262,7 +4587,7 @@ contract NiutrollerG1 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
      *          account shortfall below collateral requirements)
      */
     function getAccountLiquidity(address account) public view returns (uint, uint, uint) {
-        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, NToken(0), 0, 0);
+        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, NToken(address(0)), 0, 0);
 
         return (uint(err), liquidity, shortfall);
     }
@@ -4274,7 +4599,7 @@ contract NiutrollerG1 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
      *          account shortfall below collateral requirements)
      */
     function getAccountLiquidityInternal(address account) internal view returns (Error, uint, uint) {
-        return getHypotheticalAccountLiquidityInternal(account, NToken(0), 0, 0);
+        return getHypotheticalAccountLiquidityInternal(account, NToken(address(0)), 0, 0);
     }
 
     /**
@@ -4374,7 +4699,7 @@ contract NiutrollerG1 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
      * @param actualRepayAmount The amount of nTokenBorrowed underlying to convert into nTokenCollateral tokens
      * @return (errorCode, number of nTokenCollateral tokens to be seized in a liquidation)
      */
-    function liquidateCalculateSeizeTokens(address nTokenBorrowed, address nTokenCollateral, uint actualRepayAmount) external view returns (uint, uint) {
+    function liquidateCalculateSeizeTokens(address nTokenBorrowed, address nTokenCollateral, uint actualRepayAmount) external override view returns (uint, uint) {
         /* Read oracle prices for borrowed and collateral markets */
         uint priceBorrowedMantissa = oracle.getUnderlyingPrice(NToken(nTokenBorrowed));
         uint priceCollateralMantissa = oracle.getUnderlyingPrice(NToken(nTokenCollateral));
