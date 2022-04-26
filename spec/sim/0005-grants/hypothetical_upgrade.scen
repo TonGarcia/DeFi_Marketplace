@@ -6,7 +6,7 @@ PrintTransactionLogs
 Alias NiuHolder "0x19bc62ff7cd9ffd6bdced9802ff718f09f7259f1"
 Alias USDCWhale "0x3dfd23a6c5e8bbcfc9581d2e864a68feb6a076d3"
 Alias Tarun "0x6626593c237f530d15ae9980a95ef938ac15c35c"
-Web3Fork "https://mainnet-eth.compound.finance/@10706095" (NiuHolder USDCWhale Tarun)
+Web3Fork "https://mainnet-eth.niural.finance/@10706095" (NiuHolder USDCWhale Tarun)
 UseConfigs mainnet
 
 -- Deploy the flywheel impl

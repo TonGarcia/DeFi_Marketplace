@@ -21,8 +21,8 @@ import { getUserValue, userFetchers } from './Value/UserValue';
 import { comptrollerFetchers, getNiutrollerValue } from './Value/NiutrollerValue';
 import { comptrollerImplFetchers, getNiutrollerImplValue } from './Value/NiutrollerImplValue';
 import { getUnitrollerValue, unitrollerFetchers } from './Value/UnitrollerValue';
-import { cTokenFetchers, getCTokenValue } from './Value/CTokenValue';
-import { cTokenDelegateFetchers, getCTokenDelegateValue } from './Value/CTokenDelegateValue';
+import { nTokenFetchers, getNTokenValue } from './Value/NTokenValue';
+import { nTokenDelegateFetchers, getNTokenDelegateValue } from './Value/NTokenDelegateValue';
 import { erc20Fetchers, getErc20Value } from './Value/Erc20Value';
 import { mcdFetchers, getMCDValue } from './Value/MCDValue';
 import { getInterestRateModelValue, interestRateModelFetchers } from './Value/InterestRateModelValue';
@@ -790,8 +790,8 @@ const fetchers = [
 
       * "Equal given:<Value> expected:<Value>" - Returns true if given values are equal
         * E.g. "Equal (Exactly 0) Zero"
-        * E.g. "Equal (CToken cZRX TotalSupply) (Exactly 55)"
-        * E.g. "Equal (CToken cZRX Niutroller) (Niutroller Address)"
+        * E.g. "Equal (NToken cZRX TotalSupply) (Exactly 55)"
+        * E.g. "Equal (NToken cZRX Niutroller) (Niutroller Address)"
     `,
     'Equal',
     [new Arg('given', getCoreValue), new Arg('expected', getCoreValue)],
@@ -859,25 +859,25 @@ const fetchers = [
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### CToken
+      #### NToken
 
-      * "CToken ...cTokenArgs" - Returns cToken value
+      * "NToken ...nTokenArgs" - Returns nToken value
     `,
-    'CToken',
-    [new Arg('res', getCTokenValue, { variadic: true })],
+    'NToken',
+    [new Arg('res', getNTokenValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: cTokenFetchers() }
+    { subExpressions: nTokenFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### CTokenDelegate
+      #### NTokenDelegate
 
-      * "CTokenDelegate ...cTokenDelegateArgs" - Returns cToken delegate value
+      * "NTokenDelegate ...nTokenDelegateArgs" - Returns nToken delegate value
     `,
-    'CTokenDelegate',
-    [new Arg('res', getCTokenDelegateValue, { variadic: true })],
+    'NTokenDelegate',
+    [new Arg('res', getNTokenDelegateValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: cTokenDelegateFetchers() }
+    { subExpressions: nTokenDelegateFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `

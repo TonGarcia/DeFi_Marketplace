@@ -17,11 +17,11 @@ contract NiutrollerScenarioG4 is NiutrollerG4 {
         blockNumber = number;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(NToken nToken) public view returns (uint) {
+        return accountAssets[address(nToken)].length;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(NToken nToken) public {
+        markets[address(nToken)].isListed = false;
     }
 }

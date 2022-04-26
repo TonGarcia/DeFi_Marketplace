@@ -1,13 +1,13 @@
 pragma solidity ^0.5.16;
 
-import "./CErc20.sol";
+import "./NErc20.sol";
 
 /**
- * @title Niural's CErc20Delegate Contract
- * @notice CTokens which wrap an EIP-20 underlying and are delegated to
+ * @title Niural's NErc20Delegate Contract
+ * @notice NTokens which wrap an EIP-20 underlying and are delegated to
  * @author Niural
  */
-contract CErc20Delegate is CErc20, CDelegateInterface {
+contract NErc20Delegate is NErc20, CDelegateInterface {
     /**
      * @notice Construct an empty delegate
      */

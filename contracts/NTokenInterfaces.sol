@@ -4,7 +4,7 @@ import "./NiutrollerInterface.sol";
 import "./InterestRateModel.sol";
 import "./EIP20NonStandardInterface.sol";
 
-contract CTokenStorage {
+contract NTokenStorage {
     /**
      * @dev Guard variable for re-entrancy checks
      */
@@ -47,7 +47,7 @@ contract CTokenStorage {
     address payable public pendingAdmin;
 
     /**
-     * @notice Contract which oversees inter-cToken operations
+     * @notice Contract which oversees inter-nToken operations
      */
     NiutrollerInterface public comptroller;
 
@@ -57,7 +57,7 @@ contract CTokenStorage {
     InterestRateModel public interestRateModel;
 
     /**
-     * @notice Initial exchange rate used when minting the first CTokens (used when totalSupply = 0)
+     * @notice Initial exchange rate used when minting the first NTokens (used when totalSupply = 0)
      */
     uint internal initialExchangeRateMantissa;
 
@@ -123,11 +123,11 @@ contract CTokenStorage {
 
 }
 
-contract CTokenInterface is CTokenStorage {
+contract NTokenInterface is NTokenStorage {
     /**
-     * @notice Indicator that this is a CToken contract (for inspection)
+     * @notice Indicator that this is a NToken contract (for inspection)
      */
-    bool public constant isCToken = true;
+    bool public constant isNToken = true;
 
 
     /*** Market Events ***/
@@ -160,7 +160,7 @@ contract CTokenInterface is CTokenStorage {
     /**
      * @notice Event emitted when a borrow is liquidated
      */
-    event LiquidateBorrow(address liquidator, address borrower, uint repayAmount, address cTokenCollateral, uint seizeTokens);
+    event LiquidateBorrow(address liquidator, address borrower, uint repayAmount, address nTokenCollateral, uint seizeTokens);
 
 
     /*** Admin Events ***/
@@ -247,14 +247,14 @@ contract CTokenInterface is CTokenStorage {
     function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint);
 }
 
-contract CErc20Storage {
+contract NErc20Storage {
     /**
-     * @notice Underlying asset for this CToken
+     * @notice Underlying asset for this NToken
      */
     address public underlying;
 }
 
-contract CErc20Interface is CErc20Storage {
+contract NErc20Interface is NErc20Storage {
 
     /*** User Interface ***/
 
@@ -264,7 +264,7 @@ contract CErc20Interface is CErc20Storage {
     function borrow(uint borrowAmount) external returns (uint);
     function repayBorrow(uint repayAmount) external returns (uint);
     function repayBorrowBehalf(address borrower, uint repayAmount) external returns (uint);
-    function liquidateBorrow(address borrower, uint repayAmount, CTokenInterface cTokenCollateral) external returns (uint);
+    function liquidateBorrow(address borrower, uint repayAmount, NTokenInterface nTokenCollateral) external returns (uint);
     function sweepToken(EIP20NonStandardInterface token) external;
 
 

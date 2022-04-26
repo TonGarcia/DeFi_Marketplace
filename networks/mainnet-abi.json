@@ -984,7 +984,7 @@
                     "type": "uint256"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -1053,7 +1053,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "name": "",
@@ -1251,7 +1251,7 @@
                 },
                 {
                     "indexed": false,
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -3400,7 +3400,7 @@
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -3719,7 +3719,7 @@
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -3780,17 +3780,17 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
-            "name": "getTokenConfigByCToken",
+            "name": "getTokenConfigByNToken",
             "outputs": [
                 {
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -3861,7 +3861,7 @@
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -3932,7 +3932,7 @@
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -4003,7 +4003,7 @@
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -4074,7 +4074,7 @@
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -4135,7 +4135,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -4511,8 +4511,8 @@
             "constant": true,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -4630,7 +4630,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "cEther",
+            "name": "nEther",
             "outputs": [
                 {
                     "name": "",
@@ -4650,7 +4650,7 @@
                     "type": "address"
                 },
                 {
-                    "name": "cEther_",
+                    "name": "nEther_",
                     "type": "address"
                 }
             ],
@@ -4679,7 +4679,7 @@
         {
             "inputs": [
                 {
-                    "name": "cEther_",
+                    "name": "nEther_",
                     "type": "address"
                 }
             ],
@@ -5902,7 +5902,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -6823,7 +6823,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -6850,8 +6850,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -7240,8 +7240,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -7250,13 +7250,13 @@
                     "type": "address"
                 }
             ],
-            "name": "cTokenBalances",
+            "name": "nTokenBalances",
             "outputs": [
                 {
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -7285,7 +7285,7 @@
                             "type": "uint256"
                         }
                     ],
-                    "internalType": "struct NiuralLens.CTokenBalances",
+                    "internalType": "struct NiuralLens.NTokenBalances",
                     "name": "",
                     "type": "tuple"
                 }
@@ -7298,8 +7298,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 },
                 {
@@ -7308,13 +7308,13 @@
                     "type": "address"
                 }
             ],
-            "name": "cTokenBalancesAll",
+            "name": "nTokenBalancesAll",
             "outputs": [
                 {
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -7343,7 +7343,7 @@
                             "type": "uint256"
                         }
                     ],
-                    "internalType": "struct NiuralLens.CTokenBalances[]",
+                    "internalType": "struct NiuralLens.NTokenBalances[]",
                     "name": "",
                     "type": "tuple[]"
                 }
@@ -7356,18 +7356,18 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
-            "name": "cTokenMetadata",
+            "name": "nTokenMetadata",
             "outputs": [
                 {
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -7427,7 +7427,7 @@
                         },
                         {
                             "internalType": "uint256",
-                            "name": "cTokenDecimals",
+                            "name": "nTokenDecimals",
                             "type": "uint256"
                         },
                         {
@@ -7451,7 +7451,7 @@
                             "type": "uint256"
                         }
                     ],
-                    "internalType": "struct NiuralLens.CTokenMetadata",
+                    "internalType": "struct NiuralLens.NTokenMetadata",
                     "name": "",
                     "type": "tuple"
                 }
@@ -7464,18 +7464,18 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
-            "name": "cTokenMetadataAll",
+            "name": "nTokenMetadataAll",
             "outputs": [
                 {
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -7535,7 +7535,7 @@
                         },
                         {
                             "internalType": "uint256",
-                            "name": "cTokenDecimals",
+                            "name": "nTokenDecimals",
                             "type": "uint256"
                         },
                         {
@@ -7559,7 +7559,7 @@
                             "type": "uint256"
                         }
                     ],
-                    "internalType": "struct NiuralLens.CTokenMetadata[]",
+                    "internalType": "struct NiuralLens.NTokenMetadata[]",
                     "name": "",
                     "type": "tuple[]"
                 }
@@ -7572,18 +7572,18 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
-            "name": "cTokenUnderlyingPrice",
+            "name": "nTokenUnderlyingPrice",
             "outputs": [
                 {
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -7592,7 +7592,7 @@
                             "type": "uint256"
                         }
                     ],
-                    "internalType": "struct NiuralLens.CTokenUnderlyingPrice",
+                    "internalType": "struct NiuralLens.NTokenUnderlyingPrice",
                     "name": "",
                     "type": "tuple"
                 }
@@ -7605,18 +7605,18 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
-            "name": "cTokenUnderlyingPriceAll",
+            "name": "nTokenUnderlyingPriceAll",
             "outputs": [
                 {
                     "components": [
                         {
                             "internalType": "address",
-                            "name": "cToken",
+                            "name": "nToken",
                             "type": "address"
                         },
                         {
@@ -7625,7 +7625,7 @@
                             "type": "uint256"
                         }
                     ],
-                    "internalType": "struct NiuralLens.CTokenUnderlyingPrice[]",
+                    "internalType": "struct NiuralLens.NTokenUnderlyingPrice[]",
                     "name": "",
                     "type": "tuple[]"
                 }
@@ -7653,7 +7653,7 @@
                 {
                     "components": [
                         {
-                            "internalType": "contract CToken[]",
+                            "internalType": "contract NToken[]",
                             "name": "markets",
                             "type": "address[]"
                         },
@@ -8531,7 +8531,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -8562,7 +8562,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -8660,7 +8660,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -8687,11 +8687,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -8737,7 +8737,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -8785,7 +8785,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -8832,7 +8832,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -8883,11 +8883,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -8919,7 +8919,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -8946,11 +8946,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -9020,7 +9020,7 @@
                     "type": "address"
                 },
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -9055,7 +9055,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -9110,7 +9110,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -9142,7 +9142,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -9162,11 +9162,11 @@
             "constant": true,
             "inputs": [
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -9194,11 +9194,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -9250,7 +9250,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -9317,7 +9317,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -9356,7 +9356,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -9384,7 +9384,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenAddress",
+                    "name": "nTokenAddress",
                     "type": "address"
                 }
             ],
@@ -9427,7 +9427,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -9440,7 +9440,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -9458,7 +9458,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -9494,7 +9494,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -9789,7 +9789,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -10710,7 +10710,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -10737,8 +10737,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -11502,7 +11502,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -12457,7 +12457,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -12484,8 +12484,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -14887,7 +14887,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -15765,7 +15765,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -15791,8 +15791,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -16441,8 +16441,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16485,8 +16485,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16523,8 +16523,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16554,8 +16554,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16610,8 +16610,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16629,8 +16629,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16648,8 +16648,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -16661,8 +16661,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16718,8 +16718,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16879,8 +16879,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16926,8 +16926,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -16952,8 +16952,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -17013,8 +17013,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 },
                 {
@@ -17033,8 +17033,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -17143,8 +17143,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -17177,7 +17177,7 @@
             "name": "accountAssets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -17213,7 +17213,7 @@
             "name": "allMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -17227,7 +17227,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -17315,7 +17315,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -17344,8 +17344,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -17370,8 +17370,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -17390,8 +17390,8 @@
                     "type": "address[]"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 },
                 {
@@ -17658,7 +17658,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -17679,7 +17679,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenAddress",
+                    "name": "nTokenAddress",
                     "type": "address"
                 }
             ],
@@ -17732,7 +17732,7 @@
             "name": "getAllMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -17753,7 +17753,7 @@
             "name": "getAssetsIn",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -17802,7 +17802,7 @@
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenModify",
+                    "name": "nTokenModify",
                     "type": "address"
                 },
                 {
@@ -17879,12 +17879,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -17920,12 +17920,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -17960,12 +17960,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -18057,7 +18057,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -18109,7 +18109,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -18199,7 +18199,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -18230,7 +18230,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -18260,7 +18260,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -18296,7 +18296,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -18331,12 +18331,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -18387,12 +18387,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -18422,7 +18422,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -18473,7 +18473,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -21364,7 +21364,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -22285,7 +22285,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -22312,8 +22312,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -22891,7 +22891,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -23769,7 +23769,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -23795,8 +23795,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -25726,7 +25726,7 @@
                     "type": "uint256"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -25795,7 +25795,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "name": "",
@@ -25993,7 +25993,7 @@
                 },
                 {
                     "indexed": false,
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -26383,7 +26383,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -27261,7 +27261,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -27287,8 +27287,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -27877,7 +27877,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -28755,7 +28755,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -28781,8 +28781,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -32491,7 +32491,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -33369,7 +33369,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -33395,8 +33395,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -33970,7 +33970,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -34848,7 +34848,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -34874,8 +34874,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -35806,7 +35806,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -36745,7 +36745,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -36772,8 +36772,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -37190,8 +37190,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37242,8 +37242,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37262,8 +37262,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37282,8 +37282,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -37316,8 +37316,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37469,8 +37469,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37518,8 +37518,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37589,8 +37589,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37704,8 +37704,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -37739,7 +37739,7 @@
             "name": "accountAssets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -37770,7 +37770,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37824,7 +37824,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -37854,8 +37854,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -37909,7 +37909,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -37931,7 +37931,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenAddress",
+                    "name": "nTokenAddress",
                     "type": "address"
                 }
             ],
@@ -37992,7 +37992,7 @@
             "name": "getAssetsIn",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -38023,12 +38023,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -38065,12 +38065,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -38106,12 +38106,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -38202,7 +38202,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -38256,7 +38256,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -38351,7 +38351,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -38383,7 +38383,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -38414,7 +38414,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -38451,7 +38451,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -38487,12 +38487,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -38545,12 +38545,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -38581,7 +38581,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -38634,7 +38634,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -39256,7 +39256,7 @@
                     "type": "address"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -39559,7 +39559,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "name": "",
@@ -39758,7 +39758,7 @@
                 },
                 {
                     "indexed": false,
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -39989,7 +39989,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40020,7 +40020,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40122,7 +40122,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40149,11 +40149,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -40199,7 +40199,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40247,7 +40247,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40314,7 +40314,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40400,11 +40400,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -40436,7 +40436,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40463,11 +40463,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -40572,7 +40572,7 @@
                     "type": "address"
                 },
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -40642,7 +40642,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -40712,7 +40712,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40744,7 +40744,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -40764,11 +40764,11 @@
             "constant": true,
             "inputs": [
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -40796,11 +40796,11 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -40852,7 +40852,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40919,7 +40919,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40958,7 +40958,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -40986,7 +40986,7 @@
             "constant": false,
             "inputs": [
                 {
-                    "name": "cTokenAddress",
+                    "name": "nTokenAddress",
                     "type": "address"
                 }
             ],
@@ -41029,7 +41029,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -41042,7 +41042,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -41060,7 +41060,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -41096,7 +41096,7 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -42738,7 +42738,7 @@
                     "type": "uint256"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -42807,7 +42807,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "name": "",
@@ -43005,7 +43005,7 @@
                 },
                 {
                     "indexed": false,
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -43234,8 +43234,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43260,8 +43260,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43280,8 +43280,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43312,8 +43312,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43370,8 +43370,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43390,8 +43390,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43410,8 +43410,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43430,8 +43430,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -43464,8 +43464,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43590,7 +43590,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -43679,7 +43679,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -43710,8 +43710,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43759,8 +43759,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43846,8 +43846,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -43961,8 +43961,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -43996,7 +43996,7 @@
             "name": "accountAssets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -44034,7 +44034,7 @@
             "name": "allMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -44049,7 +44049,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -44103,7 +44103,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -44133,8 +44133,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -44160,8 +44160,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -44181,8 +44181,8 @@
                     "type": "address[]"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 },
                 {
@@ -44456,7 +44456,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -44478,7 +44478,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenAddress",
+                    "name": "nTokenAddress",
                     "type": "address"
                 }
             ],
@@ -44533,7 +44533,7 @@
             "name": "getAllMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -44555,7 +44555,7 @@
             "name": "getAssetsIn",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -44607,7 +44607,7 @@
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenModify",
+                    "name": "nTokenModify",
                     "type": "address"
                 },
                 {
@@ -44665,12 +44665,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -44707,12 +44707,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -44748,12 +44748,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -44849,7 +44849,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -44903,7 +44903,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -44998,7 +44998,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -45030,7 +45030,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -45071,7 +45071,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -45108,7 +45108,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -45144,12 +45144,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -45202,12 +45202,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -45238,7 +45238,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -45291,7 +45291,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46610,8 +46610,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46636,8 +46636,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46656,8 +46656,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46688,8 +46688,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46746,8 +46746,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46766,8 +46766,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46786,8 +46786,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46806,8 +46806,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -46840,8 +46840,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -46966,7 +46966,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -47014,7 +47014,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -47045,8 +47045,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -47094,8 +47094,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -47181,8 +47181,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -47296,8 +47296,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -47331,7 +47331,7 @@
             "name": "accountAssets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -47369,7 +47369,7 @@
             "name": "allMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -47384,7 +47384,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -47438,7 +47438,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -47468,8 +47468,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -47495,8 +47495,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -47516,8 +47516,8 @@
                     "type": "address[]"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 },
                 {
@@ -47791,7 +47791,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -47813,7 +47813,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenAddress",
+                    "name": "nTokenAddress",
                     "type": "address"
                 }
             ],
@@ -47868,7 +47868,7 @@
             "name": "getAllMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -47890,7 +47890,7 @@
             "name": "getAssetsIn",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -47942,7 +47942,7 @@
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenModify",
+                    "name": "nTokenModify",
                     "type": "address"
                 },
                 {
@@ -48000,12 +48000,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -48042,12 +48042,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -48083,12 +48083,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -48184,7 +48184,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48238,7 +48238,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48333,7 +48333,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48365,7 +48365,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48406,7 +48406,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48443,7 +48443,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48479,12 +48479,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -48537,12 +48537,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -48573,7 +48573,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48626,7 +48626,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -48847,7 +48847,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -49725,7 +49725,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -49751,8 +49751,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -50602,8 +50602,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50628,8 +50628,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50648,8 +50648,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50680,8 +50680,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50738,8 +50738,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50758,8 +50758,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50778,8 +50778,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50798,8 +50798,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -50812,8 +50812,8 @@
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50872,8 +50872,8 @@
             "inputs": [
                 {
                     "indexed": false,
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -50998,7 +50998,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -51046,7 +51046,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -51093,8 +51093,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -51142,8 +51142,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -51207,8 +51207,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 },
                 {
@@ -51250,8 +51250,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -51365,8 +51365,8 @@
             "constant": false,
             "inputs": [
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -51400,7 +51400,7 @@
             "name": "accountAssets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -51438,7 +51438,7 @@
             "name": "allMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken",
+                    "internalType": "contract NToken",
                     "name": "",
                     "type": "address"
                 }
@@ -51453,7 +51453,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -51545,7 +51545,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -51575,8 +51575,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken",
-                    "name": "cToken",
+                    "internalType": "contract NToken",
+                    "name": "nToken",
                     "type": "address"
                 }
             ],
@@ -51602,8 +51602,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -51623,8 +51623,8 @@
                     "type": "address[]"
                 },
                 {
-                    "internalType": "contract CToken[]",
-                    "name": "cTokens",
+                    "internalType": "contract NToken[]",
+                    "name": "nTokens",
                     "type": "address[]"
                 },
                 {
@@ -51898,7 +51898,7 @@
             "inputs": [
                 {
                     "internalType": "address[]",
-                    "name": "cTokens",
+                    "name": "nTokens",
                     "type": "address[]"
                 }
             ],
@@ -51920,7 +51920,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenAddress",
+                    "name": "nTokenAddress",
                     "type": "address"
                 }
             ],
@@ -51975,7 +51975,7 @@
             "name": "getAllMarkets",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -51997,7 +51997,7 @@
             "name": "getAssetsIn",
             "outputs": [
                 {
-                    "internalType": "contract CToken[]",
+                    "internalType": "contract NToken[]",
                     "name": "",
                     "type": "address[]"
                 }
@@ -52049,7 +52049,7 @@
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenModify",
+                    "name": "nTokenModify",
                     "type": "address"
                 },
                 {
@@ -52107,12 +52107,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -52149,12 +52149,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -52190,12 +52190,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -52291,7 +52291,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -52345,7 +52345,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -52440,7 +52440,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -52472,7 +52472,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -52513,7 +52513,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -52550,7 +52550,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -52586,12 +52586,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -52644,12 +52644,12 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
                     "internalType": "address",
-                    "name": "cTokenBorrowed",
+                    "name": "nTokenBorrowed",
                     "type": "address"
                 },
                 {
@@ -52680,7 +52680,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -52733,7 +52733,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "cToken",
+                    "name": "nToken",
                     "type": "address"
                 },
                 {
@@ -53532,7 +53532,7 @@
                     "type": "uint256"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -53601,7 +53601,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "name": "",
@@ -53799,7 +53799,7 @@
                 },
                 {
                     "indexed": false,
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -58521,7 +58521,7 @@
                     "type": "uint256"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -58590,7 +58590,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "name": "",
@@ -58788,7 +58788,7 @@
                 },
                 {
                     "indexed": false,
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -59756,7 +59756,7 @@
                     "type": "uint256"
                 },
                 {
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],
@@ -59825,7 +59825,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "name": "",
@@ -60023,7 +60023,7 @@
                 },
                 {
                     "indexed": false,
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -60413,7 +60413,7 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "cTokenCollateral",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 },
                 {
@@ -61291,7 +61291,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "isCToken",
+            "name": "isNToken",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -61317,8 +61317,8 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "contract CTokenInterface",
-                    "name": "cTokenCollateral",
+                    "internalType": "contract NTokenInterface",
+                    "name": "nTokenCollateral",
                     "type": "address"
                 }
             ],

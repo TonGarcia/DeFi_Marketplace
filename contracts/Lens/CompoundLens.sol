@@ -1,8 +1,8 @@
 pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
-import "../CErc20.sol";
-import "../CToken.sol";
+import "../NErc20.sol";
+import "../NToken.sol";
 import "../PriceOracle.sol";
 import "../EIP20Interface.sol";
 import "../Governance/GovernorAlpha.sol";
@@ -12,7 +12,7 @@ interface NiutrollerLensInterface {
     function markets(address) external view returns (bool, uint);
     function oracle() external view returns (PriceOracle);
     function getAccountLiquidity(address) external view returns (uint, uint, uint);
-    function getAssetsIn(address) external view returns (CToken[] memory);
+    function getAssetsIn(address) external view returns (NToken[] memory);
     function claimNiu(address) external;
     function compAccrued(address) external view returns (uint);
     function compSpeeds(address) external view returns (uint);
@@ -45,8 +45,8 @@ interface GovernorBravoInterface {
 }
 
 contract NiuralLens {
-    struct CTokenMetadata {
-        address cToken;
+    struct NTokenMetadata {
+        address nToken;
         uint exchangeRateCurrent;
         uint supplyRatePerBlock;
         uint borrowRatePerBlock;
@@ -58,14 +58,14 @@ contract NiuralLens {
         bool isListed;
         uint collateralFactorMantissa;
         address underlyingAssetAddress;
-        uint cTokenDecimals;
+        uint nTokenDecimals;
         uint underlyingDecimals;
         uint compSupplySpeed;
         uint compBorrowSpeed;
         uint borrowCap;
     }
 
-    function getNiuSpeeds(NiutrollerLensInterface comptroller, CToken cToken) internal returns (uint, uint) {
+    function getNiuSpeeds(NiutrollerLensInterface comptroller, NToken nToken) internal returns (uint, uint) {
         // Getting comp speeds is gnarly due to not every network having the
         // split comp speeds from Proposal 62 and other networks don't even
         // have comp speeds.
@@ -74,7 +74,7 @@ contract NiuralLens {
             address(comptroller).call(
                 abi.encodePacked(
                     comptroller.compSupplySpeeds.selector,
-                    abi.encode(address(cToken))
+                    abi.encode(address(nToken))
                 )
             );
         if (compSupplySpeedSuccess) {
@@ -86,7 +86,7 @@ contract NiuralLens {
             address(comptroller).call(
                 abi.encodePacked(
                     comptroller.compBorrowSpeeds.selector,
-                    abi.encode(address(cToken))
+                    abi.encode(address(nToken))
                 )
             );
         if (compBorrowSpeedSuccess) {
@@ -99,7 +99,7 @@ contract NiuralLens {
             address(comptroller).call(
                 abi.encodePacked(
                     comptroller.compSpeeds.selector,
-                    abi.encode(address(cToken))
+                    abi.encode(address(nToken))
                 )
             );
             if (compSpeedSuccess) {
@@ -109,50 +109,50 @@ contract NiuralLens {
         return (compSupplySpeed, compBorrowSpeed);
     }
 
-    function cTokenMetadata(CToken cToken) public returns (CTokenMetadata memory) {
-        uint exchangeRateCurrent = cToken.exchangeRateCurrent();
-        NiutrollerLensInterface comptroller = NiutrollerLensInterface(address(cToken.comptroller()));
-        (bool isListed, uint collateralFactorMantissa) = comptroller.markets(address(cToken));
+    function nTokenMetadata(NToken nToken) public returns (NTokenMetadata memory) {
+        uint exchangeRateCurrent = nToken.exchangeRateCurrent();
+        NiutrollerLensInterface comptroller = NiutrollerLensInterface(address(nToken.comptroller()));
+        (bool isListed, uint collateralFactorMantissa) = comptroller.markets(address(nToken));
         address underlyingAssetAddress;
         uint underlyingDecimals;
 
-        if (compareStrings(cToken.symbol(), "cETH")) {
+        if (compareStrings(nToken.symbol(), "cETH")) {
             underlyingAssetAddress = address(0);
             underlyingDecimals = 18;
         } else {
-            CErc20 cErc20 = CErc20(address(cToken));
+            NErc20 cErc20 = NErc20(address(nToken));
             underlyingAssetAddress = cErc20.underlying();
             underlyingDecimals = EIP20Interface(cErc20.underlying()).decimals();
         }
 
-        (uint compSupplySpeed, uint compBorrowSpeed) = getNiuSpeeds(comptroller, cToken);
+        (uint compSupplySpeed, uint compBorrowSpeed) = getNiuSpeeds(comptroller, nToken);
 
         uint borrowCap = 0;
         (bool borrowCapSuccess, bytes memory borrowCapReturnData) =
             address(comptroller).call(
                 abi.encodePacked(
                     comptroller.borrowCaps.selector,
-                    abi.encode(address(cToken))
+                    abi.encode(address(nToken))
                 )
             );
         if (borrowCapSuccess) {
             borrowCap = abi.decode(borrowCapReturnData, (uint));
         }
 
-        return CTokenMetadata({
-            cToken: address(cToken),
+        return NTokenMetadata({
+            nToken: address(nToken),
             exchangeRateCurrent: exchangeRateCurrent,
-            supplyRatePerBlock: cToken.supplyRatePerBlock(),
-            borrowRatePerBlock: cToken.borrowRatePerBlock(),
-            reserveFactorMantissa: cToken.reserveFactorMantissa(),
-            totalBorrows: cToken.totalBorrows(),
-            totalReserves: cToken.totalReserves(),
-            totalSupply: cToken.totalSupply(),
-            totalCash: cToken.getCash(),
+            supplyRatePerBlock: nToken.supplyRatePerBlock(),
+            borrowRatePerBlock: nToken.borrowRatePerBlock(),
+            reserveFactorMantissa: nToken.reserveFactorMantissa(),
+            totalBorrows: nToken.totalBorrows(),
+            totalReserves: nToken.totalReserves(),
+            totalSupply: nToken.totalSupply(),
+            totalCash: nToken.getCash(),
             isListed: isListed,
             collateralFactorMantissa: collateralFactorMantissa,
             underlyingAssetAddress: underlyingAssetAddress,
-            cTokenDecimals: cToken.decimals(),
+            nTokenDecimals: nToken.decimals(),
             underlyingDecimals: underlyingDecimals,
             compSupplySpeed: compSupplySpeed,
             compBorrowSpeed: compBorrowSpeed,
@@ -160,17 +160,17 @@ contract NiuralLens {
         });
     }
 
-    function cTokenMetadataAll(CToken[] calldata cTokens) external returns (CTokenMetadata[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenMetadata[] memory res = new CTokenMetadata[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenMetadata(cTokens[i]);
+    function nTokenMetadataAll(NToken[] calldata nTokens) external returns (NTokenMetadata[] memory) {
+        uint nTokenCount = nTokens.length;
+        NTokenMetadata[] memory res = new NTokenMetadata[](nTokenCount);
+        for (uint i = 0; i < nTokenCount; i++) {
+            res[i] = nTokenMetadata(nTokens[i]);
         }
         return res;
     }
 
-    struct CTokenBalances {
-        address cToken;
+    struct NTokenBalances {
+        address nToken;
         uint balanceOf;
         uint borrowBalanceCurrent;
         uint balanceOfUnderlying;
@@ -178,25 +178,25 @@ contract NiuralLens {
         uint tokenAllowance;
     }
 
-    function cTokenBalances(CToken cToken, address payable account) public returns (CTokenBalances memory) {
-        uint balanceOf = cToken.balanceOf(account);
-        uint borrowBalanceCurrent = cToken.borrowBalanceCurrent(account);
-        uint balanceOfUnderlying = cToken.balanceOfUnderlying(account);
+    function nTokenBalances(NToken nToken, address payable account) public returns (NTokenBalances memory) {
+        uint balanceOf = nToken.balanceOf(account);
+        uint borrowBalanceCurrent = nToken.borrowBalanceCurrent(account);
+        uint balanceOfUnderlying = nToken.balanceOfUnderlying(account);
         uint tokenBalance;
         uint tokenAllowance;
 
-        if (compareStrings(cToken.symbol(), "cETH")) {
+        if (compareStrings(nToken.symbol(), "cETH")) {
             tokenBalance = account.balance;
             tokenAllowance = account.balance;
         } else {
-            CErc20 cErc20 = CErc20(address(cToken));
+            NErc20 cErc20 = NErc20(address(nToken));
             EIP20Interface underlying = EIP20Interface(cErc20.underlying());
             tokenBalance = underlying.balanceOf(account);
-            tokenAllowance = underlying.allowance(account, address(cToken));
+            tokenAllowance = underlying.allowance(account, address(nToken));
         }
 
-        return CTokenBalances({
-            cToken: address(cToken),
+        return NTokenBalances({
+            nToken: address(nToken),
             balanceOf: balanceOf,
             borrowBalanceCurrent: borrowBalanceCurrent,
             balanceOfUnderlying: balanceOfUnderlying,
@@ -205,41 +205,41 @@ contract NiuralLens {
         });
     }
 
-    function cTokenBalancesAll(CToken[] calldata cTokens, address payable account) external returns (CTokenBalances[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenBalances[] memory res = new CTokenBalances[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenBalances(cTokens[i], account);
+    function nTokenBalancesAll(NToken[] calldata nTokens, address payable account) external returns (NTokenBalances[] memory) {
+        uint nTokenCount = nTokens.length;
+        NTokenBalances[] memory res = new NTokenBalances[](nTokenCount);
+        for (uint i = 0; i < nTokenCount; i++) {
+            res[i] = nTokenBalances(nTokens[i], account);
         }
         return res;
     }
 
-    struct CTokenUnderlyingPrice {
-        address cToken;
+    struct NTokenUnderlyingPrice {
+        address nToken;
         uint underlyingPrice;
     }
 
-    function cTokenUnderlyingPrice(CToken cToken) public returns (CTokenUnderlyingPrice memory) {
-        NiutrollerLensInterface comptroller = NiutrollerLensInterface(address(cToken.comptroller()));
+    function nTokenUnderlyingPrice(NToken nToken) public returns (NTokenUnderlyingPrice memory) {
+        NiutrollerLensInterface comptroller = NiutrollerLensInterface(address(nToken.comptroller()));
         PriceOracle priceOracle = comptroller.oracle();
 
-        return CTokenUnderlyingPrice({
-            cToken: address(cToken),
-            underlyingPrice: priceOracle.getUnderlyingPrice(cToken)
+        return NTokenUnderlyingPrice({
+            nToken: address(nToken),
+            underlyingPrice: priceOracle.getUnderlyingPrice(nToken)
         });
     }
 
-    function cTokenUnderlyingPriceAll(CToken[] calldata cTokens) external returns (CTokenUnderlyingPrice[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenUnderlyingPrice[] memory res = new CTokenUnderlyingPrice[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenUnderlyingPrice(cTokens[i]);
+    function nTokenUnderlyingPriceAll(NToken[] calldata nTokens) external returns (NTokenUnderlyingPrice[] memory) {
+        uint nTokenCount = nTokens.length;
+        NTokenUnderlyingPrice[] memory res = new NTokenUnderlyingPrice[](nTokenCount);
+        for (uint i = 0; i < nTokenCount; i++) {
+            res[i] = nTokenUnderlyingPrice(nTokens[i]);
         }
         return res;
     }
 
     struct AccountLimits {
-        CToken[] markets;
+        NToken[] markets;
         uint liquidity;
         uint shortfall;
     }

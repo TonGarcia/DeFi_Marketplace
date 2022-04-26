@@ -5,9 +5,9 @@ import "./InterestRateModel.sol";
 
 
 /**
-  * @title Niural's JumpRateModel Contract V2 for V2 cTokens
+  * @title Niural's JumpRateModel Contract V2 for V2 nTokens
   * @author Arr00
-  * @notice Supports only for V2 cTokens
+  * @notice Supports only for V2 nTokens
   */
 contract JumpRateModelV2 is InterestRateModel, BaseJumpRateModelV2  {
 

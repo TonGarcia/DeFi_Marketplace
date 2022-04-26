@@ -2,25 +2,25 @@
 
 Test "Set Niutroller"
     NewNiutroller
-    NewCToken ZRX cZRX
-    Assert Equal (CToken cZRX Niutroller) (Unitroller Address)
+    NewNToken ZRX cZRX
+    Assert Equal (NToken cZRX Niutroller) (Unitroller Address)
     NiutrollerImpl Deploy Scenario NewNiutroller
-    From Root (CToken cZRX SetNiutroller (NiutrollerImpl NewNiutroller Address))
+    From Root (NToken cZRX SetNiutroller (NiutrollerImpl NewNiutroller Address))
     -- TODO: Fix log assertion
     -- Assert Log "NewNiutroller" ("oldNiutroller" (Unitroller Address)) ("newNiutroller" (NiutrollerImpl NewNiutroller Address))
-    Assert Equal (CToken cZRX Niutroller) (NiutrollerImpl NewNiutroller Address)
+    Assert Equal (NToken cZRX Niutroller) (NiutrollerImpl NewNiutroller Address)
 
 Test "Fail when is not a comptroller"
     NewNiutroller
-    NewCToken ZRX cZRX
-    Invariant Remains (CToken cZRX Niutroller) (Unitroller Address)
+    NewNToken ZRX cZRX
+    Invariant Remains (NToken cZRX Niutroller) (Unitroller Address)
     AllowFailures
-    From Root (CToken cZRX SetNiutroller (PriceOracle Address))
+    From Root (NToken cZRX SetNiutroller (PriceOracle Address))
     Assert Revert
 
 Test "Fail to set comptroller as not admin"
     NewNiutroller
-    NewCToken ZRX cZRX
+    NewNToken ZRX cZRX
     AllowFailures
-    From Geoff (CToken cZRX SetNiutroller (PriceOracle Address))
+    From Geoff (NToken cZRX SetNiutroller (PriceOracle Address))
     Assert Failure UNAUTHORIZED SET_COMPTROLLER_OWNER_CHECK

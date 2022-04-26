@@ -125,7 +125,7 @@
   "PriceFeed": {},
   "Maximillion": {
     "description": "Maximillion",
-    "cEtherAddress": "0x41B5844f4680a8C38fBb695b7F9CFd1F64474a72",
+    "nEtherAddress": "0x41B5844f4680a8C38fBb695b7F9CFd1F64474a72",
     "address": "0xC363f83902Ac614F318b04771d21D25aC0d73be5"
   },
   "NiuralLens": {
@@ -408,14 +408,14 @@
       "address": "0x0000000000000000000000000000000000000000"
     }
   },
-  "CTokenDelegate": {
+  "NTokenDelegate": {
     "undefined": {
       "address": "0xC8016288dB9dFE5a1cA2503879dCDE8807377186",
       "contract": "CErc20Delegate",
       "description": "Delegate CErc20Delegate"
     }
   },
-  "cTokens": {
+  "nTokens": {
     "cZRX": {
       "name": "Niural ZRX",
       "symbol": "cZRX",

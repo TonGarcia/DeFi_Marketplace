@@ -1,18 +1,18 @@
 pragma solidity ^0.5.16;
 
 import "./NiutrollerInterface.sol";
-import "./CTokenInterfaces.sol";
+import "./NTokenInterfaces.sol";
 import "./ErrorReporter.sol";
 import "./Exponential.sol";
 import "./EIP20Interface.sol";
 import "./InterestRateModel.sol";
 
 /**
- * @title Niural's CToken Contract
- * @notice Abstract base for CTokens
+ * @title Niural's NToken Contract
+ * @notice Abstract base for NTokens
  * @author Niural
  */
-contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
+contract NToken is NTokenInterface, Exponential, TokenErrorReporter {
     /**
      * @notice Initialize the money market
      * @param comptroller_ The address of the Niutroller
@@ -87,7 +87,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
         /* Do the calculations, checking for {under,over}flow */
         MathError mathErr;
         uint allowanceNew;
-        uint srcTokensNew;
+        uint srnTokensNew;
         uint dstTokensNew;
 
         (mathErr, allowanceNew) = subUInt(startingAllowance, tokens);
@@ -95,7 +95,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
             return fail(Error.MATH_ERROR, FailureInfo.TRANSFER_NOT_ALLOWED);
         }
 
-        (mathErr, srcTokensNew) = subUInt(accountTokens[src], tokens);
+        (mathErr, srnTokensNew) = subUInt(accountTokens[src], tokens);
         if (mathErr != MathError.NO_ERROR) {
             return fail(Error.MATH_ERROR, FailureInfo.TRANSFER_NOT_ENOUGH);
         }
@@ -109,7 +109,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
         // EFFECTS & INTERACTIONS
         // (No safe failures beyond this point)
 
-        accountTokens[src] = srcTokensNew;
+        accountTokens[src] = srnTokensNew;
         accountTokens[dst] = dstTokensNew;
 
         /* Eat some of the allowance (if necessary) */
@@ -201,7 +201,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
      * @return (possible error, token balance, borrow balance, exchange rate mantissa)
      */
     function getAccountSnapshot(address account) external view returns (uint, uint, uint, uint) {
-        uint cTokenBalance = accountTokens[account];
+        uint nTokenBalance = accountTokens[account];
         uint borrowBalance;
         uint exchangeRateMantissa;
 
@@ -217,7 +217,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
             return (uint(Error.MATH_ERROR), 0, 0, 0);
         }
 
-        return (uint(Error.NO_ERROR), cTokenBalance, borrowBalance, exchangeRateMantissa);
+        return (uint(Error.NO_ERROR), nTokenBalance, borrowBalance, exchangeRateMantissa);
     }
 
     /**
@@ -229,7 +229,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Returns the current per-block borrow interest rate for this cToken
+     * @notice Returns the current per-block borrow interest rate for this nToken
      * @return The borrow interest rate per block, scaled by 1e18
      */
     function borrowRatePerBlock() external view returns (uint) {
@@ -237,7 +237,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Returns the current per-block supply interest rate for this cToken
+     * @notice Returns the current per-block supply interest rate for this nToken
      * @return The supply interest rate per block, scaled by 1e18
      */
     function supplyRatePerBlock() external view returns (uint) {
@@ -321,7 +321,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Calculates the exchange rate from the underlying to the CToken
+     * @notice Calculates the exchange rate from the underlying to the NToken
      * @dev This function does not accrue interest before calculating the exchange rate
      * @return Calculated exchange rate scaled by 1e18
      */
@@ -332,7 +332,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Calculates the exchange rate from the underlying to the CToken
+     * @notice Calculates the exchange rate from the underlying to the NToken
      * @dev This function does not accrue interest before calculating the exchange rate
      * @return (error code, calculated exchange rate scaled by 1e18)
      */
@@ -369,7 +369,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Get cash balance of this cToken in the underlying asset
+     * @notice Get cash balance of this nToken in the underlying asset
      * @return The quantity of underlying asset owned by this contract
      */
     function getCash() external view returns (uint) {
@@ -462,7 +462,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Sender supplies assets into the market and receives cTokens in exchange
+     * @notice Sender supplies assets into the market and receives nTokens in exchange
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param mintAmount The amount of the underlying asset to supply
      * @return (uint, uint) An error code (0=success, otherwise a failure, see ErrorReporter.sol), and the actual mint amount.
@@ -488,7 +488,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice User supplies assets into the market and receives cTokens in exchange
+     * @notice User supplies assets into the market and receives nTokens in exchange
      * @dev Assumes interest has already been accrued up to the current block
      * @param minter The address of the account which is supplying the assets
      * @param mintAmount The amount of the underlying asset to supply
@@ -519,16 +519,16 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
 
         /*
          *  We call `doTransferIn` for the minter and the mintAmount.
-         *  Note: The cToken must handle variations between ERC-20 and ETH underlying.
+         *  Note: The nToken must handle variations between ERC-20 and ETH underlying.
          *  `doTransferIn` reverts if anything goes wrong, since we can't be sure if
          *  side-effects occurred. The function returns the amount actually transferred,
-         *  in case of a fee. On success, the cToken holds an additional `actualMintAmount`
+         *  in case of a fee. On success, the nToken holds an additional `actualMintAmount`
          *  of cash.
          */
         vars.actualMintAmount = doTransferIn(minter, mintAmount);
 
         /*
-         * We get the current exchange rate and calculate the number of cTokens to be minted:
+         * We get the current exchange rate and calculate the number of nTokens to be minted:
          *  mintTokens = actualMintAmount / exchangeRate
          */
 
@@ -536,7 +536,7 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
         require(vars.mathErr == MathError.NO_ERROR, "MINT_EXCHANGE_CALCULATION_FAILED");
 
         /*
-         * We calculate the new total supply of cTokens and minter token balance, checking for overflow:
+         * We calculate the new total supply of nTokens and minter token balance, checking for overflow:
          *  totalSupplyNew = totalSupply + mintTokens
          *  accountTokensNew = accountTokens[minter] + mintTokens
          */
@@ -562,9 +562,9 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Sender redeems cTokens in exchange for the underlying asset
+     * @notice Sender redeems nTokens in exchange for the underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
-     * @param redeemTokens The number of cTokens to redeem into underlying
+     * @param redeemTokens The number of nTokens to redeem into underlying
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
     function redeemInternal(uint redeemTokens) internal nonReentrant returns (uint) {
@@ -578,9 +578,9 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice Sender redeems cTokens in exchange for a specified amount of underlying asset
+     * @notice Sender redeems nTokens in exchange for a specified amount of underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
-     * @param redeemAmount The amount of underlying to receive from redeeming cTokens
+     * @param redeemAmount The amount of underlying to receive from redeeming nTokens
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
     function redeemUnderlyingInternal(uint redeemAmount) internal nonReentrant returns (uint) {
@@ -604,11 +604,11 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     }
 
     /**
-     * @notice User redeems cTokens in exchange for the underlying asset
+     * @notice User redeems nTokens in exchange for the underlying asset
      * @dev Assumes interest has already been accrued up to the current block
      * @param redeemer The address of the account which is redeeming the tokens
-     * @param redeemTokensIn The number of cTokens to redeem into underlying (only one of redeemTokensIn or redeemAmountIn may be non-zero)
-     * @param redeemAmountIn The number of underlying tokens to receive from redeeming cTokens (only one of redeemTokensIn or redeemAmountIn may be non-zero)
+     * @param redeemTokensIn The number of nTokens to redeem into underlying (only one of redeemTokensIn or redeemAmountIn may be non-zero)
+     * @param redeemAmountIn The number of underlying tokens to receive from redeeming nTokens (only one of redeemTokensIn or redeemAmountIn may be non-zero)
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
     function redeemFresh(address payable redeemer, uint redeemTokensIn, uint redeemAmountIn) internal returns (uint) {
@@ -687,8 +687,8 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
 
         /*
          * We invoke doTransferOut for the redeemer and the redeemAmount.
-         *  Note: The cToken must handle variations between ERC-20 and ETH underlying.
-         *  On success, the cToken has redeemAmount less of cash.
+         *  Note: The nToken must handle variations between ERC-20 and ETH underlying.
+         *  On success, the nToken has redeemAmount less of cash.
          *  doTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
          */
         doTransferOut(redeemer, vars.redeemAmount);
@@ -779,8 +779,8 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
 
         /*
          * We invoke doTransferOut for the borrower and the borrowAmount.
-         *  Note: The cToken must handle variations between ERC-20 and ETH underlying.
-         *  On success, the cToken borrowAmount less of cash.
+         *  Note: The nToken must handle variations between ERC-20 and ETH underlying.
+         *  On success, the nToken borrowAmount less of cash.
          *  doTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
          */
         doTransferOut(borrower, borrowAmount);
@@ -885,8 +885,8 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
 
         /*
          * We call doTransferIn for the payer and the repayAmount
-         *  Note: The cToken must handle variations between ERC-20 and ETH underlying.
-         *  On success, the cToken holds an additional repayAmount of cash.
+         *  Note: The nToken must handle variations between ERC-20 and ETH underlying.
+         *  On success, the nToken holds an additional repayAmount of cash.
          *  doTransferIn reverts if anything goes wrong, since we can't be sure if side effects occurred.
          *   it returns the amount actually transferred, in case of a fee.
          */
@@ -921,40 +921,40 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     /**
      * @notice The sender liquidates the borrowers collateral.
      *  The collateral seized is transferred to the liquidator.
-     * @param borrower The borrower of this cToken to be liquidated
-     * @param cTokenCollateral The market in which to seize collateral from the borrower
+     * @param borrower The borrower of this nToken to be liquidated
+     * @param nTokenCollateral The market in which to seize collateral from the borrower
      * @param repayAmount The amount of the underlying borrowed asset to repay
      * @return (uint, uint) An error code (0=success, otherwise a failure, see ErrorReporter.sol), and the actual repayment amount.
      */
-    function liquidateBorrowInternal(address borrower, uint repayAmount, CTokenInterface cTokenCollateral) internal nonReentrant returns (uint, uint) {
+    function liquidateBorrowInternal(address borrower, uint repayAmount, NTokenInterface nTokenCollateral) internal nonReentrant returns (uint, uint) {
         uint error = accrueInterest();
         if (error != uint(Error.NO_ERROR)) {
             // accrueInterest emits logs on errors, but we still want to log the fact that an attempted liquidation failed
             return (fail(Error(error), FailureInfo.LIQUIDATE_ACCRUE_BORROW_INTEREST_FAILED), 0);
         }
 
-        error = cTokenCollateral.accrueInterest();
+        error = nTokenCollateral.accrueInterest();
         if (error != uint(Error.NO_ERROR)) {
             // accrueInterest emits logs on errors, but we still want to log the fact that an attempted liquidation failed
             return (fail(Error(error), FailureInfo.LIQUIDATE_ACCRUE_COLLATERAL_INTEREST_FAILED), 0);
         }
 
         // liquidateBorrowFresh emits borrow-specific logs on errors, so we don't need to
-        return liquidateBorrowFresh(msg.sender, borrower, repayAmount, cTokenCollateral);
+        return liquidateBorrowFresh(msg.sender, borrower, repayAmount, nTokenCollateral);
     }
 
     /**
      * @notice The liquidator liquidates the borrowers collateral.
      *  The collateral seized is transferred to the liquidator.
-     * @param borrower The borrower of this cToken to be liquidated
+     * @param borrower The borrower of this nToken to be liquidated
      * @param liquidator The address repaying the borrow and seizing collateral
-     * @param cTokenCollateral The market in which to seize collateral from the borrower
+     * @param nTokenCollateral The market in which to seize collateral from the borrower
      * @param repayAmount The amount of the underlying borrowed asset to repay
      * @return (uint, uint) An error code (0=success, otherwise a failure, see ErrorReporter.sol), and the actual repayment amount.
      */
-    function liquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, CTokenInterface cTokenCollateral) internal returns (uint, uint) {
+    function liquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, NTokenInterface nTokenCollateral) internal returns (uint, uint) {
         /* Fail if liquidate not allowed */
-        uint allowed = comptroller.liquidateBorrowAllowed(address(this), address(cTokenCollateral), liquidator, borrower, repayAmount);
+        uint allowed = comptroller.liquidateBorrowAllowed(address(this), address(nTokenCollateral), liquidator, borrower, repayAmount);
         if (allowed != 0) {
             return (failOpaque(Error.COMPTROLLER_REJECTION, FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION, allowed), 0);
         }
@@ -964,8 +964,8 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
             return (fail(Error.MARKET_NOT_FRESH, FailureInfo.LIQUIDATE_FRESHNESS_CHECK), 0);
         }
 
-        /* Verify cTokenCollateral market's block number equals current block number */
-        if (cTokenCollateral.accrualBlockNumber() != getBlockNumber()) {
+        /* Verify nTokenCollateral market's block number equals current block number */
+        if (nTokenCollateral.accrualBlockNumber() != getBlockNumber()) {
             return (fail(Error.MARKET_NOT_FRESH, FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK), 0);
         }
 
@@ -996,40 +996,40 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
         // (No safe failures beyond this point)
 
         /* We calculate the number of collateral tokens that will be seized */
-        (uint amountSeizeError, uint seizeTokens) = comptroller.liquidateCalculateSeizeTokens(address(this), address(cTokenCollateral), actualRepayAmount);
+        (uint amountSeizeError, uint seizeTokens) = comptroller.liquidateCalculateSeizeTokens(address(this), address(nTokenCollateral), actualRepayAmount);
         require(amountSeizeError == uint(Error.NO_ERROR), "LIQUIDATE_COMPTROLLER_CALCULATE_AMOUNT_SEIZE_FAILED");
 
         /* Revert if borrower collateral token balance < seizeTokens */
-        require(cTokenCollateral.balanceOf(borrower) >= seizeTokens, "LIQUIDATE_SEIZE_TOO_MUCH");
+        require(nTokenCollateral.balanceOf(borrower) >= seizeTokens, "LIQUIDATE_SEIZE_TOO_MUCH");
 
         // If this is also the collateral, run seizeInternal to avoid re-entrancy, otherwise make an external call
         uint seizeError;
-        if (address(cTokenCollateral) == address(this)) {
+        if (address(nTokenCollateral) == address(this)) {
             seizeError = seizeInternal(address(this), liquidator, borrower, seizeTokens);
         } else {
-            seizeError = cTokenCollateral.seize(liquidator, borrower, seizeTokens);
+            seizeError = nTokenCollateral.seize(liquidator, borrower, seizeTokens);
         }
 
         /* Revert if seize tokens fails (since we cannot be sure of side effects) */
         require(seizeError == uint(Error.NO_ERROR), "token seizure failed");
 
         /* We emit a LiquidateBorrow event */
-        emit LiquidateBorrow(liquidator, borrower, actualRepayAmount, address(cTokenCollateral), seizeTokens);
+        emit LiquidateBorrow(liquidator, borrower, actualRepayAmount, address(nTokenCollateral), seizeTokens);
 
         /* We call the defense hook */
         // unused function
-        // comptroller.liquidateBorrowVerify(address(this), address(cTokenCollateral), liquidator, borrower, actualRepayAmount, seizeTokens);
+        // comptroller.liquidateBorrowVerify(address(this), address(nTokenCollateral), liquidator, borrower, actualRepayAmount, seizeTokens);
 
         return (uint(Error.NO_ERROR), actualRepayAmount);
     }
 
     /**
      * @notice Transfers collateral tokens (this market) to the liquidator.
-     * @dev Will fail unless called by another cToken during the process of liquidation.
-     *  Its absolutely critical to use msg.sender as the borrowed cToken and not a parameter.
+     * @dev Will fail unless called by another nToken during the process of liquidation.
+     *  Its absolutely critical to use msg.sender as the borrowed nToken and not a parameter.
      * @param liquidator The account receiving seized collateral
      * @param borrower The account having collateral seized
-     * @param seizeTokens The number of cTokens to seize
+     * @param seizeTokens The number of nTokens to seize
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
     function seize(address liquidator, address borrower, uint seizeTokens) external nonReentrant returns (uint) {
@@ -1050,12 +1050,12 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
 
     /**
      * @notice Transfers collateral tokens (this market) to the liquidator.
-     * @dev Called only during an in-kind liquidation, or by liquidateBorrow during the liquidation of another CToken.
-     *  Its absolutely critical to use msg.sender as the seizer cToken and not a parameter.
-     * @param seizerToken The contract seizing the collateral (i.e. borrowed cToken)
+     * @dev Called only during an in-kind liquidation, or by liquidateBorrow during the liquidation of another NToken.
+     *  Its absolutely critical to use msg.sender as the seizer nToken and not a parameter.
+     * @param seizerToken The contract seizing the collateral (i.e. borrowed nToken)
      * @param liquidator The account receiving seized collateral
      * @param borrower The account having collateral seized
-     * @param seizeTokens The number of cTokens to seize
+     * @param seizeTokens The number of nTokens to seize
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
     function seizeInternal(address seizerToken, address liquidator, address borrower, uint seizeTokens) internal returns (uint) {
@@ -1281,8 +1281,8 @@ contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
 
         /*
          * We call doTransferIn for the caller and the addAmount
-         *  Note: The cToken must handle variations between ERC-20 and ETH underlying.
-         *  On success, the cToken holds an additional addAmount of cash.
+         *  Note: The nToken must handle variations between ERC-20 and ETH underlying.
+         *  On success, the nToken holds an additional addAmount of cash.
          *  doTransferIn reverts if anything goes wrong, since we can't be sure if side effects occurred.
          *  it returns the amount actually transferred, in case of a fee.
          */

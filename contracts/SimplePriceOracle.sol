@@ -1,28 +1,28 @@
 pragma solidity ^0.5.16;
 
 import "./PriceOracle.sol";
-import "./CErc20.sol";
+import "./NErc20.sol";
 
 contract SimplePriceOracle is PriceOracle {
     mapping(address => uint) prices;
     event PricePosted(address asset, uint previousPriceMantissa, uint requestedPriceMantissa, uint newPriceMantissa);
 
-    function _getUnderlyingAddress(CToken cToken) private view returns (address) {
+    function _getUnderlyingAddress(NToken nToken) private view returns (address) {
         address asset;
-        if (compareStrings(cToken.symbol(), "cETH")) {
+        if (compareStrings(nToken.symbol(), "cETH")) {
             asset = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
         } else {
-            asset = address(CErc20(address(cToken)).underlying());
+            asset = address(NErc20(address(nToken)).underlying());
         }
         return asset;
     }
 
-    function getUnderlyingPrice(CToken cToken) public view returns (uint) {
-        return prices[_getUnderlyingAddress(cToken)];
+    function getUnderlyingPrice(NToken nToken) public view returns (uint) {
+        return prices[_getUnderlyingAddress(nToken)];
     }
 
-    function setUnderlyingPrice(CToken cToken, uint underlyingPriceMantissa) public {
-        address asset = _getUnderlyingAddress(cToken);
+    function setUnderlyingPrice(NToken nToken, uint underlyingPriceMantissa) public {
+        address asset = _getUnderlyingAddress(nToken);
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
     }

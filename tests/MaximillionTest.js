@@ -6,7 +6,7 @@ const {
 
 const {
   makeNiutroller,
-  makeCToken,
+  makeNToken,
   makePriceOracle,
   pretendBorrow,
   borrowSnapshot
@@ -14,16 +14,16 @@ const {
 
 describe('Maximillion', () => {
   let root, borrower;
-  let maximillion, cEther;
+  let maximillion, nEther;
   beforeEach(async () => {
     [root, borrower] = saddle.accounts;
-    cEther = await makeCToken({kind: "cether", supportMarket: true});
-    maximillion = await deploy('Maximillion', [cEther._address]);
+    nEther = await makeNToken({kind: "cether", supportMarket: true});
+    maximillion = await deploy('Maximillion', [nEther._address]);
   });
 
   describe("constructor", () => {
-    it("sets address of cEther", async () => {
-      expect(await call(maximillion, "cEther")).toEqual(cEther._address);
+    it("sets address of nEther", async () => {
+      expect(await call(maximillion, "nEther")).toEqual(nEther._address);
     });
   });
 
@@ -38,24 +38,24 @@ describe('Maximillion', () => {
     });
 
     it("repays part of a borrow", async () => {
-      await pretendBorrow(cEther, borrower, 1, 1, 150);
+      await pretendBorrow(nEther, borrower, 1, 1, 150);
       const beforeBalance = await etherBalance(root);
       const result = await send(maximillion, "repayBehalf", [borrower], {value: 100});
       const gasCost = await etherGasCost(result);
       const afterBalance = await etherBalance(root);
-      const afterBorrowSnap = await borrowSnapshot(cEther, borrower);
+      const afterBorrowSnap = await borrowSnapshot(nEther, borrower);
       expect(result).toSucceed();
       expect(afterBalance).toEqualNumber(beforeBalance.minus(gasCost).minus(100));
       expect(afterBorrowSnap.principal).toEqualNumber(50);
     });
 
     it("repays a full borrow and refunds the rest", async () => {
-      await pretendBorrow(cEther, borrower, 1, 1, 90);
+      await pretendBorrow(nEther, borrower, 1, 1, 90);
       const beforeBalance = await etherBalance(root);
       const result = await send(maximillion, "repayBehalf", [borrower], {value: 100});
       const gasCost = await etherGasCost(result);
       const afterBalance = await etherBalance(root);
-      const afterBorrowSnap = await borrowSnapshot(cEther, borrower);
+      const afterBorrowSnap = await borrowSnapshot(nEther, borrower);
       expect(result).toSucceed();
       expect(afterBalance).toEqualNumber(beforeBalance.minus(gasCost).minus(90));
       expect(afterBorrowSnap.principal).toEqualNumber(0);

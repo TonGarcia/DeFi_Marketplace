@@ -1,15 +1,15 @@
 pragma solidity ^0.5.16;
 
-import "./CToken.sol";
+import "./NToken.sol";
 
 /**
- * @title Niural's CEther Contract
- * @notice CToken which wraps Ether
+ * @title Niural's NEther Contract
+ * @notice NToken which wraps Ether
  * @author Niural
  */
-contract CEther is CToken {
+contract NEther is NToken {
     /**
-     * @notice Construct a new CEther money market
+     * @notice Construct a new NEther money market
      * @param comptroller_ The address of the Niutroller
      * @param interestRateModel_ The address of the interest rate model
      * @param initialExchangeRateMantissa_ The initial exchange rate, scaled by 1e18
@@ -38,7 +38,7 @@ contract CEther is CToken {
     /*** User Interface ***/
 
     /**
-     * @notice Sender supplies assets into the market and receives cTokens in exchange
+     * @notice Sender supplies assets into the market and receives nTokens in exchange
      * @dev Reverts upon any failure
      */
     function mint() external payable {
@@ -47,9 +47,9 @@ contract CEther is CToken {
     }
 
     /**
-     * @notice Sender redeems cTokens in exchange for the underlying asset
+     * @notice Sender redeems nTokens in exchange for the underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
-     * @param redeemTokens The number of cTokens to redeem into underlying
+     * @param redeemTokens The number of nTokens to redeem into underlying
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
      */
     function redeem(uint redeemTokens) external returns (uint) {
@@ -57,7 +57,7 @@ contract CEther is CToken {
     }
 
     /**
-     * @notice Sender redeems cTokens in exchange for a specified amount of underlying asset
+     * @notice Sender redeems nTokens in exchange for a specified amount of underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param redeemAmount The amount of underlying to redeem
      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
@@ -98,11 +98,11 @@ contract CEther is CToken {
      * @notice The sender liquidates the borrowers collateral.
      *  The collateral seized is transferred to the liquidator.
      * @dev Reverts upon any failure
-     * @param borrower The borrower of this cToken to be liquidated
-     * @param cTokenCollateral The market in which to seize collateral from the borrower
+     * @param borrower The borrower of this nToken to be liquidated
+     * @param nTokenCollateral The market in which to seize collateral from the borrower
      */
-    function liquidateBorrow(address borrower, CToken cTokenCollateral) external payable {
-        (uint err,) = liquidateBorrowInternal(borrower, msg.value, cTokenCollateral);
+    function liquidateBorrow(address borrower, NToken nTokenCollateral) external payable {
+        (uint err,) = liquidateBorrowInternal(borrower, msg.value, nTokenCollateral);
         requireNoError(err, "liquidateBorrow failed");
     }
 
@@ -115,7 +115,7 @@ contract CEther is CToken {
     }
 
     /**
-     * @notice Send Ether to CEther to mint
+     * @notice Send Ether to NEther to mint
      */
     function () external payable {
         (uint err,) = mintInternal(msg.value);

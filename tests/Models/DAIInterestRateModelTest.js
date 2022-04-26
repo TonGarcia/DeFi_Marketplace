@@ -52,7 +52,7 @@ function daiSupplyRate(dsr, duty, mkrBase, jump, kink, cash, borrows, reserves, 
   return cashSupplyRate.plus(lendingSupplyRate).toNumber();
 }
 
-let fork = "https://kovan-eth.compound.finance/@14764778";
+let fork = "https://kovan-eth.niural.finance/@14764778";
 
 async function getKovanFork() {
   const kovan = new web3.constructor(

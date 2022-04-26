@@ -4,12 +4,12 @@ Test "Enter Markets Idempotent"
 	NewNiutroller
 	Assert Equal (Niutroller MembershipLength Geoff) Zero
 	Assert Equal (Niutroller AssetsIn Geoff) []
-	ListedCToken ZRX cZRX
+	ListedNToken ZRX cZRX
 	EnterMarkets Geoff cZRX
-	Assert Log MarketEntered (cToken (Address cZRX)) (account (Address Geoff))
+	Assert Log MarketEntered (nToken (Address cZRX)) (account (Address Geoff))
 	Assert Equal (Niutroller MembershipLength Geoff) (Exactly 1)
 	Assert True (Niutroller CheckMembership Geoff cZRX)
-	ListedCToken OMG cOMG
+	ListedNToken OMG cOMG
 	EnterMarkets Geoff cZRX cOMG
 	Assert Equal (Niutroller MembershipLength Geoff) (Exactly 2)
 	Assert True (Niutroller CheckMembership Geoff cZRX)
@@ -19,10 +19,10 @@ Test "Enter Markets Idempotent"
 Test "Entered Market Must Be Supported"
 	NewNiutroller
 	Assert Equal (Niutroller MembershipLength Geoff) Zero
-	ListedCToken ZRX cZRX
+	ListedNToken ZRX cZRX
 	EnterMarkets Geoff cZRX
 	Assert Equal (Niutroller MembershipLength Geoff) (Exactly 1)
-	NewCToken OMG cOMG
+	NewNToken OMG cOMG
 	EnterMarkets Geoff cZRX cOMG
 	Assert Equal (Niutroller MembershipLength Geoff) (Exactly 1)
 	Assert True (Niutroller CheckMembership Geoff cZRX)
@@ -35,7 +35,7 @@ Test "Entered Market Must Be Supported"
 
 Test "Exit single market"
 	NewNiutroller
-	ListedCToken ZRX cZRX
+	ListedNToken ZRX cZRX
 	EnterMarkets Geoff cZRX
 	Assert Equal (Niutroller AssetsIn Geoff) [(Address cZRX)]
 	ExitMarket Geoff cZRX
@@ -43,14 +43,14 @@ Test "Exit single market"
 
 Test "Exit non-entered market"
 	NewNiutroller
-	ListedCToken ZRX cZRX
+	ListedNToken ZRX cZRX
 	ExitMarket Geoff cZRX
 	Assert Equal (Niutroller AssetsIn Geoff) []
 
 Test "Exit one of two market from the front"
 	NewNiutroller
-	ListedCToken ZRX cZRX
-	ListedCToken OMG cOMG
+	ListedNToken ZRX cZRX
+	ListedNToken OMG cOMG
 	EnterMarkets Geoff cZRX cOMG
 	Assert Equal (Niutroller AssetsIn Geoff) [(Address cZRX) (Address cOMG)]
 	ExitMarket Geoff cZRX
@@ -58,8 +58,8 @@ Test "Exit one of two market from the front"
 
 Test "Exit one of two market from the back"
 	NewNiutroller
-	ListedCToken ZRX cZRX
-	ListedCToken OMG cOMG
+	ListedNToken ZRX cZRX
+	ListedNToken OMG cOMG
 	EnterMarkets Geoff cZRX cOMG
 	Assert Equal (Niutroller AssetsIn Geoff) [(Address cZRX) (Address cOMG)]
 	ExitMarket Geoff cOMG
@@ -67,11 +67,11 @@ Test "Exit one of two market from the back"
 
 Test "Exit multiple markets"
 	NewNiutroller
-	ListedCToken ZRX cZRX
-	ListedCToken OMG cOMG
-	ListedCToken BAT cBAT
-	ListedCToken REP cREP
-	ListedCToken DAI cDAI
+	ListedNToken ZRX cZRX
+	ListedNToken OMG cOMG
+	ListedNToken BAT cBAT
+	ListedNToken REP cREP
+	ListedNToken DAI cDAI
 	EnterMarkets Geoff cZRX cOMG cBAT cREP cDAI
 	Assert Equal (Niutroller AssetsIn Geoff) [(Address cZRX) (Address cOMG) (Address cBAT) (Address cREP) (Address cDAI)]
 	ExitMarket Geoff cZRX
@@ -87,11 +87,11 @@ Test "Exit multiple markets"
 
 Test "Realistic Market Scenario"
 	PricedNiutroller
-	ListedCToken ZRX cZRX
+	ListedNToken ZRX cZRX
 	SetPriceCF cZRX 0.002 0.4
 	ListedEtherToken cETH
 	Niutroller SetCollateralFactor cEth 0.8
-	ListedCToken BAT cBAT
+	ListedNToken BAT cBAT
 	SetPriceCF cBAT 0.0015 0.3
 	-- Mint some cZRX and cETH
 	Prep Geoff 1250e18 ZRX cZRX

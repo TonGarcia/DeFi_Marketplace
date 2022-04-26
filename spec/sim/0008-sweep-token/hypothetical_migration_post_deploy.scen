@@ -6,7 +6,7 @@ Alias cUNISender "0xf22c2e3475e4a066f4e9f44567c950dd36112d05"
 Alias UniHolder "0x5518C31f4A22782E5a7046711FACF985985530c7"
 Alias CUSDCHolder "0x926e78b8DF67e129011750Dd7b975f8E50D3d7Ad"
 Alias NewcUNIImplementation "0xa1849880593E96d2f7dF77D0D38a7f2372aE10E0"
-Web3Fork "https://mainnet-eth.compound.finance/@11805759" (NiuHolder CUSDCHolder UniHolder)
+Web3Fork "https://mainnet-eth.niural.finance/@11805759" (NiuHolder CUSDCHolder UniHolder)
 UseConfigs mainnet
 
 
@@ -27,16 +27,16 @@ Assert Equal (Erc20 (Address cUNI) TokenBalance Timelock) (179874258721489)
 
 -- Ensure accrue interest works
 MineBlock
-CToken cUNI AccrueInterest
+NToken cUNI AccrueInterest
 
 -- Mint Test
 Assert Equal (Erc20 Uni TokenBalance cUNI) (9213234645306032140780326)
 From UniHolder (Erc20 Uni Approve cUNI 10000000)
-From UniHolder (CToken cUNI Mint 10000000)
+From UniHolder (NToken cUNI Mint 10000000)
 Assert Equal (Erc20 Uni TokenBalance cUNI) (9213234645306032150780326)
 
 -- Borrow Test
-From CUSDCHolder (CToken cUNI Borrow 10000000)
+From CUSDCHolder (NToken cUNI Borrow 10000000)
 Assert Equal (Erc20 Uni TokenBalance CUSDCHolder) (10000000)
 
 Print "cUNI implementation migration ok" 

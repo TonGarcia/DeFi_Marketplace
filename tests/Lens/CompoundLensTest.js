@@ -5,7 +5,7 @@ const {
 } = require('../Utils/Ethereum');
 const {
   makeNiutroller,
-  makeCToken,
+  makeNToken,
 } = require('../Utils/Niural');
 
 function cullTuple(tuple) {
@@ -22,22 +22,22 @@ function cullTuple(tuple) {
 }
 
 describe('NiuralLens', () => {
-  let compoundLens;
+  let niuralLens;
   let acct;
 
   beforeEach(async () => {
-    compoundLens = await deploy('NiuralLens');
+    niuralLens = await deploy('NiuralLens');
     acct = accounts[0];
   });
 
-  describe('cTokenMetadata', () => {
+  describe('nTokenMetadata', () => {
     it('is correct for a cErc20', async () => {
-      let cErc20 = await makeCToken();
+      let cErc20 = await makeNToken();
       expect(
-        cullTuple(await call(compoundLens, 'cTokenMetadata', [cErc20._address]))
+        cullTuple(await call(niuralLens, 'nTokenMetadata', [cErc20._address]))
       ).toEqual(
         {
-          cToken: cErc20._address,
+          nToken: cErc20._address,
           exchangeRateCurrent: "1000000000000000000",
           supplyRatePerBlock: "0",
           borrowRatePerBlock: "0",
@@ -49,7 +49,7 @@ describe('NiuralLens', () => {
           isListed:false,
           collateralFactorMantissa: "0",
           underlyingAssetAddress: await call(cErc20, 'underlying', []),
-          cTokenDecimals: "8",
+          nTokenDecimals: "8",
           underlyingDecimals: "18",
           compSupplySpeed: "0",
           compBorrowSpeed: "0",
@@ -59,13 +59,13 @@ describe('NiuralLens', () => {
     });
 
     it('is correct for cEth', async () => {
-      let cEth = await makeCToken({kind: 'cether'});
+      let cEth = await makeNToken({kind: 'cether'});
       expect(
-        cullTuple(await call(compoundLens, 'cTokenMetadata', [cEth._address]))
+        cullTuple(await call(niuralLens, 'nTokenMetadata', [cEth._address]))
       ).toEqual({
         borrowRatePerBlock: "0",
-        cToken: cEth._address,
-        cTokenDecimals: "8",
+        nToken: cEth._address,
+        nTokenDecimals: "8",
         collateralFactorMantissa: "0",
         exchangeRateCurrent: "1000000000000000000",
         isListed: false,
@@ -84,13 +84,13 @@ describe('NiuralLens', () => {
     });
     it('is correct for cErc20 with set comp speeds', async () => {
       let comptroller = await makeNiutroller();
-      let cErc20 = await makeCToken({comptroller, supportMarket: true});
+      let cErc20 = await makeNToken({comptroller, supportMarket: true});
       await send(comptroller, '_setNiuSpeeds', [[cErc20._address], [etherExp(0.25)], [etherExp(0.75)]]);
       expect(
-        cullTuple(await call(compoundLens, 'cTokenMetadata', [cErc20._address]))
+        cullTuple(await call(niuralLens, 'nTokenMetadata', [cErc20._address]))
       ).toEqual(
         {
-          cToken: cErc20._address,
+          nToken: cErc20._address,
           exchangeRateCurrent: "1000000000000000000",
           supplyRatePerBlock: "0",
           borrowRatePerBlock: "0",
@@ -102,7 +102,7 @@ describe('NiuralLens', () => {
           isListed: true,
           collateralFactorMantissa: "0",
           underlyingAssetAddress: await call(cErc20, 'underlying', []),
-          cTokenDecimals: "8",
+          nTokenDecimals: "8",
           underlyingDecimals: "18",
           compSupplySpeed: "250000000000000000",
           compBorrowSpeed: "750000000000000000",
@@ -112,15 +112,15 @@ describe('NiuralLens', () => {
     });
   });
 
-  describe('cTokenMetadataAll', () => {
-    it('is correct for a cErc20 and cEther', async () => {
-      let cErc20 = await makeCToken();
-      let cEth = await makeCToken({kind: 'cether'});
+  describe('nTokenMetadataAll', () => {
+    it('is correct for a cErc20 and nEther', async () => {
+      let cErc20 = await makeNToken();
+      let cEth = await makeNToken({kind: 'cether'});
       expect(
-        (await call(compoundLens, 'cTokenMetadataAll', [[cErc20._address, cEth._address]])).map(cullTuple)
+        (await call(niuralLens, 'nTokenMetadataAll', [[cErc20._address, cEth._address]])).map(cullTuple)
       ).toEqual([
         {
-          cToken: cErc20._address,
+          nToken: cErc20._address,
           exchangeRateCurrent: "1000000000000000000",
           supplyRatePerBlock: "0",
           borrowRatePerBlock: "0",
@@ -132,7 +132,7 @@ describe('NiuralLens', () => {
           isListed:false,
           collateralFactorMantissa: "0",
           underlyingAssetAddress: await call(cErc20, 'underlying', []),
-          cTokenDecimals: "8",
+          nTokenDecimals: "8",
           underlyingDecimals: "18",
           compSupplySpeed: "0",
           compBorrowSpeed: "0",
@@ -140,8 +140,8 @@ describe('NiuralLens', () => {
         },
         {
           borrowRatePerBlock: "0",
-          cToken: cEth._address,
-          cTokenDecimals: "8",
+          nToken: cEth._address,
+          nTokenDecimals: "8",
           collateralFactorMantissa: "0",
           exchangeRateCurrent: "1000000000000000000",
           isListed: false,
@@ -161,17 +161,17 @@ describe('NiuralLens', () => {
     });
   });
 
-  describe('cTokenBalances', () => {
+  describe('nTokenBalances', () => {
     it('is correct for cERC20', async () => {
-      let cErc20 = await makeCToken();
+      let cErc20 = await makeNToken();
       expect(
-        cullTuple(await call(compoundLens, 'cTokenBalances', [cErc20._address, acct]))
+        cullTuple(await call(niuralLens, 'nTokenBalances', [cErc20._address, acct]))
       ).toEqual(
         {
           balanceOf: "0",
           balanceOfUnderlying: "0",
           borrowBalanceCurrent: "0",
-          cToken: cErc20._address,
+          nToken: cErc20._address,
           tokenAllowance: "0",
           tokenBalance: "10000000000000000000000000",
         }
@@ -179,16 +179,16 @@ describe('NiuralLens', () => {
     });
 
     it('is correct for cETH', async () => {
-      let cEth = await makeCToken({kind: 'cether'});
+      let cEth = await makeNToken({kind: 'cether'});
       let ethBalance = await web3.eth.getBalance(acct);
       expect(
-        cullTuple(await call(compoundLens, 'cTokenBalances', [cEth._address, acct], {gasPrice: '0'}))
+        cullTuple(await call(niuralLens, 'nTokenBalances', [cEth._address, acct], {gasPrice: '0'}))
       ).toEqual(
         {
           balanceOf: "0",
           balanceOfUnderlying: "0",
           borrowBalanceCurrent: "0",
-          cToken: cEth._address,
+          nToken: cEth._address,
           tokenAllowance: ethBalance,
           tokenBalance: ethBalance,
         }
@@ -196,20 +196,20 @@ describe('NiuralLens', () => {
     });
   });
 
-  describe('cTokenBalancesAll', () => {
+  describe('nTokenBalancesAll', () => {
     it('is correct for cEth and cErc20', async () => {
-      let cErc20 = await makeCToken();
-      let cEth = await makeCToken({kind: 'cether'});
+      let cErc20 = await makeNToken();
+      let cEth = await makeNToken({kind: 'cether'});
       let ethBalance = await web3.eth.getBalance(acct);
       
       expect(
-        (await call(compoundLens, 'cTokenBalancesAll', [[cErc20._address, cEth._address], acct], {gasPrice: '0'})).map(cullTuple)
+        (await call(niuralLens, 'nTokenBalancesAll', [[cErc20._address, cEth._address], acct], {gasPrice: '0'})).map(cullTuple)
       ).toEqual([
         {
           balanceOf: "0",
           balanceOfUnderlying: "0",
           borrowBalanceCurrent: "0",
-          cToken: cErc20._address,
+          nToken: cErc20._address,
           tokenAllowance: "0",
           tokenBalance: "10000000000000000000000000",
         },
@@ -217,7 +217,7 @@ describe('NiuralLens', () => {
           balanceOf: "0",
           balanceOfUnderlying: "0",
           borrowBalanceCurrent: "0",
-          cToken: cEth._address,
+          nToken: cEth._address,
           tokenAllowance: ethBalance,
           tokenBalance: ethBalance,
         }
@@ -225,45 +225,45 @@ describe('NiuralLens', () => {
     })
   });
 
-  describe('cTokenUnderlyingPrice', () => {
+  describe('nTokenUnderlyingPrice', () => {
     it('gets correct price for cErc20', async () => {
-      let cErc20 = await makeCToken();
+      let cErc20 = await makeNToken();
       expect(
-        cullTuple(await call(compoundLens, 'cTokenUnderlyingPrice', [cErc20._address]))
+        cullTuple(await call(niuralLens, 'nTokenUnderlyingPrice', [cErc20._address]))
       ).toEqual(
         {
-          cToken: cErc20._address,
+          nToken: cErc20._address,
           underlyingPrice: "0",
         }
       );
     });
 
     it('gets correct price for cEth', async () => {
-      let cEth = await makeCToken({kind: 'cether'});
+      let cEth = await makeNToken({kind: 'cether'});
       expect(
-        cullTuple(await call(compoundLens, 'cTokenUnderlyingPrice', [cEth._address]))
+        cullTuple(await call(niuralLens, 'nTokenUnderlyingPrice', [cEth._address]))
       ).toEqual(
         {
-          cToken: cEth._address,
+          nToken: cEth._address,
           underlyingPrice: "0",
         }
       );
     });
   });
 
-  describe('cTokenUnderlyingPriceAll', () => {
+  describe('nTokenUnderlyingPriceAll', () => {
     it('gets correct price for both', async () => {
-      let cErc20 = await makeCToken();
-      let cEth = await makeCToken({kind: 'cether'});
+      let cErc20 = await makeNToken();
+      let cEth = await makeNToken({kind: 'cether'});
       expect(
-        (await call(compoundLens, 'cTokenUnderlyingPriceAll', [[cErc20._address, cEth._address]])).map(cullTuple)
+        (await call(niuralLens, 'nTokenUnderlyingPriceAll', [[cErc20._address, cEth._address]])).map(cullTuple)
       ).toEqual([
         {
-          cToken: cErc20._address,
+          nToken: cErc20._address,
           underlyingPrice: "0",
         },
         {
-          cToken: cEth._address,
+          nToken: cEth._address,
           underlyingPrice: "0",
         }
       ]);
@@ -275,7 +275,7 @@ describe('NiuralLens', () => {
       let comptroller = await makeNiutroller();
 
       expect(
-        cullTuple(await call(compoundLens, 'getAccountLimits', [comptroller._address, acct]))
+        cullTuple(await call(niuralLens, 'getAccountLimits', [comptroller._address, acct]))
       ).toEqual({
         liquidity: "0",
         markets: [],
@@ -305,7 +305,7 @@ describe('NiuralLens', () => {
     describe('getGovReceipts', () => {
       it('gets correct values', async () => {
         expect(
-          (await call(compoundLens, 'getGovReceipts', [gov._address, acct, [proposalId]])).map(cullTuple)
+          (await call(niuralLens, 'getGovReceipts', [gov._address, acct, [proposalId]])).map(cullTuple)
         ).toEqual([
           {
             hasVoted: false,
@@ -320,7 +320,7 @@ describe('NiuralLens', () => {
     describe('getGovProposals', () => {
       it('gets correct values', async () => {
         expect(
-          (await call(compoundLens, 'getGovProposals', [gov._address, [proposalId]])).map(cullTuple)
+          (await call(niuralLens, 'getGovProposals', [gov._address, [proposalId]])).map(cullTuple)
         ).toEqual([
           {
             againstVotes: "0",
@@ -352,7 +352,7 @@ describe('NiuralLens', () => {
     describe('getNiuBalanceMetadata', () => {
       it('gets correct values', async () => {
         expect(
-          cullTuple(await call(compoundLens, 'getNiuBalanceMetadata', [comp._address, acct]))
+          cullTuple(await call(niuralLens, 'getNiuBalanceMetadata', [comp._address, acct]))
         ).toEqual({
           balance: "10000000000000000000000000",
           delegate: "0x0000000000000000000000000000000000000000",
@@ -367,7 +367,7 @@ describe('NiuralLens', () => {
         await send(comptroller, 'setNiuAccrued', [acct, 5]); // harness only
 
         expect(
-          cullTuple(await call(compoundLens, 'getNiuBalanceMetadataExt', [comp._address, comptroller._address, acct]))
+          cullTuple(await call(niuralLens, 'getNiuBalanceMetadataExt', [comp._address, comptroller._address, acct]))
         ).toEqual({
           balance: "10000000000000000000000000",
           delegate: "0x0000000000000000000000000000000000000000",
@@ -380,7 +380,7 @@ describe('NiuralLens', () => {
     describe('getNiuVotes', () => {
       it('gets correct values', async () => {
         expect(
-          (await call(compoundLens, 'getNiuVotes', [comp._address, acct, [currentBlock, currentBlock - 1]])).map(cullTuple)
+          (await call(niuralLens, 'getNiuVotes', [comp._address, acct, [currentBlock, currentBlock - 1]])).map(cullTuple)
         ).toEqual([
           {
             blockNumber: currentBlock.toString(),
@@ -395,7 +395,7 @@ describe('NiuralLens', () => {
 
       it('reverts on future value', async () => {
         await expect(
-          call(compoundLens, 'getNiuVotes', [comp._address, acct, [currentBlock + 1]])
+          call(niuralLens, 'getNiuVotes', [comp._address, acct, [currentBlock + 1]])
         ).rejects.toRevert('revert Niu::getPriorVotes: not yet determined')
       });
     });

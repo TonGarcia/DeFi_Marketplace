@@ -1,43 +1,43 @@
 
 Test "Set admin"
     NewNiutroller
-    NewCToken ZRX cZRX
-    Assert Equal (CToken cZRX Admin) (Address Root)
-    Assert Equal (CToken cZRX PendingAdmin) (Address Zero)
-    From Root (CToken cZRX SetPendingAdmin Geoff)
-    Assert Equal (CToken cZRX Admin) (Address Root)
-    Assert Equal (CToken cZRX PendingAdmin) (Address Geoff)
-    From Geoff (CToken cZRX AcceptAdmin)
-    Assert Equal (CToken cZRX Admin) (Address Geoff)
-    Assert Equal (CToken cZRX PendingAdmin) (Address Zero)
+    NewNToken ZRX cZRX
+    Assert Equal (NToken cZRX Admin) (Address Root)
+    Assert Equal (NToken cZRX PendingAdmin) (Address Zero)
+    From Root (NToken cZRX SetPendingAdmin Geoff)
+    Assert Equal (NToken cZRX Admin) (Address Root)
+    Assert Equal (NToken cZRX PendingAdmin) (Address Geoff)
+    From Geoff (NToken cZRX AcceptAdmin)
+    Assert Equal (NToken cZRX Admin) (Address Geoff)
+    Assert Equal (NToken cZRX PendingAdmin) (Address Zero)
 
 Test "Set admin to contructor argument"
     NewNiutroller
-    NewCToken ZRX cZRX admin:Torrey
-    Assert Equal (CToken cZRX Admin) (Address Torrey)
-    Assert Equal (CToken cZRX PendingAdmin) (Address Zero)
-    From Torrey (CToken cZRX SetPendingAdmin Geoff)
-    Assert Equal (CToken cZRX Admin) (Address Torrey)
-    Assert Equal (CToken cZRX PendingAdmin) (Address Geoff)
-    From Geoff (CToken cZRX AcceptAdmin)
-    Assert Equal (CToken cZRX Admin) (Address Geoff)
-    Assert Equal (CToken cZRX PendingAdmin) (Address Zero)
+    NewNToken ZRX cZRX admin:Torrey
+    Assert Equal (NToken cZRX Admin) (Address Torrey)
+    Assert Equal (NToken cZRX PendingAdmin) (Address Zero)
+    From Torrey (NToken cZRX SetPendingAdmin Geoff)
+    Assert Equal (NToken cZRX Admin) (Address Torrey)
+    Assert Equal (NToken cZRX PendingAdmin) (Address Geoff)
+    From Geoff (NToken cZRX AcceptAdmin)
+    Assert Equal (NToken cZRX Admin) (Address Geoff)
+    Assert Equal (NToken cZRX PendingAdmin) (Address Zero)
 
 
 Test "Fail to set pending admin"
     NewNiutroller
-    NewCToken ZRX cZRX
-    Invariant Remains (CToken cZRX Admin) (Address Root)
-    Invariant Remains (CToken cZRX PendingAdmin) (Address Zero)
+    NewNToken ZRX cZRX
+    Invariant Remains (NToken cZRX Admin) (Address Root)
+    Invariant Remains (NToken cZRX PendingAdmin) (Address Zero)
     AllowFailures
-    From Geoff (CToken cZRX SetPendingAdmin Geoff)
+    From Geoff (NToken cZRX SetPendingAdmin Geoff)
     Assert Failure UNAUTHORIZED SET_PENDING_ADMIN_OWNER_CHECK
 
 Test "Fail to accept admin"
     NewNiutroller
-    NewCToken ZRX cZRX
-    Invariant Remains (CToken cZRX Admin) (Address Root)
-    Invariant Remains (CToken cZRX PendingAdmin) (Address Zero)
+    NewNToken ZRX cZRX
+    Invariant Remains (NToken cZRX Admin) (Address Root)
+    Invariant Remains (NToken cZRX PendingAdmin) (Address Zero)
     AllowFailures
-    From Geoff (CToken cZRX AcceptAdmin)
+    From Geoff (NToken cZRX AcceptAdmin)
     Assert Failure UNAUTHORIZED ACCEPT_ADMIN_PENDING_ADMIN_CHECK

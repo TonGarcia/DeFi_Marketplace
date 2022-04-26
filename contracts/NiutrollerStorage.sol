@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 
-import "./CToken.sol";
+import "./NToken.sol";
 import "./PriceOracle.sol";
 
 contract UnitrollerAdminStorage {
@@ -50,7 +50,7 @@ contract NiutrollerV1Storage is UnitrollerAdminStorage {
     /**
      * @notice Per-account mapping of "assets you are in", capped by maxAssets
      */
-    mapping(address => CToken[]) public accountAssets;
+    mapping(address => NToken[]) public accountAssets;
 
 }
 
@@ -74,7 +74,7 @@ contract NiutrollerV2Storage is NiutrollerV1Storage {
     }
 
     /**
-     * @notice Official mapping of cTokens -> Market metadata
+     * @notice Official mapping of nTokens -> Market metadata
      * @dev Used e.g. to determine if a market is supported
      */
     mapping(address => Market) public markets;
@@ -104,7 +104,7 @@ contract NiutrollerV3Storage is NiutrollerV2Storage {
     }
 
     /// @notice A list of all markets
-    CToken[] public allMarkets;
+    NToken[] public allMarkets;
 
     /// @notice The rate at which the flywheel distributes COMP, per block
     uint public compRate;
@@ -132,7 +132,7 @@ contract NiutrollerV4Storage is NiutrollerV3Storage {
     // @notice The borrowCapGuardian can set borrowCaps to any number for any market. Lowering the borrow cap could disable borrowing on the given market.
     address public borrowCapGuardian;
 
-    // @notice Borrow caps enforced by borrowAllowed for each cToken address. Defaults to zero which corresponds to unlimited borrowing.
+    // @notice Borrow caps enforced by borrowAllowed for each nToken address. Defaults to zero which corresponds to unlimited borrowing.
     mapping(address => uint) public borrowCaps;
 }
 

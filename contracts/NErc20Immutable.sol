@@ -1,13 +1,13 @@
 pragma solidity ^0.5.16;
 
-import "./CErc20.sol";
+import "./NErc20.sol";
 
 /**
- * @title Niural's CErc20Immutable Contract
- * @notice CTokens which wrap an EIP-20 underlying and are immutable
+ * @title Niural's NErc20Immutable Contract
+ * @notice NTokens which wrap an EIP-20 underlying and are immutable
  * @author Niural
  */
-contract CErc20Immutable is CErc20 {
+contract NErc20Immutable is NErc20 {
     /**
      * @notice Construct a new money market
      * @param underlying_ The address of the underlying asset

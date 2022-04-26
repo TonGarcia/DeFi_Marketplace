@@ -4,7 +4,7 @@ PrintTransactionLogs
 Alias NiuHolder "0x19bc62ff7cd9ffd6bdced9802ff718f09f7259f1"
 Alias USDCWhale "0x3dfd23a6c5e8bbcfc9581d2e864a68feb6a076d3"
 Alias Arr00 "0x2b384212edc04ae8bb41738d05ba20e33277bf33"
-Web3Fork "https://mainnet-eth.compound.finance/@10706095" (NiuHolder USDCWhale)
+Web3Fork "https://mainnet-eth.niural.finance/@10706095" (NiuHolder USDCWhale)
 UseConfigs mainnet
 
 -- Deploy the flywheel impl
@@ -30,18 +30,18 @@ Assert Equal (Address (Unitroller Implementation)) (Address NiutrollerG5)
 Assert Equal (Erc20 SAI TokenBalance (Address Arr00)) (2360000000000000000000)
 
 From USDCWhale (Trx GasPrice 0 (Erc20 USDC Approve cUSDC UInt256Max))
-From USDCWhale (Trx GasPrice 0 (CToken cUSDC Mint 214000000e6))
-From USDCWhale (Trx GasPrice 0 (CToken cUSDC Borrow 1000000e6))
+From USDCWhale (Trx GasPrice 0 (NToken cUSDC Mint 214000000e6))
+From USDCWhale (Trx GasPrice 0 (NToken cUSDC Borrow 1000000e6))
 
 From NiuHolder (Niutroller SetMarketBorrowCaps (cUSDC) (83000000e6))
 
 AllowFailures
-From USDCWhale (Trx GasPrice 0 (CToken cUSDC Borrow 1000000e6))
+From USDCWhale (Trx GasPrice 0 (NToken cUSDC Borrow 1000000e6))
 Assert Revert
 
 Successfully
-From USDCWhale (Trx GasPrice 0 (CToken cUSDC RepayBorrow 1000000e6))
-From USDCWhale (Trx GasPrice 0 (CToken cUSDC Borrow 10e6))
+From USDCWhale (Trx GasPrice 0 (NToken cUSDC RepayBorrow 1000000e6))
+From USDCWhale (Trx GasPrice 0 (NToken cUSDC Borrow 10e6))
 
 
 

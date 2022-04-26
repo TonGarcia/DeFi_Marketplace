@@ -5,7 +5,7 @@ import "./NiutrollerStorage.sol";
 /**
  * @title NiutrollerCore
  * @dev Storage for the comptroller is at this address, while execution is delegated to the `comptrollerImplementation`.
- * CTokens should reference this contract as their comptroller.
+ * NTokens should reference this contract as their comptroller.
  */
 contract Unitroller is UnitrollerAdminStorage, NiutrollerErrorReporter {
 

@@ -88,8 +88,8 @@ contract CEtherHarness is CEther {
         return err;
     }
 
-    function harnessRedeemFresh(address payable account, uint cTokenAmount, uint underlyingAmount) public returns (uint) {
-        return super.redeemFresh(account, cTokenAmount, underlyingAmount);
+    function harnessRedeemFresh(address payable account, uint nTokenAmount, uint underlyingAmount) public returns (uint) {
+        return super.redeemFresh(account, nTokenAmount, underlyingAmount);
     }
 
     function harnessAccountBorrows(address account) public view returns (uint principal, uint interestIndex) {
@@ -114,8 +114,8 @@ contract CEtherHarness is CEther {
         return err;
     }
 
-    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, CToken cTokenCollateral) public returns (uint) {
-        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, cTokenCollateral);
+    function harnessLiquidateBorrowFresh(address liquidator, address borrower, uint repayAmount, NToken nTokenCollateral) public returns (uint) {
+        (uint err,) = liquidateBorrowFresh(liquidator, borrower, repayAmount, nTokenCollateral);
         return err;
     }
 

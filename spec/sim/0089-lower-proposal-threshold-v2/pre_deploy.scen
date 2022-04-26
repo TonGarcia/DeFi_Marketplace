@@ -8,7 +8,7 @@ Alias NiuProposer "0xb326843982c5872768ea8E24dCe34D18b73f0B44" -- Niural Holder 
 Alias CalBlockchain "0x7AE109A63ff4DC852e063a673b40BED85D22E585"
 Alias Ratan "0xcf0Ef02C51438C821246f2e6ADe50e0F1CB0f385" -- Ratan Kaliani ETH address
 
-Web3Fork "https://mainnet-eth.compound.finance/@14251015" (NiuHolder NiuHolder2 NiuProposer CalBlockchain)
+Web3Fork "https://mainnet-eth.niural.finance/@14251015" (NiuHolder NiuHolder2 NiuProposer CalBlockchain)
 UseConfigs mainnet
 
 GovernorBravo Deploy BravoDelegate BravoDelegate2

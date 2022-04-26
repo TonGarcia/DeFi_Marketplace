@@ -8,7 +8,7 @@ contract NiutrollerCertora is Niutroller {
 
     function getHypotheticalAccountLiquidityInternal(
         address account,
-        CToken cTokenModify,
+        NToken nTokenModify,
         uint redeemTokens,
         uint borrowAmount) internal view returns (Error, uint, uint) {
         if (switcher == 0)

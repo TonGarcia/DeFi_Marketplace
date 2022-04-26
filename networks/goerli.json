@@ -80,7 +80,7 @@
     },
     "Maximillion": {
         "description": "Maximillion",
-        "cEtherAddress": "0x20572e4c090f15667cF7378e16FaD2eA0e2f3EfF",
+        "nEtherAddress": "0x20572e4c090f15667cF7378e16FaD2eA0e2f3EfF",
         "address": "0x73d3F01b8aC5063f4601C7C45DA5Fdf1b5240C92"
     },
     "NiuralLens": {
@@ -252,7 +252,7 @@
             "name": "Wrapped BTC",
             "symbol": "WBTC",
             "decimals": 8,
-            "contract": "WBTCToken",
+            "contract": "WBTNToken",
             "address": "0xC04B0d3107736C32e19F1c62b2aF67BE61d63a05"
         },
         "SAI": {
@@ -300,7 +300,7 @@
             "address": "0xD87Ba7A50B2E7E660f678A895E4B72E7CB4CCd9C"
         }
     },
-    "CTokenDelegate": {
+    "NTokenDelegate": {
         "cErc20Delegate": {
             "address": "0xB40d042a65Dd413Ae0fd85bECF8D722e16bC46F1",
             "contract": "CErc20Delegate",
@@ -313,7 +313,7 @@
             "contract": "Counter"
         }
     },
-    "cTokens": {
+    "nTokens": {
         "cZRX": {
             "name": "Niural 0x 📈",
             "symbol": "cZRX",

@@ -10,7 +10,7 @@ Alias DaiHolder "0x5f65f7b609678448494De4C87521CdF6cEf1e932" -- Gemini 4
 Alias Timelock "0x6d903f6003cca6255D85CcA4D3B5E5146dC33925"
 
 -- Fork the block prior to proposal 62 executing
-Web3Fork "https://mainnet-eth.compound.finance/@13322797" (NiuHolder CUSDCHolder DaiHolder Timelock)
+Web3Fork "https://mainnet-eth.niural.finance/@13322797" (NiuHolder CUSDCHolder DaiHolder Timelock)
 UseConfigs mainnet
 
 -- Disable USDC COMP rewards so that these rewards won't mess with our results
@@ -29,14 +29,14 @@ From DaiHolder (Erc20 DAI Transfer Jared 1000000e18)
 
 -- Pre Proposal 62: Deposit collateral and borrow SUSHI
 From Geoff (Erc20 USDC Approve (Address cUSDC) 1000000e6)
-From Geoff (CToken cUSDC Mint 1000000e6)
+From Geoff (NToken cUSDC Mint 1000000e6)
 From Geoff (Niutroller EnterMarkets (cUSDC))
-From Geoff (CToken cSUSHI Borrow 1000e18)
+From Geoff (NToken cSUSHI Borrow 1000e18)
 
 From Torrey (Erc20 USDC Approve (Address cUSDC) 1000000e6)
-From Torrey (CToken cUSDC Mint 1000000e6)
+From Torrey (NToken cUSDC Mint 1000000e6)
 From Torrey (Niutroller EnterMarkets (cUSDC))
-From Torrey (CToken cSUSHI Borrow 1000e18)
+From Torrey (NToken cSUSHI Borrow 1000e18)
 
 -- Execute proposal 62
 GovernorBravo GovernorBravo Proposal LastProposal Execute
@@ -50,7 +50,7 @@ Assert Equal (Erc20 COMP TokenBalance Geoff) (988792275103122749560) -- Huge amo
 Assert Equal (Niutroller NiuAccrued Geoff) (0)
 
 -- Cause Torrey to accrue COMP without claiming
-From Torrey (CToken cSUSHI Borrow 1e18) -- Causes COMP to be distributed but not claimed
+From Torrey (NToken cSUSHI Borrow 1e18) -- Causes COMP to be distributed but not claimed
 
 -- Deploy latest Niutroller
 NiutrollerImpl Deploy Standard NewNiutroller
@@ -78,15 +78,15 @@ Assert Equal (Niutroller NiuAccrued Torrey) (988792086947769887785) -- Huge amou
 
 -- Post bug fix: Deposit collateral (DAI) and borrow SUSHI - block COMP sending
 From Coburn (Erc20 DAI Approve (Address cDAI) 1000000e18)
-From Coburn (CToken cDAI Mint 1000000e18)
+From Coburn (NToken cDAI Mint 1000000e18)
 From Coburn (Niutroller EnterMarkets (cDAI))
-From Coburn (CToken cSUSHI Borrow 1000e18)
+From Coburn (NToken cSUSHI Borrow 1000e18)
 
 -- Post bug fix: Deposit collateral (DAI) and borrow BAT - don't block COMP sending
 From Jared (Erc20 DAI Approve (Address cDAI) 1000000e18)
-From Jared (CToken cDAI Mint 1000000e18)
+From Jared (NToken cDAI Mint 1000000e18)
 From Jared (Niutroller EnterMarkets (cDAI))
-From Jared (CToken cBAT Borrow 1000e18)
+From Jared (NToken cBAT Borrow 1000e18)
 
 -- Accrue rewards (if any)
 MineBlock

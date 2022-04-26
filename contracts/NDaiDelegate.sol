@@ -1,13 +1,13 @@
 pragma solidity ^0.5.16;
 
-import "./CErc20Delegate.sol";
+import "./NErc20Delegate.sol";
 
 /**
- * @title Niural's CDai Contract
- * @notice CToken which wraps Multi-Collateral DAI
+ * @title Niural's NDai Contract
+ * @notice NToken which wraps Multi-Collateral DAI
  * @author Niural
  */
-contract CDaiDelegate is CErc20Delegate {
+contract NDaiDelegate is NErc20Delegate {
     /**
      * @notice DAI adapter address
      */
@@ -91,7 +91,7 @@ contract CDaiDelegate is CErc20Delegate {
         daiJoin.exit(address(this), bal / RAY);
     }
 
-    /*** CToken Overrides ***/
+    /*** NToken Overrides ***/
 
     /**
       * @notice Accrues DSR then applies accrued interest to total borrows and reserves
@@ -102,7 +102,7 @@ contract CDaiDelegate is CErc20Delegate {
         // Accumulate DSR interest
         PotLike(potAddress).drip();
 
-        // Accumulate CToken interest
+        // Accumulate NToken interest
         return super.accrueInterest();
     }
 

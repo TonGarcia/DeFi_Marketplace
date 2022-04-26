@@ -260,8 +260,8 @@ export function assertionCommands() {
 
         * "Approx given:<Value> expected:<Value> tolerance:<Value>" - Asserts that given approximately matches expected.
           * E.g. "Assert Approx (Exactly 0) Zero "
-          * E.g. "Assert Approx (CToken cZRX TotalSupply) (Exactly 55) 1e-18"
-          * E.g. "Assert Approx (CToken cZRX Niutroller) (Niutroller Address) 1"
+          * E.g. "Assert Approx (NToken cZRX TotalSupply) (Exactly 55) 1e-18"
+          * E.g. "Assert Approx (NToken cZRX Niutroller) (Niutroller Address) 1"
       `,
       "Approx",
       [
@@ -277,8 +277,8 @@ export function assertionCommands() {
 
         * "Equal given:<Value> expected:<Value>" - Asserts that given matches expected.
           * E.g. "Assert Equal (Exactly 0) Zero"
-          * E.g. "Assert Equal (CToken cZRX TotalSupply) (Exactly 55)"
-          * E.g. "Assert Equal (CToken cZRX Niutroller) (Niutroller Address)"
+          * E.g. "Assert Equal (NToken cZRX TotalSupply) (Exactly 55)"
+          * E.g. "Assert Equal (NToken cZRX Niutroller) (Niutroller Address)"
       `,
       "Equal",
       [

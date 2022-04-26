@@ -1,6 +1,6 @@
 const {
   makeNiutroller,
-  makeCToken
+  makeNToken
 } = require('../Utils/Niural');
 const {
   etherExp,
@@ -17,7 +17,7 @@ describe.skip('Flywheel trace ops', () => {
     let interestRateModelOpts = {borrowRate: 0.000001};
     [root, a1, a2, a3, ...accounts] = saddle.accounts;
     comptroller = await makeNiutroller();
-    market = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
+    market = await makeNToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
     await send(comptroller, '_addNiuMarkets', [[market].map(c => c._address)]);
   });
 

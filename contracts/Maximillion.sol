@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 
-import "./CEther.sol";
+import "./NEther.sol";
 
 /**
  * @title Niural's Maximillion Contract
@@ -8,40 +8,40 @@ import "./CEther.sol";
  */
 contract Maximillion {
     /**
-     * @notice The default cEther market to repay in
+     * @notice The default nEther market to repay in
      */
-    CEther public cEther;
+    NEther public nEther;
 
     /**
-     * @notice Construct a Maximillion to repay max in a CEther market
+     * @notice Construct a Maximillion to repay max in a NEther market
      */
-    constructor(CEther cEther_) public {
-        cEther = cEther_;
+    constructor(NEther nEther_) public {
+        nEther = nEther_;
     }
 
     /**
-     * @notice msg.sender sends Ether to repay an account's borrow in the cEther market
+     * @notice msg.sender sends Ether to repay an account's borrow in the nEther market
      * @dev The provided Ether is applied towards the borrow balance, any excess is refunded
      * @param borrower The address of the borrower account to repay on behalf of
      */
     function repayBehalf(address borrower) public payable {
-        repayBehalfExplicit(borrower, cEther);
+        repayBehalfExplicit(borrower, nEther);
     }
 
     /**
-     * @notice msg.sender sends Ether to repay an account's borrow in a cEther market
+     * @notice msg.sender sends Ether to repay an account's borrow in a nEther market
      * @dev The provided Ether is applied towards the borrow balance, any excess is refunded
      * @param borrower The address of the borrower account to repay on behalf of
-     * @param cEther_ The address of the cEther contract to repay in
+     * @param nEther_ The address of the nEther contract to repay in
      */
-    function repayBehalfExplicit(address borrower, CEther cEther_) public payable {
+    function repayBehalfExplicit(address borrower, NEther nEther_) public payable {
         uint received = msg.value;
-        uint borrows = cEther_.borrowBalanceCurrent(borrower);
+        uint borrows = nEther_.borrowBalanceCurrent(borrower);
         if (received > borrows) {
-            cEther_.repayBorrowBehalf.value(borrows)(borrower);
+            nEther_.repayBorrowBehalf.value(borrows)(borrower);
             msg.sender.transfer(received - borrows);
         } else {
-            cEther_.repayBorrowBehalf.value(received)(borrower);
+            nEther_.repayBorrowBehalf.value(received)(borrower);
         }
     }
 }

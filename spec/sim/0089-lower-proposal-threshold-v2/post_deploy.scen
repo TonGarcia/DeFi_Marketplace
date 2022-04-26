@@ -9,7 +9,7 @@ Alias NewBravoDelegate "0x30065B703DE5d473975A2db5bBB790A23FD6EFbD" -- New Bravo
 Alias Ratan "0xcf0Ef02C51438C821246f2e6ADe50e0F1CB0f385" -- Ratan Kaliani ETH address
 
 
-Web3Fork "https://mainnet-eth.compound.finance/@14261479" (NiuHolder NiuHolder2 NiuProposer NewBravoDelegate)
+Web3Fork "https://mainnet-eth.niural.finance/@14261479" (NiuHolder NiuHolder2 NiuProposer NewBravoDelegate)
 UseConfigs mainnet
 
 GovernorBravo Deploy BravoDelegate BravoDelegate2

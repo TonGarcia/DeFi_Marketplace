@@ -115,7 +115,7 @@
     "PriceFeed": {},
     "Maximillion": {
         "description": "Maximillion",
-        "cEtherAddress": "0x859e9d8a4edadfEDb5A2fF311243af80F85A91b8",
+        "nEtherAddress": "0x859e9d8a4edadfEDb5A2fF311243af80F85A91b8",
         "address": "0x8f4abdBA752aa40F6BeEaD5d3ba2b648c7B4606B"
     },
     "NiuralLens": {
@@ -403,7 +403,7 @@
             "address": "0x07865c6e87b9f70255377e024ace6630c1eaa37f"
         }
     },
-    "CTokenDelegate": {
+    "NTokenDelegate": {
         "undefined": {
             "address": "0x0295a48b76bc68662Bd15BfAECEDcA075A4f568f",
             "contract": "CErc20Delegate",
@@ -415,7 +415,7 @@
             "description": "Standard CErc20 Delegate"
         }
     },
-    "cTokens": {
+    "nTokens": {
         "cUSDC": {
             "name": "Niural USDC",
             "symbol": "cUSDC",

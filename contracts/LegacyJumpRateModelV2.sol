@@ -5,9 +5,9 @@ import "./LegacyInterestRateModel.sol";
 
 
 /**
-  * @title Niural's JumpRateModel Contract V2 for legacy cTokens
+  * @title Niural's JumpRateModel Contract V2 for legacy nTokens
   * @author Arr00
-  * @notice Supports only legacy cTokens
+  * @notice Supports only legacy nTokens
   */
 contract LegacyJumpRateModelV2 is LegacyInterestRateModel, BaseJumpRateModelV2  {
 

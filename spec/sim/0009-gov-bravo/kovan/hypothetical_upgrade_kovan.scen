@@ -4,7 +4,7 @@ PrintTransactionLogs
 
 Alias Arr00 "0x2B384212EDc04Ae8bB41738D05BA20E33277bf33"
 
-Web3Fork "https://kovan-eth.compound.finance/@23053022" (Arr00)
+Web3Fork "https://kovan-eth.niural.finance/@23053022" (Arr00)
 UseConfigs kovan
 
 GovernorBravo Deploy BravoDelegate BravoDelegate2

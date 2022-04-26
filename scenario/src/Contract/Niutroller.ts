@@ -6,7 +6,7 @@ interface NiutrollerMethods {
   getAccountLiquidity(string): Callable<{0: number, 1: number, 2: number}>
   getHypotheticalAccountLiquidity(account: string, asset: string, redeemTokens: encodedNumber, borrowAmount: encodedNumber): Callable<{0: number, 1: number, 2: number}>
   membershipLength(string): Callable<string>
-  checkMembership(user: string, cToken: string): Callable<string>
+  checkMembership(user: string, nToken: string): Callable<string>
   getAssetsIn(string): Callable<string[]>
   admin(): Callable<string>
   oracle(): Callable<string>
@@ -60,18 +60,18 @@ interface NiutrollerMethods {
   compSupplySpeeds(string): Callable<string>
   compBorrowSpeeds(string): Callable<string>
   claimNiu(holder: string): Sendable<void>
-  claimNiu(holder: string, cTokens: string[]): Sendable<void>
+  claimNiu(holder: string, nTokens: string[]): Sendable<void>
   updateContributorRewards(account: string): Sendable<void>
   _grantNiu(account: string, encodedNumber): Sendable<void>
   _setNiuRate(encodedNumber): Sendable<void>
-  _setNiuSpeed(cTokens: string, encodedNumber): Sendable<void>
-  _setNiuSpeeds(cTokens: string[], supplySpeeds: encodedNumber[], borrowSpeeds: encodedNumber[]): Sendable<void>
+  _setNiuSpeed(nTokens: string, encodedNumber): Sendable<void>
+  _setNiuSpeeds(nTokens: string[], supplySpeeds: encodedNumber[], borrowSpeeds: encodedNumber[]): Sendable<void>
   _setContributorNiuSpeed(account: string, encodedNumber): Sendable<void>
-  _setMarketBorrowCaps(cTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
+  _setMarketBorrowCaps(nTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
   _setBorrowCapGuardian(string): Sendable<void>
   borrowCapGuardian(): Callable<string>
   borrowCaps(string): Callable<string>
-  isDeprecated(cToken: string): Callable<string>
+  isDeprecated(nToken: string): Callable<string>
 }
 
 export interface Niutroller extends Contract {

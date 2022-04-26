@@ -7,7 +7,7 @@ Alias NiuHolder "0x7587cAefc8096f5F40ACB83A09Df031a018C66ec"
 Alias CommunityMultisig "0xbbf3f1421D886E9b2c5D716B5192aC998af2012c"
 Alias NewBravoDelegate "0x563a63d650a5d259abae9248dddc6867813d3f87"
 
-Web3Fork "https://mainnet-eth.compound.finance/@13170219" (NiuHolder Arr00 CommunityMultisig)
+Web3Fork "https://mainnet-eth.niural.finance/@13170219" (NiuHolder Arr00 CommunityMultisig)
 UseConfigs mainnet
 
 GovernorBravo Deploy BravoDelegate BravoDelegate2 -- Just used to merge abi

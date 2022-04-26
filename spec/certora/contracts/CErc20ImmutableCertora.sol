@@ -3,10 +3,10 @@ pragma solidity ^0.5.16;
 import "../../../contracts/CErc20Immutable.sol";
 import "../../../contracts/EIP20Interface.sol";
 
-import "./CTokenCollateral.sol";
+import "./NTokenCollateral.sol";
 
 contract CErc20ImmutableCertora is CErc20Immutable {
-    CTokenCollateral public otherToken;
+    NTokenCollateral public otherToken;
 
     constructor(address underlying_,
                 NiutrollerInterface comptroller_,

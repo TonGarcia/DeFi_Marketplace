@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 
-import "./CToken.sol";
+import "./NToken.sol";
 import "./ErrorReporter.sol";
 import "./PriceOracle.sol";
 import "./NiutrollerInterface.sol";
@@ -14,19 +14,19 @@ import "./Governance/Niu.sol";
  */
 contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerErrorReporter, ExponentialNoError {
     /// @notice Emitted when an admin supports a market
-    event MarketListed(CToken cToken);
+    event MarketListed(NToken nToken);
 
     /// @notice Emitted when an account enters a market
-    event MarketEntered(CToken cToken, address account);
+    event MarketEntered(NToken nToken, address account);
 
     /// @notice Emitted when an account exits a market
-    event MarketExited(CToken cToken, address account);
+    event MarketExited(NToken nToken, address account);
 
     /// @notice Emitted when close factor is changed by admin
     event NewCloseFactor(uint oldCloseFactorMantissa, uint newCloseFactorMantissa);
 
     /// @notice Emitted when a collateral factor is changed by admin
-    event NewCollateralFactor(CToken cToken, uint oldCollateralFactorMantissa, uint newCollateralFactorMantissa);
+    event NewCollateralFactor(NToken nToken, uint oldCollateralFactorMantissa, uint newCollateralFactorMantissa);
 
     /// @notice Emitted when liquidation incentive is changed by admin
     event NewLiquidationIncentive(uint oldLiquidationIncentiveMantissa, uint newLiquidationIncentiveMantissa);
@@ -41,25 +41,25 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
     event ActionPaused(string action, bool pauseState);
 
     /// @notice Emitted when an action is paused on a market
-    event ActionPaused(CToken cToken, string action, bool pauseState);
+    event ActionPaused(NToken nToken, string action, bool pauseState);
 
     /// @notice Emitted when a new borrow-side COMP speed is calculated for a market
-    event NiuBorrowSpeedUpdated(CToken indexed cToken, uint newSpeed);
+    event NiuBorrowSpeedUpdated(NToken indexed nToken, uint newSpeed);
 
     /// @notice Emitted when a new supply-side COMP speed is calculated for a market
-    event NiuSupplySpeedUpdated(CToken indexed cToken, uint newSpeed);
+    event NiuSupplySpeedUpdated(NToken indexed nToken, uint newSpeed);
 
     /// @notice Emitted when a new COMP speed is set for a contributor
     event ContributorNiuSpeedUpdated(address indexed contributor, uint newSpeed);
 
     /// @notice Emitted when COMP is distributed to a supplier
-    event DistributedSupplierNiu(CToken indexed cToken, address indexed supplier, uint compDelta, uint compSupplyIndex);
+    event DistributedSupplierNiu(NToken indexed nToken, address indexed supplier, uint compDelta, uint compSupplyIndex);
 
     /// @notice Emitted when COMP is distributed to a borrower
-    event DistributedBorrowerNiu(CToken indexed cToken, address indexed borrower, uint compDelta, uint compBorrowIndex);
+    event DistributedBorrowerNiu(NToken indexed nToken, address indexed borrower, uint compDelta, uint compBorrowIndex);
 
-    /// @notice Emitted when borrow cap for a cToken is changed
-    event NewBorrowCap(CToken indexed cToken, uint newBorrowCap);
+    /// @notice Emitted when borrow cap for a nToken is changed
+    event NewBorrowCap(NToken indexed nToken, uint newBorrowCap);
 
     /// @notice Emitted when borrow cap guardian is changed
     event NewBorrowCapGuardian(address oldBorrowCapGuardian, address newBorrowCapGuardian);
@@ -96,8 +96,8 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      * @param account The address of the account to pull assets for
      * @return A dynamic list with the assets the account has entered
      */
-    function getAssetsIn(address account) external view returns (CToken[] memory) {
-        CToken[] memory assetsIn = accountAssets[account];
+    function getAssetsIn(address account) external view returns (NToken[] memory) {
+        NToken[] memory assetsIn = accountAssets[account];
 
         return assetsIn;
     }
@@ -105,26 +105,26 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
     /**
      * @notice Returns whether the given account is entered in the given asset
      * @param account The address of the account to check
-     * @param cToken The cToken to check
+     * @param nToken The nToken to check
      * @return True if the account is in the asset, otherwise false.
      */
-    function checkMembership(address account, CToken cToken) external view returns (bool) {
-        return markets[address(cToken)].accountMembership[account];
+    function checkMembership(address account, NToken nToken) external view returns (bool) {
+        return markets[address(nToken)].accountMembership[account];
     }
 
     /**
      * @notice Add assets to be included in account liquidity calculation
-     * @param cTokens The list of addresses of the cToken markets to be enabled
+     * @param nTokens The list of addresses of the nToken markets to be enabled
      * @return Success indicator for whether each corresponding market was entered
      */
-    function enterMarkets(address[] memory cTokens) public returns (uint[] memory) {
-        uint len = cTokens.length;
+    function enterMarkets(address[] memory nTokens) public returns (uint[] memory) {
+        uint len = nTokens.length;
 
         uint[] memory results = new uint[](len);
         for (uint i = 0; i < len; i++) {
-            CToken cToken = CToken(cTokens[i]);
+            NToken nToken = NToken(nTokens[i]);
 
-            results[i] = uint(addToMarketInternal(cToken, msg.sender));
+            results[i] = uint(addToMarketInternal(nToken, msg.sender));
         }
 
         return results;
@@ -132,12 +132,12 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Add the market to the borrower's "assets in" for liquidity calculations
-     * @param cToken The market to enter
+     * @param nToken The market to enter
      * @param borrower The address of the account to modify
      * @return Success indicator for whether the market was entered
      */
-    function addToMarketInternal(CToken cToken, address borrower) internal returns (Error) {
-        Market storage marketToJoin = markets[address(cToken)];
+    function addToMarketInternal(NToken nToken, address borrower) internal returns (Error) {
+        Market storage marketToJoin = markets[address(nToken)];
 
         if (!marketToJoin.isListed) {
             // market is not listed, cannot join
@@ -155,9 +155,9 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         //  that is, only when we need to perform liquidity checks
         //  and not whenever we want to check if an account is in a particular market
         marketToJoin.accountMembership[borrower] = true;
-        accountAssets[borrower].push(cToken);
+        accountAssets[borrower].push(nToken);
 
-        emit MarketEntered(cToken, borrower);
+        emit MarketEntered(nToken, borrower);
 
         return Error.NO_ERROR;
     }
@@ -166,13 +166,13 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      * @notice Removes asset from sender's account liquidity calculation
      * @dev Sender must not have an outstanding borrow balance in the asset,
      *  or be providing necessary collateral for an outstanding borrow.
-     * @param cTokenAddress The address of the asset to be removed
+     * @param nTokenAddress The address of the asset to be removed
      * @return Whether or not the account successfully exited the market
      */
-    function exitMarket(address cTokenAddress) external returns (uint) {
-        CToken cToken = CToken(cTokenAddress);
-        /* Get sender tokensHeld and amountOwed underlying from the cToken */
-        (uint oErr, uint tokensHeld, uint amountOwed, ) = cToken.getAccountSnapshot(msg.sender);
+    function exitMarket(address nTokenAddress) external returns (uint) {
+        NToken nToken = NToken(nTokenAddress);
+        /* Get sender tokensHeld and amountOwed underlying from the nToken */
+        (uint oErr, uint tokensHeld, uint amountOwed, ) = nToken.getAccountSnapshot(msg.sender);
         require(oErr == 0, "exitMarket: getAccountSnapshot failed"); // semi-opaque error code
 
         /* Fail if the sender has a borrow balance */
@@ -181,28 +181,28 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         }
 
         /* Fail if the sender is not permitted to redeem all of their tokens */
-        uint allowed = redeemAllowedInternal(cTokenAddress, msg.sender, tokensHeld);
+        uint allowed = redeemAllowedInternal(nTokenAddress, msg.sender, tokensHeld);
         if (allowed != 0) {
             return failOpaque(Error.REJECTION, FailureInfo.EXIT_MARKET_REJECTION, allowed);
         }
 
-        Market storage marketToExit = markets[address(cToken)];
+        Market storage marketToExit = markets[address(nToken)];
 
         /* Return true if the sender is not already ‘in’ the market */
         if (!marketToExit.accountMembership[msg.sender]) {
             return uint(Error.NO_ERROR);
         }
 
-        /* Set cToken account membership to false */
+        /* Set nToken account membership to false */
         delete marketToExit.accountMembership[msg.sender];
 
-        /* Delete cToken from the account’s list of assets */
+        /* Delete nToken from the account’s list of assets */
         // load into memory for faster iteration
-        CToken[] memory userAssetList = accountAssets[msg.sender];
+        NToken[] memory userAssetList = accountAssets[msg.sender];
         uint len = userAssetList.length;
         uint assetIndex = len;
         for (uint i = 0; i < len; i++) {
-            if (userAssetList[i] == cToken) {
+            if (userAssetList[i] == nToken) {
                 assetIndex = i;
                 break;
             }
@@ -212,11 +212,11 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         assert(assetIndex < len);
 
         // copy last item in list to location of item to be removed, reduce length by 1
-        CToken[] storage storedList = accountAssets[msg.sender];
+        NToken[] storage storedList = accountAssets[msg.sender];
         storedList[assetIndex] = storedList[storedList.length - 1];
         storedList.length--;
 
-        emit MarketExited(cToken, msg.sender);
+        emit MarketExited(nToken, msg.sender);
 
         return uint(Error.NO_ERROR);
     }
@@ -225,40 +225,40 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Checks if the account should be allowed to mint tokens in the given market
-     * @param cToken The market to verify the mint against
+     * @param nToken The market to verify the mint against
      * @param minter The account which would get the minted tokens
      * @param mintAmount The amount of underlying being supplied to the market in exchange for tokens
      * @return 0 if the mint is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function mintAllowed(address cToken, address minter, uint mintAmount) external returns (uint) {
+    function mintAllowed(address nToken, address minter, uint mintAmount) external returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
-        require(!mintGuardianPaused[cToken], "mint is paused");
+        require(!mintGuardianPaused[nToken], "mint is paused");
 
         // Shh - currently unused
         minter;
         mintAmount;
 
-        if (!markets[cToken].isListed) {
+        if (!markets[nToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
         // Keep the flywheel moving
-        updateNiuSupplyIndex(cToken);
-        distributeSupplierNiu(cToken, minter);
+        updateNiuSupplyIndex(nToken);
+        distributeSupplierNiu(nToken, minter);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates mint and reverts on rejection. May emit logs.
-     * @param cToken Asset being minted
+     * @param nToken Asset being minted
      * @param minter The address minting the tokens
      * @param actualMintAmount The amount of the underlying asset being minted
      * @param mintTokens The number of tokens being minted
      */
-    function mintVerify(address cToken, address minter, uint actualMintAmount, uint mintTokens) external {
+    function mintVerify(address nToken, address minter, uint actualMintAmount, uint mintTokens) external {
         // Shh - currently unused
-        cToken;
+        nToken;
         minter;
         actualMintAmount;
         mintTokens;
@@ -271,36 +271,36 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Checks if the account should be allowed to redeem tokens in the given market
-     * @param cToken The market to verify the redeem against
+     * @param nToken The market to verify the redeem against
      * @param redeemer The account which would redeem the tokens
-     * @param redeemTokens The number of cTokens to exchange for the underlying asset in the market
+     * @param redeemTokens The number of nTokens to exchange for the underlying asset in the market
      * @return 0 if the redeem is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function redeemAllowed(address cToken, address redeemer, uint redeemTokens) external returns (uint) {
-        uint allowed = redeemAllowedInternal(cToken, redeemer, redeemTokens);
+    function redeemAllowed(address nToken, address redeemer, uint redeemTokens) external returns (uint) {
+        uint allowed = redeemAllowedInternal(nToken, redeemer, redeemTokens);
         if (allowed != uint(Error.NO_ERROR)) {
             return allowed;
         }
 
         // Keep the flywheel moving
-        updateNiuSupplyIndex(cToken);
-        distributeSupplierNiu(cToken, redeemer);
+        updateNiuSupplyIndex(nToken);
+        distributeSupplierNiu(nToken, redeemer);
 
         return uint(Error.NO_ERROR);
     }
 
-    function redeemAllowedInternal(address cToken, address redeemer, uint redeemTokens) internal view returns (uint) {
-        if (!markets[cToken].isListed) {
+    function redeemAllowedInternal(address nToken, address redeemer, uint redeemTokens) internal view returns (uint) {
+        if (!markets[nToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
         /* If the redeemer is not 'in' the market, then we can bypass the liquidity check */
-        if (!markets[cToken].accountMembership[redeemer]) {
+        if (!markets[nToken].accountMembership[redeemer]) {
             return uint(Error.NO_ERROR);
         }
 
         /* Otherwise, perform a hypothetical liquidity check to guard against shortfall */
-        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(redeemer, CToken(cToken), redeemTokens, 0);
+        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(redeemer, NToken(nToken), redeemTokens, 0);
         if (err != Error.NO_ERROR) {
             return uint(err);
         }
@@ -313,14 +313,14 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Validates redeem and reverts on rejection. May emit logs.
-     * @param cToken Asset being redeemed
+     * @param nToken Asset being redeemed
      * @param redeemer The address redeeming the tokens
      * @param redeemAmount The amount of the underlying asset being redeemed
      * @param redeemTokens The number of tokens being redeemed
      */
-    function redeemVerify(address cToken, address redeemer, uint redeemAmount, uint redeemTokens) external {
+    function redeemVerify(address nToken, address redeemer, uint redeemAmount, uint redeemTokens) external {
         // Shh - currently unused
-        cToken;
+        nToken;
         redeemer;
 
         // Require tokens is zero or amount is also zero
@@ -331,47 +331,47 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Checks if the account should be allowed to borrow the underlying asset of the given market
-     * @param cToken The market to verify the borrow against
+     * @param nToken The market to verify the borrow against
      * @param borrower The account which would borrow the asset
      * @param borrowAmount The amount of underlying the account would borrow
      * @return 0 if the borrow is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function borrowAllowed(address cToken, address borrower, uint borrowAmount) external returns (uint) {
+    function borrowAllowed(address nToken, address borrower, uint borrowAmount) external returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
-        require(!borrowGuardianPaused[cToken], "borrow is paused");
+        require(!borrowGuardianPaused[nToken], "borrow is paused");
 
-        if (!markets[cToken].isListed) {
+        if (!markets[nToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
-        if (!markets[cToken].accountMembership[borrower]) {
-            // only cTokens may call borrowAllowed if borrower not in market
-            require(msg.sender == cToken, "sender must be cToken");
+        if (!markets[nToken].accountMembership[borrower]) {
+            // only nTokens may call borrowAllowed if borrower not in market
+            require(msg.sender == nToken, "sender must be nToken");
 
             // attempt to add borrower to the market
-            Error err = addToMarketInternal(CToken(msg.sender), borrower);
+            Error err = addToMarketInternal(NToken(msg.sender), borrower);
             if (err != Error.NO_ERROR) {
                 return uint(err);
             }
 
             // it should be impossible to break the important invariant
-            assert(markets[cToken].accountMembership[borrower]);
+            assert(markets[nToken].accountMembership[borrower]);
         }
 
-        if (oracle.getUnderlyingPrice(CToken(cToken)) == 0) {
+        if (oracle.getUnderlyingPrice(NToken(nToken)) == 0) {
             return uint(Error.PRICE_ERROR);
         }
 
 
-        uint borrowCap = borrowCaps[cToken];
+        uint borrowCap = borrowCaps[nToken];
         // Borrow cap of 0 corresponds to unlimited borrowing
         if (borrowCap != 0) {
-            uint totalBorrows = CToken(cToken).totalBorrows();
+            uint totalBorrows = NToken(nToken).totalBorrows();
             uint nextTotalBorrows = add_(totalBorrows, borrowAmount);
             require(nextTotalBorrows < borrowCap, "market borrow cap reached");
         }
 
-        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(borrower, CToken(cToken), 0, borrowAmount);
+        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(borrower, NToken(nToken), 0, borrowAmount);
         if (err != Error.NO_ERROR) {
             return uint(err);
         }
@@ -380,22 +380,22 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         }
 
         // Keep the flywheel moving
-        Exp memory borrowIndex = Exp({mantissa: CToken(cToken).borrowIndex()});
-        updateNiuBorrowIndex(cToken, borrowIndex);
-        distributeBorrowerNiu(cToken, borrower, borrowIndex);
+        Exp memory borrowIndex = Exp({mantissa: NToken(nToken).borrowIndex()});
+        updateNiuBorrowIndex(nToken, borrowIndex);
+        distributeBorrowerNiu(nToken, borrower, borrowIndex);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates borrow and reverts on rejection. May emit logs.
-     * @param cToken Asset whose underlying is being borrowed
+     * @param nToken Asset whose underlying is being borrowed
      * @param borrower The address borrowing the underlying
      * @param borrowAmount The amount of the underlying asset requested to borrow
      */
-    function borrowVerify(address cToken, address borrower, uint borrowAmount) external {
+    function borrowVerify(address nToken, address borrower, uint borrowAmount) external {
         // Shh - currently unused
-        cToken;
+        nToken;
         borrower;
         borrowAmount;
 
@@ -407,14 +407,14 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Checks if the account should be allowed to repay a borrow in the given market
-     * @param cToken The market to verify the repay against
+     * @param nToken The market to verify the repay against
      * @param payer The account which would repay the asset
      * @param borrower The account which would borrowed the asset
      * @param repayAmount The amount of the underlying asset the account would repay
      * @return 0 if the repay is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
     function repayBorrowAllowed(
-        address cToken,
+        address nToken,
         address payer,
         address borrower,
         uint repayAmount) external returns (uint) {
@@ -423,33 +423,33 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         borrower;
         repayAmount;
 
-        if (!markets[cToken].isListed) {
+        if (!markets[nToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
         // Keep the flywheel moving
-        Exp memory borrowIndex = Exp({mantissa: CToken(cToken).borrowIndex()});
-        updateNiuBorrowIndex(cToken, borrowIndex);
-        distributeBorrowerNiu(cToken, borrower, borrowIndex);
+        Exp memory borrowIndex = Exp({mantissa: NToken(nToken).borrowIndex()});
+        updateNiuBorrowIndex(nToken, borrowIndex);
+        distributeBorrowerNiu(nToken, borrower, borrowIndex);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates repayBorrow and reverts on rejection. May emit logs.
-     * @param cToken Asset being repaid
+     * @param nToken Asset being repaid
      * @param payer The address repaying the borrow
      * @param borrower The address of the borrower
      * @param actualRepayAmount The amount of underlying being repaid
      */
     function repayBorrowVerify(
-        address cToken,
+        address nToken,
         address payer,
         address borrower,
         uint actualRepayAmount,
         uint borrowerIndex) external {
         // Shh - currently unused
-        cToken;
+        nToken;
         payer;
         borrower;
         actualRepayAmount;
@@ -463,29 +463,29 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Checks if the liquidation should be allowed to occur
-     * @param cTokenBorrowed Asset which was borrowed by the borrower
-     * @param cTokenCollateral Asset which was used as collateral and will be seized
+     * @param nTokenBorrowed Asset which was borrowed by the borrower
+     * @param nTokenCollateral Asset which was used as collateral and will be seized
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param repayAmount The amount of underlying being repaid
      */
     function liquidateBorrowAllowed(
-        address cTokenBorrowed,
-        address cTokenCollateral,
+        address nTokenBorrowed,
+        address nTokenCollateral,
         address liquidator,
         address borrower,
         uint repayAmount) external returns (uint) {
         // Shh - currently unused
         liquidator;
 
-        if (!markets[cTokenBorrowed].isListed || !markets[cTokenCollateral].isListed) {
+        if (!markets[nTokenBorrowed].isListed || !markets[nTokenCollateral].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
-        uint borrowBalance = CToken(cTokenBorrowed).borrowBalanceStored(borrower);
+        uint borrowBalance = NToken(nTokenBorrowed).borrowBalanceStored(borrower);
 
         /* allow accounts to be liquidated if the market is deprecated */
-        if (isDeprecated(CToken(cTokenBorrowed))) {
+        if (isDeprecated(NToken(nTokenBorrowed))) {
             require(borrowBalance >= repayAmount, "Can not repay more than the total borrow");
         } else {
             /* The borrower must have shortfall in order to be liquidatable */
@@ -509,22 +509,22 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Validates liquidateBorrow and reverts on rejection. May emit logs.
-     * @param cTokenBorrowed Asset which was borrowed by the borrower
-     * @param cTokenCollateral Asset which was used as collateral and will be seized
+     * @param nTokenBorrowed Asset which was borrowed by the borrower
+     * @param nTokenCollateral Asset which was used as collateral and will be seized
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param actualRepayAmount The amount of underlying being repaid
      */
     function liquidateBorrowVerify(
-        address cTokenBorrowed,
-        address cTokenCollateral,
+        address nTokenBorrowed,
+        address nTokenCollateral,
         address liquidator,
         address borrower,
         uint actualRepayAmount,
         uint seizeTokens) external {
         // Shh - currently unused
-        cTokenBorrowed;
-        cTokenCollateral;
+        nTokenBorrowed;
+        nTokenCollateral;
         liquidator;
         borrower;
         actualRepayAmount;
@@ -538,15 +538,15 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Checks if the seizing of assets should be allowed to occur
-     * @param cTokenCollateral Asset which was used as collateral and will be seized
-     * @param cTokenBorrowed Asset which was borrowed by the borrower
+     * @param nTokenCollateral Asset which was used as collateral and will be seized
+     * @param nTokenBorrowed Asset which was borrowed by the borrower
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param seizeTokens The number of collateral tokens to seize
      */
     function seizeAllowed(
-        address cTokenCollateral,
-        address cTokenBorrowed,
+        address nTokenCollateral,
+        address nTokenBorrowed,
         address liquidator,
         address borrower,
         uint seizeTokens) external returns (uint) {
@@ -556,39 +556,39 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         // Shh - currently unused
         seizeTokens;
 
-        if (!markets[cTokenCollateral].isListed || !markets[cTokenBorrowed].isListed) {
+        if (!markets[nTokenCollateral].isListed || !markets[nTokenBorrowed].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
-        if (CToken(cTokenCollateral).comptroller() != CToken(cTokenBorrowed).comptroller()) {
+        if (NToken(nTokenCollateral).comptroller() != NToken(nTokenBorrowed).comptroller()) {
             return uint(Error.COMPTROLLER_MISMATCH);
         }
 
         // Keep the flywheel moving
-        updateNiuSupplyIndex(cTokenCollateral);
-        distributeSupplierNiu(cTokenCollateral, borrower);
-        distributeSupplierNiu(cTokenCollateral, liquidator);
+        updateNiuSupplyIndex(nTokenCollateral);
+        distributeSupplierNiu(nTokenCollateral, borrower);
+        distributeSupplierNiu(nTokenCollateral, liquidator);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates seize and reverts on rejection. May emit logs.
-     * @param cTokenCollateral Asset which was used as collateral and will be seized
-     * @param cTokenBorrowed Asset which was borrowed by the borrower
+     * @param nTokenCollateral Asset which was used as collateral and will be seized
+     * @param nTokenBorrowed Asset which was borrowed by the borrower
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param seizeTokens The number of collateral tokens to seize
      */
     function seizeVerify(
-        address cTokenCollateral,
-        address cTokenBorrowed,
+        address nTokenCollateral,
+        address nTokenBorrowed,
         address liquidator,
         address borrower,
         uint seizeTokens) external {
         // Shh - currently unused
-        cTokenCollateral;
-        cTokenBorrowed;
+        nTokenCollateral;
+        nTokenBorrowed;
         liquidator;
         borrower;
         seizeTokens;
@@ -601,41 +601,41 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Checks if the account should be allowed to transfer tokens in the given market
-     * @param cToken The market to verify the transfer against
+     * @param nToken The market to verify the transfer against
      * @param src The account which sources the tokens
      * @param dst The account which receives the tokens
-     * @param transferTokens The number of cTokens to transfer
+     * @param transferTokens The number of nTokens to transfer
      * @return 0 if the transfer is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function transferAllowed(address cToken, address src, address dst, uint transferTokens) external returns (uint) {
+    function transferAllowed(address nToken, address src, address dst, uint transferTokens) external returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
         require(!transferGuardianPaused, "transfer is paused");
 
         // Currently the only consideration is whether or not
         //  the src is allowed to redeem this many tokens
-        uint allowed = redeemAllowedInternal(cToken, src, transferTokens);
+        uint allowed = redeemAllowedInternal(nToken, src, transferTokens);
         if (allowed != uint(Error.NO_ERROR)) {
             return allowed;
         }
 
         // Keep the flywheel moving
-        updateNiuSupplyIndex(cToken);
-        distributeSupplierNiu(cToken, src);
-        distributeSupplierNiu(cToken, dst);
+        updateNiuSupplyIndex(nToken);
+        distributeSupplierNiu(nToken, src);
+        distributeSupplierNiu(nToken, dst);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates transfer and reverts on rejection. May emit logs.
-     * @param cToken Asset being transferred
+     * @param nToken Asset being transferred
      * @param src The account which sources the tokens
      * @param dst The account which receives the tokens
-     * @param transferTokens The number of cTokens to transfer
+     * @param transferTokens The number of nTokens to transfer
      */
-    function transferVerify(address cToken, address src, address dst, uint transferTokens) external {
+    function transferVerify(address nToken, address src, address dst, uint transferTokens) external {
         // Shh - currently unused
-        cToken;
+        nToken;
         src;
         dst;
         transferTokens;
@@ -650,13 +650,13 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @dev Local vars for avoiding stack-depth limits in calculating account liquidity.
-     *  Note that `cTokenBalance` is the number of cTokens the account owns in the market,
+     *  Note that `nTokenBalance` is the number of nTokens the account owns in the market,
      *  whereas `borrowBalance` is the amount of underlying that the account has borrowed.
      */
     struct AccountLiquidityLocalVars {
         uint sumCollateral;
         uint sumBorrowPlusEffects;
-        uint cTokenBalance;
+        uint nTokenBalance;
         uint borrowBalance;
         uint exchangeRateMantissa;
         uint oraclePriceMantissa;
@@ -673,7 +673,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      *          account shortfall below collateral requirements)
      */
     function getAccountLiquidity(address account) public view returns (uint, uint, uint) {
-        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, CToken(0), 0, 0);
+        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, NToken(0), 0, 0);
 
         return (uint(err), liquidity, shortfall);
     }
@@ -685,12 +685,12 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      *          account shortfall below collateral requirements)
      */
     function getAccountLiquidityInternal(address account) internal view returns (Error, uint, uint) {
-        return getHypotheticalAccountLiquidityInternal(account, CToken(0), 0, 0);
+        return getHypotheticalAccountLiquidityInternal(account, NToken(0), 0, 0);
     }
 
     /**
      * @notice Determine what the account liquidity would be if the given amounts were redeemed/borrowed
-     * @param cTokenModify The market to hypothetically redeem/borrow in
+     * @param nTokenModify The market to hypothetically redeem/borrow in
      * @param account The account to determine liquidity for
      * @param redeemTokens The number of tokens to hypothetically redeem
      * @param borrowAmount The amount of underlying to hypothetically borrow
@@ -700,20 +700,20 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      */
     function getHypotheticalAccountLiquidity(
         address account,
-        address cTokenModify,
+        address nTokenModify,
         uint redeemTokens,
         uint borrowAmount) public view returns (uint, uint, uint) {
-        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, CToken(cTokenModify), redeemTokens, borrowAmount);
+        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, NToken(nTokenModify), redeemTokens, borrowAmount);
         return (uint(err), liquidity, shortfall);
     }
 
     /**
      * @notice Determine what the account liquidity would be if the given amounts were redeemed/borrowed
-     * @param cTokenModify The market to hypothetically redeem/borrow in
+     * @param nTokenModify The market to hypothetically redeem/borrow in
      * @param account The account to determine liquidity for
      * @param redeemTokens The number of tokens to hypothetically redeem
      * @param borrowAmount The amount of underlying to hypothetically borrow
-     * @dev Note that we calculate the exchangeRateStored for each collateral cToken using stored data,
+     * @dev Note that we calculate the exchangeRateStored for each collateral nToken using stored data,
      *  without calculating accumulated interest.
      * @return (possible error code,
                 hypothetical account liquidity in excess of collateral requirements,
@@ -721,7 +721,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      */
     function getHypotheticalAccountLiquidityInternal(
         address account,
-        CToken cTokenModify,
+        NToken nTokenModify,
         uint redeemTokens,
         uint borrowAmount) internal view returns (Error, uint, uint) {
 
@@ -729,12 +729,12 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         uint oErr;
 
         // For each asset the account is in
-        CToken[] memory assets = accountAssets[account];
+        NToken[] memory assets = accountAssets[account];
         for (uint i = 0; i < assets.length; i++) {
-            CToken asset = assets[i];
+            NToken asset = assets[i];
 
-            // Read the balances and exchange rate from the cToken
-            (oErr, vars.cTokenBalance, vars.borrowBalance, vars.exchangeRateMantissa) = asset.getAccountSnapshot(account);
+            // Read the balances and exchange rate from the nToken
+            (oErr, vars.nTokenBalance, vars.borrowBalance, vars.exchangeRateMantissa) = asset.getAccountSnapshot(account);
             if (oErr != 0) { // semi-opaque error code, we assume NO_ERROR == 0 is invariant between upgrades
                 return (Error.SNAPSHOT_ERROR, 0, 0);
             }
@@ -751,14 +751,14 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
             // Pre-compute a conversion factor from tokens -> ether (normalized price value)
             vars.tokensToDenom = mul_(mul_(vars.collateralFactor, vars.exchangeRate), vars.oraclePrice);
 
-            // sumCollateral += tokensToDenom * cTokenBalance
-            vars.sumCollateral = mul_ScalarTruncateAddUInt(vars.tokensToDenom, vars.cTokenBalance, vars.sumCollateral);
+            // sumCollateral += tokensToDenom * nTokenBalance
+            vars.sumCollateral = mul_ScalarTruncateAddUInt(vars.tokensToDenom, vars.nTokenBalance, vars.sumCollateral);
 
             // sumBorrowPlusEffects += oraclePrice * borrowBalance
             vars.sumBorrowPlusEffects = mul_ScalarTruncateAddUInt(vars.oraclePrice, vars.borrowBalance, vars.sumBorrowPlusEffects);
 
-            // Calculate effects of interacting with cTokenModify
-            if (asset == cTokenModify) {
+            // Calculate effects of interacting with nTokenModify
+            if (asset == nTokenModify) {
                 // redeem effect
                 // sumBorrowPlusEffects += tokensToDenom * redeemTokens
                 vars.sumBorrowPlusEffects = mul_ScalarTruncateAddUInt(vars.tokensToDenom, redeemTokens, vars.sumBorrowPlusEffects);
@@ -779,16 +779,16 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Calculate number of tokens of collateral asset to seize given an underlying amount
-     * @dev Used in liquidation (called in cToken.liquidateBorrowFresh)
-     * @param cTokenBorrowed The address of the borrowed cToken
-     * @param cTokenCollateral The address of the collateral cToken
-     * @param actualRepayAmount The amount of cTokenBorrowed underlying to convert into cTokenCollateral tokens
-     * @return (errorCode, number of cTokenCollateral tokens to be seized in a liquidation)
+     * @dev Used in liquidation (called in nToken.liquidateBorrowFresh)
+     * @param nTokenBorrowed The address of the borrowed nToken
+     * @param nTokenCollateral The address of the collateral nToken
+     * @param actualRepayAmount The amount of nTokenBorrowed underlying to convert into nTokenCollateral tokens
+     * @return (errorCode, number of nTokenCollateral tokens to be seized in a liquidation)
      */
-    function liquidateCalculateSeizeTokens(address cTokenBorrowed, address cTokenCollateral, uint actualRepayAmount) external view returns (uint, uint) {
+    function liquidateCalculateSeizeTokens(address nTokenBorrowed, address nTokenCollateral, uint actualRepayAmount) external view returns (uint, uint) {
         /* Read oracle prices for borrowed and collateral markets */
-        uint priceBorrowedMantissa = oracle.getUnderlyingPrice(CToken(cTokenBorrowed));
-        uint priceCollateralMantissa = oracle.getUnderlyingPrice(CToken(cTokenCollateral));
+        uint priceBorrowedMantissa = oracle.getUnderlyingPrice(NToken(nTokenBorrowed));
+        uint priceCollateralMantissa = oracle.getUnderlyingPrice(NToken(nTokenCollateral));
         if (priceBorrowedMantissa == 0 || priceCollateralMantissa == 0) {
             return (uint(Error.PRICE_ERROR), 0);
         }
@@ -799,7 +799,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
          *  seizeTokens = seizeAmount / exchangeRate
          *   = actualRepayAmount * (liquidationIncentive * priceBorrowed) / (priceCollateral * exchangeRate)
          */
-        uint exchangeRateMantissa = CToken(cTokenCollateral).exchangeRateStored(); // Note: reverts on error
+        uint exchangeRateMantissa = NToken(nTokenCollateral).exchangeRateStored(); // Note: reverts on error
         uint seizeTokens;
         Exp memory numerator;
         Exp memory denominator;
@@ -859,18 +859,18 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
     /**
       * @notice Sets the collateralFactor for a market
       * @dev Admin function to set per-market collateralFactor
-      * @param cToken The market to set the factor on
+      * @param nToken The market to set the factor on
       * @param newCollateralFactorMantissa The new collateral factor, scaled by 1e18
       * @return uint 0=success, otherwise a failure. (See ErrorReporter for details)
       */
-    function _setCollateralFactor(CToken cToken, uint newCollateralFactorMantissa) external returns (uint) {
+    function _setCollateralFactor(NToken nToken, uint newCollateralFactorMantissa) external returns (uint) {
         // Check caller is admin
         if (msg.sender != admin) {
             return fail(Error.UNAUTHORIZED, FailureInfo.SET_COLLATERAL_FACTOR_OWNER_CHECK);
         }
 
         // Verify market is listed
-        Market storage market = markets[address(cToken)];
+        Market storage market = markets[address(nToken)];
         if (!market.isListed) {
             return fail(Error.MARKET_NOT_LISTED, FailureInfo.SET_COLLATERAL_FACTOR_NO_EXISTS);
         }
@@ -884,7 +884,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         }
 
         // If collateral factor != 0, fail if price == 0
-        if (newCollateralFactorMantissa != 0 && oracle.getUnderlyingPrice(cToken) == 0) {
+        if (newCollateralFactorMantissa != 0 && oracle.getUnderlyingPrice(nToken) == 0) {
             return fail(Error.PRICE_ERROR, FailureInfo.SET_COLLATERAL_FACTOR_WITHOUT_PRICE);
         }
 
@@ -893,7 +893,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         market.collateralFactorMantissa = newCollateralFactorMantissa;
 
         // Emit event with asset, old collateral factor, and new collateral factor
-        emit NewCollateralFactor(cToken, oldCollateralFactorMantissa, newCollateralFactorMantissa);
+        emit NewCollateralFactor(nToken, oldCollateralFactorMantissa, newCollateralFactorMantissa);
 
         return uint(Error.NO_ERROR);
     }
@@ -925,43 +925,43 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
     /**
       * @notice Add the market to the markets mapping and set it as listed
       * @dev Admin function to set isListed and add support for the market
-      * @param cToken The address of the market (token) to list
+      * @param nToken The address of the market (token) to list
       * @return uint 0=success, otherwise a failure. (See enum Error for details)
       */
-    function _supportMarket(CToken cToken) external returns (uint) {
+    function _supportMarket(NToken nToken) external returns (uint) {
         if (msg.sender != admin) {
             return fail(Error.UNAUTHORIZED, FailureInfo.SUPPORT_MARKET_OWNER_CHECK);
         }
 
-        if (markets[address(cToken)].isListed) {
+        if (markets[address(nToken)].isListed) {
             return fail(Error.MARKET_ALREADY_LISTED, FailureInfo.SUPPORT_MARKET_EXISTS);
         }
 
-        cToken.isCToken(); // Sanity check to make sure its really a CToken
+        nToken.isNToken(); // Sanity check to make sure its really a NToken
 
         // Note that isNiued is not in active use anymore
-        markets[address(cToken)] = Market({isListed: true, isNiued: false, collateralFactorMantissa: 0});
+        markets[address(nToken)] = Market({isListed: true, isNiued: false, collateralFactorMantissa: 0});
 
-        _addMarketInternal(address(cToken));
-        _initializeMarket(address(cToken));
+        _addMarketInternal(address(nToken));
+        _initializeMarket(address(nToken));
 
-        emit MarketListed(cToken);
+        emit MarketListed(nToken);
 
         return uint(Error.NO_ERROR);
     }
 
-    function _addMarketInternal(address cToken) internal {
+    function _addMarketInternal(address nToken) internal {
         for (uint i = 0; i < allMarkets.length; i ++) {
-            require(allMarkets[i] != CToken(cToken), "market already added");
+            require(allMarkets[i] != NToken(nToken), "market already added");
         }
-        allMarkets.push(CToken(cToken));
+        allMarkets.push(NToken(nToken));
     }
 
-    function _initializeMarket(address cToken) internal {
+    function _initializeMarket(address nToken) internal {
         uint32 blockNumber = safe32(getBlockNumber(), "block number exceeds 32 bits");
 
-        NiuMarketState storage supplyState = compSupplyState[cToken];
-        NiuMarketState storage borrowState = compBorrowState[cToken];
+        NiuMarketState storage supplyState = compSupplyState[nToken];
+        NiuMarketState storage borrowState = compBorrowState[nToken];
 
         /*
          * Update market state indices
@@ -984,22 +984,22 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
 
     /**
-      * @notice Set the given borrow caps for the given cToken markets. Borrowing that brings total borrows to or above borrow cap will revert.
+      * @notice Set the given borrow caps for the given nToken markets. Borrowing that brings total borrows to or above borrow cap will revert.
       * @dev Admin or borrowCapGuardian function to set the borrow caps. A borrow cap of 0 corresponds to unlimited borrowing.
-      * @param cTokens The addresses of the markets (tokens) to change the borrow caps for
+      * @param nTokens The addresses of the markets (tokens) to change the borrow caps for
       * @param newBorrowCaps The new borrow cap values in underlying to be set. A value of 0 corresponds to unlimited borrowing.
       */
-    function _setMarketBorrowCaps(CToken[] calldata cTokens, uint[] calldata newBorrowCaps) external {
+    function _setMarketBorrowCaps(NToken[] calldata nTokens, uint[] calldata newBorrowCaps) external {
     	require(msg.sender == admin || msg.sender == borrowCapGuardian, "only admin or borrow cap guardian can set borrow caps"); 
 
-        uint numMarkets = cTokens.length;
+        uint numMarkets = nTokens.length;
         uint numBorrowCaps = newBorrowCaps.length;
 
         require(numMarkets != 0 && numMarkets == numBorrowCaps, "invalid input");
 
         for(uint i = 0; i < numMarkets; i++) {
-            borrowCaps[address(cTokens[i])] = newBorrowCaps[i];
-            emit NewBorrowCap(cTokens[i], newBorrowCaps[i]);
+            borrowCaps[address(nTokens[i])] = newBorrowCaps[i];
+            emit NewBorrowCap(nTokens[i], newBorrowCaps[i]);
         }
     }
 
@@ -1042,23 +1042,23 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         return uint(Error.NO_ERROR);
     }
 
-    function _setMintPaused(CToken cToken, bool state) public returns (bool) {
-        require(markets[address(cToken)].isListed, "cannot pause a market that is not listed");
+    function _setMintPaused(NToken nToken, bool state) public returns (bool) {
+        require(markets[address(nToken)].isListed, "cannot pause a market that is not listed");
         require(msg.sender == pauseGuardian || msg.sender == admin, "only pause guardian and admin can pause");
         require(msg.sender == admin || state == true, "only admin can unpause");
 
-        mintGuardianPaused[address(cToken)] = state;
-        emit ActionPaused(cToken, "Mint", state);
+        mintGuardianPaused[address(nToken)] = state;
+        emit ActionPaused(nToken, "Mint", state);
         return state;
     }
 
-    function _setBorrowPaused(CToken cToken, bool state) public returns (bool) {
-        require(markets[address(cToken)].isListed, "cannot pause a market that is not listed");
+    function _setBorrowPaused(NToken nToken, bool state) public returns (bool) {
+        require(markets[address(nToken)].isListed, "cannot pause a market that is not listed");
         require(msg.sender == pauseGuardian || msg.sender == admin, "only pause guardian and admin can pause");
         require(msg.sender == admin || state == true, "only admin can unpause");
 
-        borrowGuardianPaused[address(cToken)] = state;
-        emit ActionPaused(cToken, "Borrow", state);
+        borrowGuardianPaused[address(nToken)] = state;
+        emit ActionPaused(nToken, "Borrow", state);
         return state;
     }
 
@@ -1144,50 +1144,50 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Set COMP speed for a single market
-     * @param cToken The market whose COMP speed to update
+     * @param nToken The market whose COMP speed to update
      * @param supplySpeed New supply-side COMP speed for market
      * @param borrowSpeed New borrow-side COMP speed for market
      */
-    function setNiuSpeedInternal(CToken cToken, uint supplySpeed, uint borrowSpeed) internal {
-        Market storage market = markets[address(cToken)];
+    function setNiuSpeedInternal(NToken nToken, uint supplySpeed, uint borrowSpeed) internal {
+        Market storage market = markets[address(nToken)];
         require(market.isListed, "comp market is not listed");
 
-        if (compSupplySpeeds[address(cToken)] != supplySpeed) {
+        if (compSupplySpeeds[address(nToken)] != supplySpeed) {
             // Supply speed updated so let's update supply state to ensure that
             //  1. COMP accrued properly for the old speed, and
             //  2. COMP accrued at the new speed starts after this block.
-            updateNiuSupplyIndex(address(cToken));
+            updateNiuSupplyIndex(address(nToken));
 
             // Update speed and emit event
-            compSupplySpeeds[address(cToken)] = supplySpeed;
-            emit NiuSupplySpeedUpdated(cToken, supplySpeed);
+            compSupplySpeeds[address(nToken)] = supplySpeed;
+            emit NiuSupplySpeedUpdated(nToken, supplySpeed);
         }
 
-        if (compBorrowSpeeds[address(cToken)] != borrowSpeed) {
+        if (compBorrowSpeeds[address(nToken)] != borrowSpeed) {
             // Borrow speed updated so let's update borrow state to ensure that
             //  1. COMP accrued properly for the old speed, and
             //  2. COMP accrued at the new speed starts after this block.
-            Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-            updateNiuBorrowIndex(address(cToken), borrowIndex);
+            Exp memory borrowIndex = Exp({mantissa: nToken.borrowIndex()});
+            updateNiuBorrowIndex(address(nToken), borrowIndex);
 
             // Update speed and emit event
-            compBorrowSpeeds[address(cToken)] = borrowSpeed;
-            emit NiuBorrowSpeedUpdated(cToken, borrowSpeed);
+            compBorrowSpeeds[address(nToken)] = borrowSpeed;
+            emit NiuBorrowSpeedUpdated(nToken, borrowSpeed);
         }
     }
 
     /**
      * @notice Accrue COMP to the market by updating the supply index
-     * @param cToken The market whose supply index to update
-     * @dev Index is a cumulative sum of the COMP per cToken accrued.
+     * @param nToken The market whose supply index to update
+     * @dev Index is a cumulative sum of the COMP per nToken accrued.
      */
-    function updateNiuSupplyIndex(address cToken) internal {
-        NiuMarketState storage supplyState = compSupplyState[cToken];
-        uint supplySpeed = compSupplySpeeds[cToken];
+    function updateNiuSupplyIndex(address nToken) internal {
+        NiuMarketState storage supplyState = compSupplyState[nToken];
+        uint supplySpeed = compSupplySpeeds[nToken];
         uint32 blockNumber = safe32(getBlockNumber(), "block number exceeds 32 bits");
         uint deltaBlocks = sub_(uint(blockNumber), uint(supplyState.block));
         if (deltaBlocks > 0 && supplySpeed > 0) {
-            uint supplyTokens = CToken(cToken).totalSupply();
+            uint supplyTokens = NToken(nToken).totalSupply();
             uint compAccrued = mul_(deltaBlocks, supplySpeed);
             Double memory ratio = supplyTokens > 0 ? fraction(compAccrued, supplyTokens) : Double({mantissa: 0});
             supplyState.index = safe224(add_(Double({mantissa: supplyState.index}), ratio).mantissa, "new index exceeds 224 bits");
@@ -1199,16 +1199,16 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Accrue COMP to the market by updating the borrow index
-     * @param cToken The market whose borrow index to update
-     * @dev Index is a cumulative sum of the COMP per cToken accrued.
+     * @param nToken The market whose borrow index to update
+     * @dev Index is a cumulative sum of the COMP per nToken accrued.
      */
-    function updateNiuBorrowIndex(address cToken, Exp memory marketBorrowIndex) internal {
-        NiuMarketState storage borrowState = compBorrowState[cToken];
-        uint borrowSpeed = compBorrowSpeeds[cToken];
+    function updateNiuBorrowIndex(address nToken, Exp memory marketBorrowIndex) internal {
+        NiuMarketState storage borrowState = compBorrowState[nToken];
+        uint borrowSpeed = compBorrowSpeeds[nToken];
         uint32 blockNumber = safe32(getBlockNumber(), "block number exceeds 32 bits");
         uint deltaBlocks = sub_(uint(blockNumber), uint(borrowState.block));
         if (deltaBlocks > 0 && borrowSpeed > 0) {
-            uint borrowAmount = div_(CToken(cToken).totalBorrows(), marketBorrowIndex);
+            uint borrowAmount = div_(NToken(nToken).totalBorrows(), marketBorrowIndex);
             uint compAccrued = mul_(deltaBlocks, borrowSpeed);
             Double memory ratio = borrowAmount > 0 ? fraction(compAccrued, borrowAmount) : Double({mantissa: 0});
             borrowState.index = safe224(add_(Double({mantissa: borrowState.index}), ratio).mantissa, "new index exceeds 224 bits");
@@ -1220,20 +1220,20 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Calculate COMP accrued by a supplier and possibly transfer it to them
-     * @param cToken The market in which the supplier is interacting
+     * @param nToken The market in which the supplier is interacting
      * @param supplier The address of the supplier to distribute COMP to
      */
-    function distributeSupplierNiu(address cToken, address supplier) internal {
+    function distributeSupplierNiu(address nToken, address supplier) internal {
         // TODO: Don't distribute supplier COMP if the user is not in the supplier market.
         // This check should be as gas efficient as possible as distributeSupplierNiu is called in many places.
         // - We really don't want to call an external contract as that's quite expensive.
 
-        NiuMarketState storage supplyState = compSupplyState[cToken];
+        NiuMarketState storage supplyState = compSupplyState[nToken];
         uint supplyIndex = supplyState.index;
-        uint supplierIndex = compSupplierIndex[cToken][supplier];
+        uint supplierIndex = compSupplierIndex[nToken][supplier];
 
         // Update supplier's index to the current index since we are distributing accrued COMP
-        compSupplierIndex[cToken][supplier] = supplyIndex;
+        compSupplierIndex[nToken][supplier] = supplyIndex;
 
         if (supplierIndex == 0 && supplyIndex >= compInitialIndex) {
             // Covers the case where users supplied tokens before the market's supply state index was set.
@@ -1242,37 +1242,37 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
             supplierIndex = compInitialIndex;
         }
 
-        // Calculate change in the cumulative sum of the COMP per cToken accrued
+        // Calculate change in the cumulative sum of the COMP per nToken accrued
         Double memory deltaIndex = Double({mantissa: sub_(supplyIndex, supplierIndex)});
 
-        uint supplierTokens = CToken(cToken).balanceOf(supplier);
+        uint supplierTokens = NToken(nToken).balanceOf(supplier);
 
-        // Calculate COMP accrued: cTokenAmount * accruedPerCToken
+        // Calculate COMP accrued: nTokenAmount * accruedPerNToken
         uint supplierDelta = mul_(supplierTokens, deltaIndex);
 
         uint supplierAccrued = add_(compAccrued[supplier], supplierDelta);
         compAccrued[supplier] = supplierAccrued;
 
-        emit DistributedSupplierNiu(CToken(cToken), supplier, supplierDelta, supplyIndex);
+        emit DistributedSupplierNiu(NToken(nToken), supplier, supplierDelta, supplyIndex);
     }
 
     /**
      * @notice Calculate COMP accrued by a borrower and possibly transfer it to them
      * @dev Borrowers will not begin to accrue until after the first interaction with the protocol.
-     * @param cToken The market in which the borrower is interacting
+     * @param nToken The market in which the borrower is interacting
      * @param borrower The address of the borrower to distribute COMP to
      */
-    function distributeBorrowerNiu(address cToken, address borrower, Exp memory marketBorrowIndex) internal {
+    function distributeBorrowerNiu(address nToken, address borrower, Exp memory marketBorrowIndex) internal {
         // TODO: Don't distribute supplier COMP if the user is not in the borrower market.
         // This check should be as gas efficient as possible as distributeBorrowerNiu is called in many places.
         // - We really don't want to call an external contract as that's quite expensive.
 
-        NiuMarketState storage borrowState = compBorrowState[cToken];
+        NiuMarketState storage borrowState = compBorrowState[nToken];
         uint borrowIndex = borrowState.index;
-        uint borrowerIndex = compBorrowerIndex[cToken][borrower];
+        uint borrowerIndex = compBorrowerIndex[nToken][borrower];
 
         // Update borrowers's index to the current index since we are distributing accrued COMP
-        compBorrowerIndex[cToken][borrower] = borrowIndex;
+        compBorrowerIndex[nToken][borrower] = borrowIndex;
 
         if (borrowerIndex == 0 && borrowIndex >= compInitialIndex) {
             // Covers the case where users borrowed tokens before the market's borrow state index was set.
@@ -1284,15 +1284,15 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         // Calculate change in the cumulative sum of the COMP per borrowed unit accrued
         Double memory deltaIndex = Double({mantissa: sub_(borrowIndex, borrowerIndex)});
 
-        uint borrowerAmount = div_(CToken(cToken).borrowBalanceStored(borrower), marketBorrowIndex);
+        uint borrowerAmount = div_(NToken(nToken).borrowBalanceStored(borrower), marketBorrowIndex);
         
-        // Calculate COMP accrued: cTokenAmount * accruedPerBorrowedUnit
+        // Calculate COMP accrued: nTokenAmount * accruedPerBorrowedUnit
         uint borrowerDelta = mul_(borrowerAmount, deltaIndex);
 
         uint borrowerAccrued = add_(compAccrued[borrower], borrowerDelta);
         compAccrued[borrower] = borrowerAccrued;
 
-        emit DistributedBorrowerNiu(CToken(cToken), borrower, borrowerDelta, borrowIndex);
+        emit DistributedBorrowerNiu(NToken(nToken), borrower, borrowerDelta, borrowIndex);
     }
 
     /**
@@ -1323,36 +1323,36 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
     /**
      * @notice Claim all the comp accrued by holder in the specified markets
      * @param holder The address to claim COMP for
-     * @param cTokens The list of markets to claim COMP in
+     * @param nTokens The list of markets to claim COMP in
      */
-    function claimNiu(address holder, CToken[] memory cTokens) public {
+    function claimNiu(address holder, NToken[] memory nTokens) public {
         address[] memory holders = new address[](1);
         holders[0] = holder;
-        claimNiu(holders, cTokens, true, true);
+        claimNiu(holders, nTokens, true, true);
     }
 
     /**
      * @notice Claim all comp accrued by the holders
      * @param holders The addresses to claim COMP for
-     * @param cTokens The list of markets to claim COMP in
+     * @param nTokens The list of markets to claim COMP in
      * @param borrowers Whether or not to claim COMP earned by borrowing
      * @param suppliers Whether or not to claim COMP earned by supplying
      */
-    function claimNiu(address[] memory holders, CToken[] memory cTokens, bool borrowers, bool suppliers) public {
-        for (uint i = 0; i < cTokens.length; i++) {
-            CToken cToken = cTokens[i];
-            require(markets[address(cToken)].isListed, "market must be listed");
+    function claimNiu(address[] memory holders, NToken[] memory nTokens, bool borrowers, bool suppliers) public {
+        for (uint i = 0; i < nTokens.length; i++) {
+            NToken nToken = nTokens[i];
+            require(markets[address(nToken)].isListed, "market must be listed");
             if (borrowers == true) {
-                Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-                updateNiuBorrowIndex(address(cToken), borrowIndex);
+                Exp memory borrowIndex = Exp({mantissa: nToken.borrowIndex()});
+                updateNiuBorrowIndex(address(nToken), borrowIndex);
                 for (uint j = 0; j < holders.length; j++) {
-                    distributeBorrowerNiu(address(cToken), holders[j], borrowIndex);
+                    distributeBorrowerNiu(address(nToken), holders[j], borrowIndex);
                 }
             }
             if (suppliers == true) {
-                updateNiuSupplyIndex(address(cToken));
+                updateNiuSupplyIndex(address(nToken));
                 for (uint j = 0; j < holders.length; j++) {
-                    distributeSupplierNiu(address(cToken), holders[j]);
+                    distributeSupplierNiu(address(nToken), holders[j]);
                 }
             }
         }
@@ -1395,18 +1395,18 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
 
     /**
      * @notice Set COMP borrow and supply speeds for the specified markets.
-     * @param cTokens The markets whose COMP speed to update.
+     * @param nTokens The markets whose COMP speed to update.
      * @param supplySpeeds New supply-side COMP speed for the corresponding market.
      * @param borrowSpeeds New borrow-side COMP speed for the corresponding market.
      */
-    function _setNiuSpeeds(CToken[] memory cTokens, uint[] memory supplySpeeds, uint[] memory borrowSpeeds) public {
+    function _setNiuSpeeds(NToken[] memory nTokens, uint[] memory supplySpeeds, uint[] memory borrowSpeeds) public {
         require(adminOrInitializing(), "only admin can set comp speed");
 
-        uint numTokens = cTokens.length;
+        uint numTokens = nTokens.length;
         require(numTokens == supplySpeeds.length && numTokens == borrowSpeeds.length, "Niutroller::_setNiuSpeeds invalid input");
 
         for (uint i = 0; i < numTokens; ++i) {
-            setNiuSpeedInternal(cTokens[i], supplySpeeds[i], borrowSpeeds[i]);
+            setNiuSpeedInternal(nTokens[i], supplySpeeds[i], borrowSpeeds[i]);
         }
     }
 
@@ -1436,20 +1436,20 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      * @dev The automatic getter may be used to access an individual market.
      * @return The list of market addresses
      */
-    function getAllMarkets() public view returns (CToken[] memory) {
+    function getAllMarkets() public view returns (NToken[] memory) {
         return allMarkets;
     }
 
     /**
-     * @notice Returns true if the given cToken market has been deprecated
-     * @dev All borrows in a deprecated cToken market can be immediately liquidated
-     * @param cToken The market to check if deprecated
+     * @notice Returns true if the given nToken market has been deprecated
+     * @dev All borrows in a deprecated nToken market can be immediately liquidated
+     * @param nToken The market to check if deprecated
      */
-    function isDeprecated(CToken cToken) public view returns (bool) {
+    function isDeprecated(NToken nToken) public view returns (bool) {
         return
-            markets[address(cToken)].collateralFactorMantissa == 0 && 
-            borrowGuardianPaused[address(cToken)] == true && 
-            cToken.reserveFactorMantissa() == 1e18
+            markets[address(nToken)].collateralFactorMantissa == 0 && 
+            borrowGuardianPaused[address(nToken)] == true && 
+            nToken.reserveFactorMantissa() == 1e18
         ;
     }
 

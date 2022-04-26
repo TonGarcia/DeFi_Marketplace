@@ -15,8 +15,8 @@ Macro FlywheelNiutroller price=1.0 compInitAmount=5000000e18
     Niutroller SetCloseFactor 0.5
     Niutroller LiquidationIncentive 1.1
     -- Add markets
-    NewCToken ZRX cZRX
-    NewCToken BAT cBAT
+    NewNToken ZRX cZRX
+    NewNToken BAT cBAT
     Support cZRX collateralFactor:0.5
     Support cBAT collateralFactor:0.5
     -- Setup COMP token
@@ -40,13 +40,13 @@ Macro ClaimNiuForAll
     Niutroller ClaimNiu Geoff
     Niutroller ClaimNiu Coburn
 
-Macro VerifyNiuSpeeds cToken supplySpeed borrowSpeed
-    Assert Equal (Niutroller NiuSupplySpeed cToken) supplySpeed
-    Assert Equal (Niutroller NiuBorrowSpeed cToken) borrowSpeed
+Macro VerifyNiuSpeeds nToken supplySpeed borrowSpeed
+    Assert Equal (Niutroller NiuSupplySpeed nToken) supplySpeed
+    Assert Equal (Niutroller NiuBorrowSpeed nToken) borrowSpeed
 
-Macro SetAndVerifyNiuSpeeds cToken supplySpeed borrowSpeed
-    Niutroller SetNiuSpeeds (cToken) ((Number supplySpeed)) ((Number borrowSpeed))
-    VerifyNiuSpeeds cToken supplySpeed borrowSpeed
+Macro SetAndVerifyNiuSpeeds nToken supplySpeed borrowSpeed
+    Niutroller SetNiuSpeeds (nToken) ((Number supplySpeed)) ((Number borrowSpeed))
+    VerifyNiuSpeeds nToken supplySpeed borrowSpeed
     MineBlock -- Ensures we accrue COMP
     ClaimNiuForAll -- Ensures setting the COMP speeds didn't break the distribution mechanisms
 

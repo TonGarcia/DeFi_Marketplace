@@ -2,7 +2,7 @@
 
 PrintTransactionLogs
 Alias NiuHolder "0x19bc62ff7cd9ffd6bdced9802ff718f09f7259f1"
-Web3Fork "https://mainnet-eth.compound.finance/@10796407" (NiuHolder)
+Web3Fork "https://mainnet-eth.niural.finance/@10796407" (NiuHolder)
 UseConfigs mainnet
 
 -- Deploy new interest rate model
@@ -23,8 +23,8 @@ IncreaseTime 604910
 Governor GovernorAlpha Proposal LastProposal Execute
 
 
-Assert Equal (Address (CToken cUSDC InterestRateModel)) (Address MyInterestRateModel)
-CToken cUSDC AccrueInterest
+Assert Equal (Address (NToken cUSDC InterestRateModel)) (Address MyInterestRateModel)
+NToken cUSDC AccrueInterest
 
 
 Print "cUSDC interest rate model upgrade ok" 

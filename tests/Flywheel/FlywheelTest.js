@@ -1,6 +1,6 @@
 const {
   makeNiutroller,
-  makeCToken,
+  makeNToken,
   balanceOf,
   fastForward,
   pretendBorrow,
@@ -37,7 +37,7 @@ describe('Flywheel upgrade', () => {
       let root = saddle.accounts[0];
       let unitroller = await makeNiutroller({kind: 'unitroller-g2'});
       let compMarkets = await Promise.all([1, 2, 3].map(async _ => {
-        return makeCToken({comptroller: unitroller, supportMarket: true});
+        return makeNToken({comptroller: unitroller, supportMarket: true});
       }));
       compMarkets = compMarkets.map(c => c._address);
       unitroller = await makeNiutroller({kind: 'unitroller-g3', unitroller, compMarkets});
@@ -48,7 +48,7 @@ describe('Flywheel upgrade', () => {
       let root = saddle.accounts[0];
       let unitroller = await makeNiutroller({kind: 'unitroller-g2'});
       let allMarkets = await Promise.all([1, 2, 3].map(async _ => {
-        return makeCToken({comptroller: unitroller, supportMarket: true});
+        return makeNToken({comptroller: unitroller, supportMarket: true});
       }));
       allMarkets = allMarkets.map(c => c._address);
       unitroller = await makeNiutroller({
@@ -66,7 +66,7 @@ describe('Flywheel upgrade', () => {
       let unitroller = await makeNiutroller({kind: 'unitroller-g3'});
       let allMarkets = [];
       for (let _ of Array(10)) {
-        allMarkets.push(await makeCToken({comptroller: unitroller, supportMarket: true}));
+        allMarkets.push(await makeNToken({comptroller: unitroller, supportMarket: true}));
       }
       expect(await call(unitroller, 'getAllMarkets')).toEqual(allMarkets.map(c => c._address));
       expect(
@@ -87,11 +87,11 @@ describe('Flywheel', () => {
     let interestRateModelOpts = {borrowRate: 0.000001};
     [root, a1, a2, a3, ...accounts] = saddle.accounts;
     comptroller = await makeNiutroller();
-    cLOW = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 1, interestRateModelOpts});
-    cREP = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
-    cZRX = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
-    cEVIL = await makeCToken({comptroller, supportMarket: false, underlyingPrice: 3, interestRateModelOpts});
-    cUSD = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 1, collateralFactor: 0.5, interestRateModelOpts});
+    cLOW = await makeNToken({comptroller, supportMarket: true, underlyingPrice: 1, interestRateModelOpts});
+    cREP = await makeNToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
+    cZRX = await makeNToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
+    cEVIL = await makeNToken({comptroller, supportMarket: false, underlyingPrice: 3, interestRateModelOpts});
+    cUSD = await makeNToken({comptroller, supportMarket: true, underlyingPrice: 1, collateralFactor: 0.5, interestRateModelOpts});
   });
 
   describe('_grantNiu()', () => {
@@ -155,11 +155,11 @@ describe('Flywheel', () => {
         [cREP, cZRX].map((c) => c._address)
       );
       expect(tx).toHaveLog('NiuBorrowSpeedUpdated', {
-        cToken: cLOW._address,
+        nToken: cLOW._address,
         newSpeed: 0
       });
       expect(tx).toHaveLog('NiuSupplySpeedUpdated', {
-        cToken: cLOW._address,
+        nToken: cLOW._address,
         newSpeed: 0
       });
     });
@@ -184,7 +184,7 @@ describe('Flywheel', () => {
     });
 
     it('should not add non-listed markets', async () => {
-      const cBAT = await makeCToken({ comptroller, supportMarket: false });
+      const cBAT = await makeNToken({ comptroller, supportMarket: false });
       await expect(
         send(comptroller, 'harnessAddNiuMarkets', [[cBAT._address]])
       ).rejects.toRevert('revert comp market is not listed');
@@ -220,8 +220,8 @@ describe('Flywheel', () => {
       expect(block).toEqualNumber(100);
     });
 
-    it('should not revert or update compBorrowState index if cToken not in COMP markets', async () => {
-      const mkt = await makeCToken({
+    it('should not revert or update compBorrowState index if nToken not in COMP markets', async () => {
+      const mkt = await makeNToken({
         comptroller: comptroller,
         supportMarket: true,
         addNiuMarket: false,
@@ -290,7 +290,7 @@ describe('Flywheel', () => {
     });
 
     it('should not update index on non-COMP markets', async () => {
-      const mkt = await makeCToken({
+      const mkt = await makeNToken({
         comptroller: comptroller,
         supportMarket: true,
         addNiuMarket: false
@@ -403,7 +403,7 @@ describe('Flywheel', () => {
       expect(await compAccrued(comptroller, a1)).toEqualNumber(25e18);
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
       expect(tx).toHaveLog('DistributedBorrowerNiu', {
-        cToken: mkt._address,
+        nToken: mkt._address,
         borrower: a1,
         compDelta: etherUnsigned(25e18).toFixed(),
         compBorrowIndex: etherDouble(6).toFixed()
@@ -431,7 +431,7 @@ describe('Flywheel', () => {
     });
 
     it('should not revert or distribute when called with non-COMP market', async () => {
-      const mkt = await makeCToken({
+      const mkt = await makeNToken({
         comptroller: comptroller,
         supportMarket: true,
         addNiuMarket: false,
@@ -465,7 +465,7 @@ describe('Flywheel', () => {
       expect(await compAccrued(comptroller, a1)).toEqualNumber(0);
       expect(await compBalance(comptroller, a1)).toEqualNumber(25e18);
       expect(tx).toHaveLog('DistributedSupplierNiu', {
-        cToken: mkt._address,
+        nToken: mkt._address,
         supplier: a1,
         compDelta: etherUnsigned(25e18).toFixed(),
         compSupplyIndex: etherDouble(6).toFixed()
@@ -512,7 +512,7 @@ describe('Flywheel', () => {
     });
 
     it('should not revert or distribute when called with non-COMP market', async () => {
-      const mkt = await makeCToken({
+      const mkt = await makeNToken({
         comptroller: comptroller,
         supportMarket: true,
         addNiuMarket: false,
@@ -623,7 +623,7 @@ describe('Flywheel', () => {
     });
 
     it('should revert when a market is not listed', async () => {
-      const cNOT = await makeCToken({comptroller});
+      const cNOT = await makeNToken({comptroller});
       await expect(
         send(comptroller, 'claimNiu', [a1, [cNOT._address]])
       ).rejects.toRevert('revert market must be listed');
@@ -718,7 +718,7 @@ describe('Flywheel', () => {
     });
 
     it('should revert when a market is not listed', async () => {
-      const cNOT = await makeCToken({comptroller});
+      const cNOT = await makeNToken({comptroller});
       await expect(
         send(comptroller, 'claimNiu', [[a1, a2], [cNOT._address], true, true])
       ).rejects.toRevert('revert market must be listed');
@@ -743,11 +743,11 @@ describe('Flywheel', () => {
       expect(supplySpeed).toEqualNumber(compRate);
       expect(borrowSpeed).toEqualNumber(compRate);
       expect(tx).toHaveLog(['NiuBorrowSpeedUpdated', 0], {
-        cToken: cLOW._address,
+        nToken: cLOW._address,
         newSpeed: borrowSpeed
       });
       expect(tx).toHaveLog(['NiuSupplySpeedUpdated', 0], {
-        cToken: cLOW._address,
+        nToken: cLOW._address,
         newSpeed: supplySpeed
       });
     });
@@ -779,11 +779,11 @@ describe('Flywheel', () => {
       await send(comptroller, 'harnessAddNiuMarkets', [[cLOW._address]]);
       const tx = await send(comptroller, '_setNiuSpeeds', [[cLOW._address], [desiredNiuSupplySpeed], [desiredNiuBorrowSpeed]]);
       expect(tx).toHaveLog(['NiuBorrowSpeedUpdated', 0], {
-        cToken: cLOW._address,
+        nToken: cLOW._address,
         newSpeed: desiredNiuBorrowSpeed
       });
       expect(tx).toHaveLog(['NiuSupplySpeedUpdated', 0], {
-        cToken: cLOW._address,
+        nToken: cLOW._address,
         newSpeed: desiredNiuSupplySpeed
       });
       const currentNiuSupplySpeed = await call(comptroller, 'compSupplySpeeds', [cLOW._address]);
@@ -793,8 +793,8 @@ describe('Flywheel', () => {
     });
 
     it('should correctly get differing COMP supply and borrow speeds for 4 assets', async () => {
-      const cBAT = await makeCToken({ comptroller, supportMarket: true });
-      const cDAI = await makeCToken({ comptroller, supportMarket: true });
+      const cBAT = await makeNToken({ comptroller, supportMarket: true });
+      const cDAI = await makeNToken({ comptroller, supportMarket: true });
 
       const borrowSpeed1 = 5;
       const supplySpeed1 = 10;
@@ -889,17 +889,17 @@ describe('Flywheel', () => {
 
   describe('harnessAddNiuMarkets', () => {
     it('should correctly add a comp market if called by admin', async () => {
-      const cBAT = await makeCToken({comptroller, supportMarket: true});
+      const cBAT = await makeNToken({comptroller, supportMarket: true});
       const tx1 = await send(comptroller, 'harnessAddNiuMarkets', [[cLOW._address, cREP._address, cZRX._address]]);
       const tx2 = await send(comptroller, 'harnessAddNiuMarkets', [[cBAT._address]]);
       const markets = await call(comptroller, 'getNiuMarkets');
       expect(markets).toEqual([cLOW, cREP, cZRX, cBAT].map((c) => c._address));
       expect(tx2).toHaveLog('NiuBorrowSpeedUpdated', {
-        cToken: cBAT._address,
+        nToken: cBAT._address,
         newSpeed: 1
       });
       expect(tx2).toHaveLog('NiuSupplySpeedUpdated', {
-        cToken: cBAT._address,
+        nToken: cBAT._address,
         newSpeed: 1
       });
     });

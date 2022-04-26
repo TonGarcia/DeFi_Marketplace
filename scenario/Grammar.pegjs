@@ -237,7 +237,7 @@ expr
         tail:(ws continuation? value:expr { return value })*
         { return [head].concat(tail.flat(1)); }
     )
-    / begin_compound inner:expr end_compound { return [inner]; }
+    / begin_niural inner:expr end_niural { return [inner]; }
     / begin_list inner:list_inner? end_list { return [["List"].concat((inner || []).flat())] };
 
 comment
@@ -265,8 +265,8 @@ list_inner
         { return [head].concat(tail.flat()); }
     )
 
-begin_compound    = ws "(" ws
-end_compound    = ws ")" ws
+begin_niural    = ws "(" ws
+end_niural    = ws ")" ws
 
 begin_list    = ws "[" ws
 end_list    = ws "]" ws

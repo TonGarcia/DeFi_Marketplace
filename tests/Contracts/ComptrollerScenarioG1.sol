@@ -11,8 +11,8 @@ contract NiutrollerScenarioG1 is NiutrollerG1 {
 
     constructor() NiutrollerG1() public {}
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(NToken nToken) public view returns (uint) {
+        return accountAssets[address(nToken)].length;
     }
 
     function fastForward(uint blocks) public returns (uint) {
@@ -36,15 +36,15 @@ contract NiutrollerScenarioG1 is NiutrollerG1 {
 
     function getHypotheticalAccountLiquidity(
         address account,
-        address cTokenModify,
+        address nTokenModify,
         uint redeemTokens,
         uint borrowAmount) public view returns (uint, uint, uint) {
         (Error err, uint liquidity, uint shortfall) =
-            super.getHypotheticalAccountLiquidityInternal(account, CToken(cTokenModify), redeemTokens, borrowAmount);
+            super.getHypotheticalAccountLiquidityInternal(account, NToken(nTokenModify), redeemTokens, borrowAmount);
         return (uint(err), liquidity, shortfall);
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(NToken nToken) public {
+        markets[address(nToken)].isListed = false;
     }
 }

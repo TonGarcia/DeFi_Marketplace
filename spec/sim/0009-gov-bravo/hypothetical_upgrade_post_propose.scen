@@ -7,7 +7,7 @@ Alias NiuVoter3 "0xAC5720d6EE2d7872b88914C9c5Fa9BF38e72FaF6"
 Alias NiuVoter4 "0x8169522c2C57883E8EF80C498aAB7820dA539806"
 
 Alias Arr00 "0x2b384212edc04ae8bb41738d05ba20e33277bf33"
-Web3Fork "https://mainnet-eth.compound.finance/@12109064" (NiuVoter1 NiuVoter2 NiuVoter3 NiuVoter4)
+Web3Fork "https://mainnet-eth.niural.finance/@12109064" (NiuVoter1 NiuVoter2 NiuVoter3 NiuVoter4)
 UseConfigs mainnet
 
 

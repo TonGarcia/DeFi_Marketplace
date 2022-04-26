@@ -9,8 +9,8 @@ Test "Standard Upgrade"
     Assert Equal (Niutroller CloseFactor) 0.2
     Assert Equal (Niutroller MaxAssets) 20
     Assert Equal (Niutroller Implementation) (Address ScenNiutrollerG1)
-    ListedCToken ZRX cZRX
-    ListedCToken DAI cDAI
+    ListedNToken ZRX cZRX
+    ListedNToken DAI cDAI
     -- Upgrade to G2
     NiutrollerImpl Deploy StandardG2 StandardNiutrollerG2
     Unitroller SetPendingImpl StandardNiutrollerG2
@@ -36,8 +36,8 @@ Test "Standard Upgrade, then downgrade then upgrade again"
     Assert Equal (Niutroller CloseFactor) 0.2
     Assert Equal (Niutroller MaxAssets) 20
     Assert Equal (Niutroller Implementation) (Address ScenNiutrollerG1)
-    ListedCToken ZRX cZRX
-    ListedCToken DAI cDAI
+    ListedNToken ZRX cZRX
+    ListedNToken DAI cDAI
     -- Upgrade to G2
     NiutrollerImpl Deploy StandardG2 NiutrollerG2
     Unitroller SetPendingImpl NiutrollerG2
@@ -230,8 +230,8 @@ Pending "Keeps all storage"
     NiutrollerImpl NiutrollerG1 BecomeG1 (PriceOracle Address) 0.2 20
     Niutroller SetPendingAdmin Coburn
     ---
-    NewCToken ZRX cZRX delegatorType:CErc20Delegator cTokenType:CErc20Delegate
-    NewCToken BAT cBAT delegatorType:CErc20Delegator cTokenType:CErc20Delegate
+    NewNToken ZRX cZRX delegatorType:CErc20Delegator nTokenType:CErc20Delegate
+    NewNToken BAT cBAT delegatorType:CErc20Delegator nTokenType:CErc20Delegate
     Give cBAT 10e18 BAT -- Faucet some bat to borrow
     Support cZRX collateralFactor:0.5
     Support cBAT collateralFactor:0.4

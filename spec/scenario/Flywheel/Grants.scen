@@ -12,8 +12,8 @@ Macro DeployNiutroller price=1.0
     Niutroller LiquidationIncentive 1.1
 
 Macro SetupMarkets
-    NewCToken ZRX cZRX
-    NewCToken BAT cBAT
+    NewNToken ZRX cZRX
+    NewNToken BAT cBAT
     Support cZRX collateralFactor:0.5
     Support cBAT collateralFactor:0.5
 

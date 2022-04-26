@@ -13,8 +13,8 @@ Niutroller SetPriceOracle (PriceOracleProxy Address)
 Niutroller SetMaxAssets 20
 Niutroller SetCloseFactor 0.5
 Niutroller LiquidationIncentive 1.1
-NewCToken ZRX cZRX
-NewCToken BAT cBAT
+NewNToken ZRX cZRX
+NewNToken BAT cBAT
 Support cZRX collateralFactor:0.5
 Support cBAT collateralFactor:0.5
 -- final

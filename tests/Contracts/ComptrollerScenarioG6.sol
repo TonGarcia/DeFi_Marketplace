@@ -29,15 +29,15 @@ contract NiutrollerScenarioG6 is NiutrollerG6 {
         return blockNumber;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(NToken nToken) public view returns (uint) {
+        return accountAssets[address(nToken)].length;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(NToken nToken) public {
+        markets[address(nToken)].isListed = false;
     }
 
-    function setNiuSpeed(address cToken, uint compSpeed) public {
-        compSpeeds[cToken] = compSpeed;
+    function setNiuSpeed(address nToken, uint compSpeed) public {
+        compSpeeds[nToken] = compSpeed;
     }
 }

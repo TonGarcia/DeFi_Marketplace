@@ -8,7 +8,7 @@ Alias NiuVoter1 "0x9aa835bc7b8ce13b9b0c9764a52fbf71ac62ccf1"
 Alias NiuVoter2 "0xed409c9ff60f3020abf9012bcd45fc294f5608ff"
 Alias USDCWhale "0x3dfd23a6c5e8bbcfc9581d2e864a68feb6a076d3"
 Alias Tarun "0x6626593c237f530d15ae9980a95ef938ac15c35c"
-Web3Fork "https://mainnet-eth.compound.finance/@11395519" (NiuHolder USDCWhale Tarun NiuVoter1 NiuVoter2)
+Web3Fork "https://mainnet-eth.niural.finance/@11395519" (NiuHolder USDCWhale Tarun NiuVoter1 NiuVoter2)
 UseConfigs mainnet
 
 Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (2e18)

@@ -1,7 +1,7 @@
 import {Event} from '../Event';
 import {World} from '../World';
 import {Niutroller} from '../Contract/Niutroller';
-import {CToken} from '../Contract/CToken';
+import {NToken} from '../Contract/NToken';
 import {
   getAddressV,
   getCoreValue,
@@ -19,7 +19,7 @@ import {
 import {Arg, Fetcher, getFetcherValue} from '../Command';
 import {getNiutroller} from '../ContractLookup';
 import {encodedNumber} from '../Encoding';
-import {getCTokenV} from './CTokenValue';
+import {getNTokenV} from './NTokenValue';
 import { encodeParameters, encodeABI } from '../Utils';
 
 export async function getNiutrollerAddress(world: World, comptroller: Niutroller): Promise<AddressV> {
@@ -74,8 +74,8 @@ async function getPendingAdmin(world: World, comptroller: Niutroller): Promise<A
   return new AddressV(await comptroller.methods.pendingAdmin().call());
 }
 
-async function getCollateralFactor(world: World, comptroller: Niutroller, cToken: CToken): Promise<NumberV> {
-  let {0: _isListed, 1: collateralFactorMantissa} = await comptroller.methods.markets(cToken._address).call();
+async function getCollateralFactor(world: World, comptroller: Niutroller, nToken: NToken): Promise<NumberV> {
+  let {0: _isListed, 1: collateralFactorMantissa} = await comptroller.methods.markets(nToken._address).call();
   return new NumberV(collateralFactorMantissa, 1e18);
 }
 
@@ -83,8 +83,8 @@ async function membershipLength(world: World, comptroller: Niutroller, user: str
   return new NumberV(await comptroller.methods.membershipLength(user).call());
 }
 
-async function checkMembership(world: World, comptroller: Niutroller, user: string, cToken: CToken): Promise<BoolV> {
-  return new BoolV(await comptroller.methods.checkMembership(user, cToken._address).call());
+async function checkMembership(world: World, comptroller: Niutroller, user: string, nToken: NToken): Promise<BoolV> {
+  return new BoolV(await comptroller.methods.checkMembership(user, nToken._address).call());
 }
 
 async function getAssetsIn(world: World, comptroller: Niutroller, user: string): Promise<ListV> {
@@ -99,14 +99,14 @@ async function getNiuMarkets(world: World, comptroller: Niutroller): Promise<Lis
   return new ListV(mkts.map((a) => new AddressV(a)));
 }
 
-async function checkListed(world: World, comptroller: Niutroller, cToken: CToken): Promise<BoolV> {
-  let {0: isListed, 1: _collateralFactorMantissa} = await comptroller.methods.markets(cToken._address).call();
+async function checkListed(world: World, comptroller: Niutroller, nToken: NToken): Promise<BoolV> {
+  let {0: isListed, 1: _collateralFactorMantissa} = await comptroller.methods.markets(nToken._address).call();
 
   return new BoolV(isListed);
 }
 
-async function checkIsNiued(world: World, comptroller: Niutroller, cToken: CToken): Promise<BoolV> {
-  let {0: isListed, 1: _collateralFactorMantissa, 2: isNiued} = await comptroller.methods.markets(cToken._address).call();
+async function checkIsNiued(world: World, comptroller: Niutroller, nToken: NToken): Promise<BoolV> {
+  let {0: isListed, 1: _collateralFactorMantissa, 2: isNiued} = await comptroller.methods.markets(nToken._address).call();
   return new BoolV(isNiued);
 }
 
@@ -135,7 +135,7 @@ export function comptrollerFetchers() {
       ],
       (world, {comptroller, account}) => getLiquidity(world, comptroller, account.val)
     ),
-    new Fetcher<{comptroller: Niutroller, account: AddressV, action: StringV, amount: NumberV, cToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, account: AddressV, action: StringV, amount: NumberV, nToken: NToken}, NumberV>(`
         #### Hypothetical
 
         * "Niutroller Hypothetical <User> <Action> <Asset> <Number>" - Returns a given user's trued up liquidity given a hypothetical change in asset with redeeming a certain number of tokens and/or borrowing a given amount.
@@ -148,9 +148,9 @@ export function comptrollerFetchers() {
         new Arg("account", getAddressV),
         new Arg("action", getStringV),
         new Arg("amount", getNumberV),
-        new Arg("cToken", getCTokenV)
+        new Arg("nToken", getNTokenV)
       ],
-      async (world, {comptroller, account, action, cToken, amount}) => {
+      async (world, {comptroller, account, action, nToken, amount}) => {
         let redeemTokens: NumberV;
         let borrowAmount: NumberV;
 
@@ -167,7 +167,7 @@ export function comptrollerFetchers() {
             throw new Error(`Unknown hypothetical: ${action.val}`);
         }
 
-        return await getHypotheticalLiquidity(world, comptroller, account.val, cToken._address, redeemTokens.encode(), borrowAmount.encode());
+        return await getHypotheticalLiquidity(world, comptroller, account.val, nToken._address, redeemTokens.encode(), borrowAmount.encode());
       }
     ),
     new Fetcher<{comptroller: Niutroller}, AddressV>(`
@@ -252,18 +252,18 @@ export function comptrollerFetchers() {
       [new Arg("comptroller", getNiutroller, {implicit: true})],
       (world, {comptroller}) => getBlockNumber(world, comptroller)
     ),
-    new Fetcher<{comptroller: Niutroller, cToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, nToken: NToken}, NumberV>(`
         #### CollateralFactor
 
-        * "Niutroller CollateralFactor <CToken>" - Returns the collateralFactor associated with a given asset
+        * "Niutroller CollateralFactor <NToken>" - Returns the collateralFactor associated with a given asset
           * E.g. "Niutroller CollateralFactor cZRX"
       `,
       "CollateralFactor",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("nToken", getNTokenV)
       ],
-      (world, {comptroller, cToken}) => getCollateralFactor(world, comptroller, cToken)
+      (world, {comptroller, nToken}) => getCollateralFactor(world, comptroller, nToken)
     ),
     new Fetcher<{comptroller: Niutroller, account: AddressV}, NumberV>(`
         #### MembershipLength
@@ -278,19 +278,19 @@ export function comptrollerFetchers() {
       ],
       (world, {comptroller, account}) => membershipLength(world, comptroller, account.val)
     ),
-    new Fetcher<{comptroller: Niutroller, account: AddressV, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Niutroller, account: AddressV, nToken: NToken}, BoolV>(`
         #### CheckMembership
 
-        * "Niutroller CheckMembership <User> <CToken>" - Returns one if user is in asset, zero otherwise.
+        * "Niutroller CheckMembership <User> <NToken>" - Returns one if user is in asset, zero otherwise.
           * E.g. "Niutroller CheckMembership Geoff cZRX"
       `,
       "CheckMembership",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
         new Arg("account", getAddressV),
-        new Arg("cToken", getCTokenV)
+        new Arg("nToken", getNTokenV)
       ],
-      (world, {comptroller, account, cToken}) => checkMembership(world, comptroller, account.val, cToken)
+      (world, {comptroller, account, nToken}) => checkMembership(world, comptroller, account.val, nToken)
     ),
     new Fetcher<{comptroller: Niutroller, account: AddressV}, ListV>(`
         #### AssetsIn
@@ -305,31 +305,31 @@ export function comptrollerFetchers() {
       ],
       (world, {comptroller, account}) => getAssetsIn(world, comptroller, account.val)
     ),
-    new Fetcher<{comptroller: Niutroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Niutroller, nToken: NToken}, BoolV>(`
         #### CheckListed
 
-        * "Niutroller CheckListed <CToken>" - Returns true if market is listed, false otherwise.
+        * "Niutroller CheckListed <NToken>" - Returns true if market is listed, false otherwise.
           * E.g. "Niutroller CheckListed cZRX"
       `,
       "CheckListed",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("nToken", getNTokenV)
       ],
-      (world, {comptroller, cToken}) => checkListed(world, comptroller, cToken)
+      (world, {comptroller, nToken}) => checkListed(world, comptroller, nToken)
     ),
-    new Fetcher<{comptroller: Niutroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Niutroller, nToken: NToken}, BoolV>(`
         #### CheckIsNiued
 
-        * "Niutroller CheckIsNiued <CToken>" - Returns true if market is listed, false otherwise.
+        * "Niutroller CheckIsNiued <NToken>" - Returns true if market is listed, false otherwise.
           * E.g. "Niutroller CheckIsNiued cZRX"
       `,
       "CheckIsNiued",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("nToken", getNTokenV)
       ],
-      (world, {comptroller, cToken}) => checkIsNiued(world, comptroller, cToken)
+      (world, {comptroller, nToken}) => checkIsNiued(world, comptroller, nToken)
     ),
     new Fetcher<{comptroller: Niutroller}, AddressV>(`
         #### PauseGuardian
@@ -386,7 +386,7 @@ export function comptrollerFetchers() {
         async (world, {comptroller}) => new BoolV(await comptroller.methods.seizeGuardianPaused().call())
     ),
 
-    new Fetcher<{comptroller: Niutroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Niutroller, nToken: NToken}, BoolV>(`
         #### MintGuardianMarketPaused
 
         * "MintGuardianMarketPaused" - Returns the Niutrollers's Mint paused status in market
@@ -395,11 +395,11 @@ export function comptrollerFetchers() {
         "MintGuardianMarketPaused",
         [
           new Arg("comptroller", getNiutroller, {implicit: true}),
-          new Arg("cToken", getCTokenV)
+          new Arg("nToken", getNTokenV)
         ],
-        async (world, {comptroller, cToken}) => new BoolV(await comptroller.methods.mintGuardianPaused(cToken._address).call())
+        async (world, {comptroller, nToken}) => new BoolV(await comptroller.methods.mintGuardianPaused(nToken._address).call())
     ),
-    new Fetcher<{comptroller: Niutroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Niutroller, nToken: NToken}, BoolV>(`
         #### BorrowGuardianMarketPaused
 
         * "BorrowGuardianMarketPaused" - Returns the Niutrollers's Borrow paused status in market
@@ -408,9 +408,9 @@ export function comptrollerFetchers() {
         "BorrowGuardianMarketPaused",
         [
           new Arg("comptroller", getNiutroller, {implicit: true}),
-          new Arg("cToken", getCTokenV)
+          new Arg("nToken", getNTokenV)
         ],
-        async (world, {comptroller, cToken}) => new BoolV(await comptroller.methods.borrowGuardianPaused(cToken._address).call())
+        async (world, {comptroller, nToken}) => new BoolV(await comptroller.methods.borrowGuardianPaused(nToken._address).call())
     ),
 
     new Fetcher<{comptroller: Niutroller}, ListV>(`
@@ -457,7 +457,7 @@ export function comptrollerFetchers() {
         return new NumberV(resNum);
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken, key: StringV}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken, key: StringV}, NumberV>(`
         #### NiuSupplyState(address)
 
         * "Niutroller NiuBorrowState cZRX "index"
@@ -465,15 +465,15 @@ export function comptrollerFetchers() {
       "NiuSupplyState",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg("key", getStringV),
       ],
-      async (world, {comptroller, CToken, key}) => {
-        const result = await comptroller.methods.compSupplyState(CToken._address).call();
+      async (world, {comptroller, NToken, key}) => {
+        const result = await comptroller.methods.compSupplyState(NToken._address).call();
         return new NumberV(result[key.val]);
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken, key: StringV}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken, key: StringV}, NumberV>(`
         #### NiuBorrowState(address)
 
         * "Niutroller NiuBorrowState cZRX "index"
@@ -481,11 +481,11 @@ export function comptrollerFetchers() {
       "NiuBorrowState",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg("key", getStringV),
       ],
-      async (world, {comptroller, CToken, key}) => {
-        const result = await comptroller.methods.compBorrowState(CToken._address).call();
+      async (world, {comptroller, NToken, key}) => {
+        const result = await comptroller.methods.compBorrowState(NToken._address).call();
         return new NumberV(result[key.val]);
       }
     ),
@@ -519,7 +519,7 @@ export function comptrollerFetchers() {
         return new NumberV(result);
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken, account: AddressV}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken, account: AddressV}, NumberV>(`
         #### compSupplierIndex
 
         * "Niutroller NiuSupplierIndex cZRX Coburn
@@ -527,14 +527,14 @@ export function comptrollerFetchers() {
       "NiuSupplierIndex",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg("account", getAddressV),
       ],
-      async (world, {comptroller, CToken, account}) => {
-        return new NumberV(await comptroller.methods.compSupplierIndex(CToken._address, account.val).call());
+      async (world, {comptroller, NToken, account}) => {
+        return new NumberV(await comptroller.methods.compSupplierIndex(NToken._address, account.val).call());
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken, account: AddressV}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken, account: AddressV}, NumberV>(`
         #### NiuBorrowerIndex
 
         * "Niutroller NiuBorrowerIndex cZRX Coburn
@@ -542,14 +542,14 @@ export function comptrollerFetchers() {
       "NiuBorrowerIndex",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
         new Arg("account", getAddressV),
       ],
-      async (world, {comptroller, CToken, account}) => {
-        return new NumberV(await comptroller.methods.compBorrowerIndex(CToken._address, account.val).call());
+      async (world, {comptroller, NToken, account}) => {
+        return new NumberV(await comptroller.methods.compBorrowerIndex(NToken._address, account.val).call());
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken}, NumberV>(`
         #### NiuSpeed
 
         * "Niutroller NiuSpeed cZRX
@@ -557,13 +557,13 @@ export function comptrollerFetchers() {
       "NiuSpeed",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
       ],
-      async (world, {comptroller, CToken}) => {
-        return new NumberV(await comptroller.methods.compSpeeds(CToken._address).call());
+      async (world, {comptroller, NToken}) => {
+        return new NumberV(await comptroller.methods.compSpeeds(NToken._address).call());
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken}, NumberV>(`
         #### NiuSupplySpeed
 
         * "Niutroller NiuSupplySpeed cZRX
@@ -571,13 +571,13 @@ export function comptrollerFetchers() {
       "NiuSupplySpeed",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
       ],
-      async (world, {comptroller, CToken}) => {
-        return new NumberV(await comptroller.methods.compSupplySpeeds(CToken._address).call());
+      async (world, {comptroller, NToken}) => {
+        return new NumberV(await comptroller.methods.compSupplySpeeds(NToken._address).call());
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken}, NumberV>(`
         #### NiuBorrowSpeed
 
         * "Niutroller NiuBorrowSpeed cZRX
@@ -585,10 +585,10 @@ export function comptrollerFetchers() {
       "NiuBorrowSpeed",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
       ],
-      async (world, {comptroller, CToken}) => {
-        return new NumberV(await comptroller.methods.compBorrowSpeeds(CToken._address).call());
+      async (world, {comptroller, NToken}) => {
+        return new NumberV(await comptroller.methods.compBorrowSpeeds(NToken._address).call());
       }
     ),
     new Fetcher<{comptroller: Niutroller}, AddressV>(`
@@ -603,7 +603,7 @@ export function comptrollerFetchers() {
         ],
         async (world, {comptroller}) => new AddressV(await comptroller.methods.borrowCapGuardian().call())
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken}, NumberV>(`
         #### BorrowCaps
 
         * "Niutroller BorrowCaps cZRX
@@ -611,13 +611,13 @@ export function comptrollerFetchers() {
       "BorrowCaps",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
       ],
-      async (world, {comptroller, CToken}) => {
-        return new NumberV(await comptroller.methods.borrowCaps(CToken._address).call());
+      async (world, {comptroller, NToken}) => {
+        return new NumberV(await comptroller.methods.borrowCaps(NToken._address).call());
       }
     ),
-    new Fetcher<{comptroller: Niutroller, CToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Niutroller, NToken: NToken}, NumberV>(`
         #### IsDeprecated
 
         * "Niutroller IsDeprecated cZRX
@@ -625,10 +625,10 @@ export function comptrollerFetchers() {
       "IsDeprecated",
       [
         new Arg("comptroller", getNiutroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("NToken", getNTokenV),
       ],
-      async (world, {comptroller, CToken}) => {
-        return new NumberV(await comptroller.methods.isDeprecated(CToken._address).call());
+      async (world, {comptroller, NToken}) => {
+        return new NumberV(await comptroller.methods.isDeprecated(NToken._address).call());
       }
     )
   ];

@@ -10,8 +10,8 @@ Macro DeployNiutroller price=1.0
     Niutroller LiquidationIncentive 1.1
 
 Macro SetupMarkets
-    NewCToken ZRX cZRX
-    NewCToken BAT cBAT
+    NewNToken ZRX cZRX
+    NewNToken BAT cBAT
     Support cZRX collateralFactor:0.5
     Support cBAT collateralFactor:0.5
 
@@ -170,7 +170,7 @@ Test "Accrues correctly when COMP rewards are added (after market activation), r
     FlywheelNiutroller
     Prep Coburn 100000e18 BAT cBAT
     -- Mint test
-    From Coburn (CToken cBAT Mint 1000e18)
+    From Coburn (NToken cBAT Mint 1000e18)
     FastForward 1 Blocks
     -- Ensure no COMP rewards distributed
     Niutroller ClaimNiu Coburn
@@ -181,7 +181,7 @@ Test "Accrues correctly when COMP rewards are added (after market activation), r
     Niutroller SetNiuSpeeds (cBAT) (1) (1)
     FastForward 2 Blocks
     -- Ensure minting still works
-    From Coburn (CToken cBAT Mint 1000e18)
+    From Coburn (NToken cBAT Mint 1000e18)
     -- Ensure we only accrued interest while the COMP speed has been non-zero
     Niutroller ClaimNiu Coburn
     Assert Equal (Erc20 COMP TokenBalance Coburn) (2)
@@ -197,7 +197,7 @@ Test "Accrues correctly when COMP rewards are added (after market activation), r
     Niutroller SetNiuSpeeds (cBAT) (1) (1)
     FastForward 1 Blocks
     -- Ensure minting still works
-    From Coburn (CToken cBAT Mint 1000e18)
+    From Coburn (NToken cBAT Mint 1000e18)
     -- Ensure we only accrued interest while the COMP speed has been non-zero
     Niutroller ClaimNiu Coburn
     Assert Equal (Erc20 COMP TokenBalance Coburn) (3)
@@ -237,7 +237,7 @@ Test "New COMP speeds apply to both prior borrowers+suppliers and later borrower
     FlywheelNiutroller
     InitUsage2
     -- New token with no rewards
-    NewCToken YFI cYFI
+    NewNToken YFI cYFI
     Support cYFI collateralFactor:0.5
     Prep Torrey 100e18 YFI cYFI
     Mint Torrey 100e18 cYFI
@@ -278,7 +278,7 @@ Test "New COMP speeds apply to both prior borrowers+suppliers and later borrower
     FlywheelNiutroller
     InitUsage2
     -- New token with no rewards
-    NewCToken YFI cYFI
+    NewNToken YFI cYFI
     Support cYFI collateralFactor:0.5
     Prep Torrey 100e18 YFI cYFI
     Mint Torrey 100e18 cYFI
@@ -322,7 +322,7 @@ Test "Zero COMP speed markets don't accrue rewards w/ uninitialized borrower/sup
     FlywheelNiutroller
     InitUsage2
     -- New token with no rewards
-    NewCToken YFI cYFI
+    NewNToken YFI cYFI
     Support cYFI collateralFactor:0.5
     Prep Torrey 100e18 YFI cYFI
     Mint Torrey 100e18 cYFI

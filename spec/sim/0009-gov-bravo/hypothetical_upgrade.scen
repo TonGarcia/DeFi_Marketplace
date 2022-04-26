@@ -5,7 +5,7 @@ PrintTransactionLogs
 Alias Arr00 "0x2B384212EDc04Ae8bB41738D05BA20E33277bf33"
 Alias NiuHolder "0xC89b6f0146642688bb254bF93C28fcCF1E182C81"
 
-Web3Fork "https://mainnet-eth.compound.finance/@11635311" (NiuHolder)
+Web3Fork "https://mainnet-eth.niural.finance/@11635311" (NiuHolder)
 UseConfigs mainnet
 
 GovernorBravo Deploy BravoDelegate BravoDelegate2

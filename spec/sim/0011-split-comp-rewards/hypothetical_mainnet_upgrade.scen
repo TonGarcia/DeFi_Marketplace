@@ -7,7 +7,7 @@ Alias NiuHolder "0x7587caefc8096f5f40acb83a09df031a018c66ec"
 Alias TokenHolder "0x05e793ce0c6027323ac150f6d45c2344d28b6019"
 Alias CUSDCHolder "0x5e34bc93a7506ecc8562ade4d5c8b090247a6349"
 
-Web3Fork "https://mainnet-eth.compound.finance/@13057957" (NiuHolder TokenHolder CUSDCHolder)
+Web3Fork "https://mainnet-eth.niural.finance/@13057957" (NiuHolder TokenHolder CUSDCHolder)
 UseConfigs mainnet
 
 -- Verify current borrow state indices
@@ -195,7 +195,7 @@ Print "Verifying exploits/bugs are patched"
 
 -- Mint test
 From TokenHolder (Erc20 MKR Approve (Address cMKR) 1000e18)
-From TokenHolder (CToken cMKR Mint 1000e18)
+From TokenHolder (NToken cMKR Mint 1000e18)
 
 Niutroller ClaimNiu TokenHolder
 Assert Equal (Erc20 COMP TokenBalance TokenHolder) (0)
@@ -217,10 +217,10 @@ IncreaseTime 604910
 GovernorBravo GovernorBravo Proposal LastProposal Execute
 
 -- Ensure accrue interest
-CToken cMKR AccrueInterest
+NToken cMKR AccrueInterest
 
 From TokenHolder (Erc20 MKR Approve (Address cMKR) 1000e18)
-From TokenHolder (CToken cMKR Mint 1000e18)
+From TokenHolder (NToken cMKR Mint 1000e18)
 
 Niutroller ClaimNiu TokenHolder
 Assert Equal (Erc20 COMP TokenBalance TokenHolder) (2)
@@ -237,7 +237,7 @@ GovernorBravo GovernorBravo Proposal LastProposal Queue
 IncreaseTime 604910
 GovernorBravo GovernorBravo Proposal LastProposal Execute
 
-CToken cMKR AccrueInterest
+NToken cMKR AccrueInterest
 Niutroller ClaimNiu TokenHolder
 Assert Equal (Erc20 COMP TokenBalance TokenHolder) (32056)
 
@@ -258,10 +258,10 @@ IncreaseTime 604910
 GovernorBravo GovernorBravo Proposal LastProposal Execute
 
 -- Ensure accrue interest
-CToken cMKR AccrueInterest
+NToken cMKR AccrueInterest
 
 From TokenHolder (Erc20 MKR Approve (Address cMKR) 1000e18)
-From TokenHolder (CToken cMKR Mint 1000e18)
+From TokenHolder (NToken cMKR Mint 1000e18)
 
 Niutroller ClaimNiu TokenHolder
 Assert Equal (Erc20 COMP TokenBalance TokenHolder) (32058)

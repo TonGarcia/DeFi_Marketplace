@@ -12,7 +12,7 @@ Alias AffectedUser4 "0x261fe0fc430c4ce4158ebe9258e7f9c646fea448"
 Alias AffectedUser54 "0xb265ac5bc12a97bc359b0ca0870f8b1cec6369e9"
 Alias AffectedUser74 "0xde122ae193f46d67c239ae0c7dae644f9931a772" -- The last affected user
 
-Web3Fork "https://mainnet-eth.compound.finance/@13380217" (NiuHolder)
+Web3Fork "https://mainnet-eth.niural.finance/@13380217" (NiuHolder)
 UseConfigs mainnet
 
 -- Execute proposal 64

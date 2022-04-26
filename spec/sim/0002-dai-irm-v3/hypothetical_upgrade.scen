@@ -6,7 +6,7 @@ PrintTransactionLogs
 Alias PotAddress "0x197E90f9FAD81970bA7976f33CbD77088E5D7cf7"
 Alias JugAddress "0x19c0976f590D67707E62397C87829d896Dc0f1F1"
 Alias NiuHolder "0x19bc62ff7cd9ffd6bdced9802ff718f09f7259f1"
-Web3Fork "https://mainnet-eth.compound.finance/@10473211" (NiuHolder)
+Web3Fork "https://mainnet-eth.niural.finance/@10473211" (NiuHolder)
 UseConfigs mainnet
 
 -- Deploy IRM contract
@@ -25,7 +25,7 @@ IncreaseTime 604910
 Governor GovernorAlpha Proposal LastProposal Execute
 
 -- Check model
-Assert Equal (CToken cDAI InterestRateModel) (InterestRateModel UpdateableDaiInterestRateModel Address)
+Assert Equal (NToken cDAI InterestRateModel) (InterestRateModel UpdateableDaiInterestRateModel Address)
 
 -- Propose to apply the update
 From NiuHolder (Governor GovernorAlpha Propose "DAI IRM v3 update" [(Address UpdateableDaiInterestRateModel)] [0] ["updateJumpRateModel(uint256,uint256,uint256,uint256)"] [[0 (Exp 0.4) (Exp 1.1) (Exp 0.7)]])

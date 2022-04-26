@@ -184,7 +184,7 @@
   },
   "Maximillion": {
     "description": "Maximillion",
-    "cEtherAddress": "0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5",
+    "nEtherAddress": "0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5",
     "address": "0xf859A1AD94BcF445A406B892eF0d3082f4174088"
   },
   "NiuralLens": {
@@ -462,7 +462,7 @@
       "contract": "Maker"
     }
   },
-  "CTokenDelegate": {
+  "NTokenDelegate": {
     "cAAVEDelegate": {
       "address": "0xa035b9e130f2b1aedc733eefb1c67ba4c503491f",
       "contract": "CErc20Delegate",
@@ -519,7 +519,7 @@
       "description": "Standard CErc20 Delegate"
     }
   },
-  "cTokens": {
+  "nTokens": {
     "cAAVE": {
       "address": "0xe65cdb6479bac1e22340e4e755fae7e509ecd06c",
       "contract": "CErc20Delegator",
