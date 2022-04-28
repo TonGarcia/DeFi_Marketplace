@@ -49,16 +49,16 @@ interface NiutrollerMethods {
   _dropNiuMarket(market: string): Sendable<void>
   getNiuMarkets(): Callable<string[]>
   refreshNiuSpeeds(): Sendable<void>
-  compRate(): Callable<number>
-  compSupplyState(string): Callable<string>
-  compBorrowState(string): Callable<string>
-  compAccrued(string): Callable<string>
+  niuRate(): Callable<number>
+  niuSupplyState(string): Callable<string>
+  niuBorrowState(string): Callable<string>
+  niuAccrued(string): Callable<string>
   compReceivable(string): Callable<string>
-  compSupplierIndex(market: string, account: string): Callable<string>
-  compBorrowerIndex(market: string, account: string): Callable<string>
+  niuSupplierIndex(market: string, account: string): Callable<string>
+  niuBorrowerIndex(market: string, account: string): Callable<string>
   compSpeeds(string): Callable<string>
-  compSupplySpeeds(string): Callable<string>
-  compBorrowSpeeds(string): Callable<string>
+  niuSupplySpeeds(string): Callable<string>
+  niuBorrowSpeeds(string): Callable<string>
   claimNiu(holder: string): Sendable<void>
   claimNiu(holder: string, nTokens: string[]): Sendable<void>
   updateContributorRewards(account: string): Sendable<void>

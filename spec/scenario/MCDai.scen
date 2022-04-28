@@ -28,15 +28,15 @@ Macro DeployCDAIWithDSR
     NewNiutroller
     InterestRateModel Deploy Fixed StdInterest 0.000005
     NTokenDelegate Deploy CDaiDelegate cDaiDelegate
-    From NTokenAdmin (NToken Deploy CErc20Delegator cDAI cDAI (Erc20 DAI Address) (Niutroller Address) (InterestRateModel StdInterest Address) 1e9 8 NTokenAdmin (NTokenDelegate cDaiDelegate Address) (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
+    From NTokenAdmin (NToken Deploy NErc20Delegator cDAI cDAI (Erc20 DAI Address) (Niutroller Address) (InterestRateModel StdInterest Address) 1e9 8 NTokenAdmin (NTokenDelegate cDaiDelegate Address) (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
     Niutroller SupportMarket cDAI
 
 Macro DeployCDAI
     ForkMCD
     NewNiutroller
     InterestRateModel Deploy Fixed StdInterest 0.000005
-    NTokenDelegate Deploy CErc20Delegate cErc20Delegate
-    From NTokenAdmin (NToken Deploy CErc20Delegator cDAI cDAI (Erc20 DAI Address) (Niutroller Address) (InterestRateModel StdInterest Address) 1e9 8 NTokenAdmin (NTokenDelegate cErc20Delegate Address) "0x0")
+    NTokenDelegate Deploy NErc20Delegate cErc20Delegate
+    From NTokenAdmin (NToken Deploy NErc20Delegator cDAI cDAI (Erc20 DAI Address) (Niutroller Address) (InterestRateModel StdInterest Address) 1e9 8 NTokenAdmin (NTokenDelegate cErc20Delegate Address) "0x0")
     Niutroller SupportMarket cDAI
 
 Macro UpgradeToDSR

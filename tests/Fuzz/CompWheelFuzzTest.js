@@ -104,8 +104,8 @@ describe.skip('NiuWheelFuzzTest', () => {
       compBorrowIndexSnapshots: {},
       compSupplyIndexUpdatedBlock: globals.blockNumber,
 
-      compAccruedWithCrank: {}, // naive method, accruing all accounts every block
-      compAccruedWithIndex: {}, // with indices
+      niuAccruedWithCrank: {}, // naive method, accruing all accounts every block
+      niuAccruedWithIndex: {}, // with indices
 
       activeBorrowBlocks: new bn(0), // # blocks with an active borrow, for which we expect to see comp distributed. just for fuzz testing.
       activeSupplyBlocks: new bn(0)
@@ -173,15 +173,15 @@ describe.skip('NiuWheelFuzzTest', () => {
       compSupplySpeed,
       totalSupply,
       totalBorrows,
-      compAccruedWithCrank,
+      niuAccruedWithCrank,
       borrowBalances
     } = state;
 
     // suppliers
     for (let [account, balance] of Object.entries(balances)) {
       if (isPositive(totalSupply)) {
-        compAccruedWithCrank[account] = get(
-          state.compAccruedWithCrank[account]
+        niuAccruedWithCrank[account] = get(
+          state.niuAccruedWithCrank[account]
         ).plus(
           deltaBlocks
             .times(compSupplySpeed)
@@ -196,8 +196,8 @@ describe.skip('NiuWheelFuzzTest', () => {
       if (isPositive(totalBorrows)) {
         let truedUpBorrowBalance = getAccruedBorrowBalance(state, account);
 
-        compAccruedWithCrank[account] = get(
-          state.compAccruedWithCrank[account]
+        niuAccruedWithCrank[account] = get(
+          state.niuAccruedWithCrank[account]
         ).plus(
           deltaBlocks
             .times(compBorrowSpeed)
@@ -209,7 +209,7 @@ describe.skip('NiuWheelFuzzTest', () => {
 
     return {
       ...state,
-      compAccruedWithCrank: compAccruedWithCrank,
+      niuAccruedWithCrank: niuAccruedWithCrank,
     };
   };
 
@@ -219,7 +219,7 @@ describe.skip('NiuWheelFuzzTest', () => {
       compBorrowSpeed,
       compBorrowIndex,
       compBorrowIndexSnapshots,
-      compAccruedWithIndex,
+      niuAccruedWithIndex,
       totalBorrows,
       borrowBalances,
       compBorrowIndexUpdatedBlock,
@@ -246,7 +246,7 @@ describe.skip('NiuWheelFuzzTest', () => {
       let borrowBalanceNew = borrowBalances[account]
         .times(borrowIndex)
         .div(state.borrowIndexSnapshots[account]);
-      compAccruedWithIndex[account] = get(compAccruedWithIndex[account]).plus(
+      niuAccruedWithIndex[account] = get(niuAccruedWithIndex[account]).plus(
         borrowBalanceNew
           .div(borrowIndex)
           .times(compBorrowIndex.minus(indexSnapshot))
@@ -271,7 +271,7 @@ describe.skip('NiuWheelFuzzTest', () => {
       compSupplySpeed,
       compSupplyIndex,
       compSupplyIndexSnapshots,
-      compAccruedWithIndex,
+      niuAccruedWithIndex,
       totalSupply,
       compSupplyIndexUpdatedBlock
     } = state;
@@ -287,7 +287,7 @@ describe.skip('NiuWheelFuzzTest', () => {
     let indexSnapshot = compSupplyIndexSnapshots[account];
     if (indexSnapshot !== undefined) {
       // if had prev snapshot,  accrue some comp
-      compAccruedWithIndex[account] = get(compAccruedWithIndex[account]).plus(
+      niuAccruedWithIndex[account] = get(niuAccruedWithIndex[account]).plus(
         balances[account].times(compSupplyIndex.minus(indexSnapshot))
       );
     }
@@ -300,7 +300,7 @@ describe.skip('NiuWheelFuzzTest', () => {
         ...state.compSupplyIndexSnapshots,
         [account]: compSupplyIndex
       },
-      compAccruedWithIndex: compAccruedWithIndex
+      niuAccruedWithIndex: niuAccruedWithIndex
     };
   };
 
@@ -585,7 +585,7 @@ describe.skip('NiuWheelFuzzTest', () => {
       .times(state.compSupplySpeed)
       .plus(state.activeBorrowBlocks.times(state.compBorrowSpeed));
 
-    let actual = Object.values(state.compAccruedWithCrank).reduce(
+    let actual = Object.values(state.niuAccruedWithCrank).reduce(
       (acc, val) => acc.plus(val),
       new bn(0)
     );
@@ -599,8 +599,8 @@ describe.skip('NiuWheelFuzzTest', () => {
 
   // assert comp distributed by index is the same as amount distributed by crank
   let indexCorrectnessInvariant = (globals, state, events, invariantFn) => {
-    let expected = state.compAccruedWithCrank;
-    let actual = state.compAccruedWithIndex;
+    let expected = state.niuAccruedWithCrank;
+    let actual = state.niuAccruedWithIndex;
     invariantFn(
       (expected, actual) => {
         return Object.keys(expected).reduce((succeeded, account) => {

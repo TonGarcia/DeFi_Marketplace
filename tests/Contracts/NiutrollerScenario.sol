@@ -4,7 +4,7 @@ import "../../contracts/Niutroller.sol";
 
 contract NiutrollerScenario is Niutroller {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
     constructor() Niutroller() public {}
 
@@ -13,12 +13,12 @@ contract NiutrollerScenario is Niutroller {
         return blockNumber;
     }
 
-    function setNiuAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setNiuAddress(address niuAddress_) public {
+        niuAddress = niuAddress_;
     }
 
     function getNiuAddress() public view returns (address) {
-        return compAddress;
+        return niuAddress;
     }
 
     function setBlockNumber(uint number) public {
@@ -38,11 +38,11 @@ contract NiutrollerScenario is Niutroller {
     }
 
     function setNiuBorrowerIndex(address nToken, address borrower, uint index) public {
-        compBorrowerIndex[nToken][borrower] = index;
+        niuBorrowerIndex[nToken][borrower] = index;
     }
 
     function setNiuSupplierIndex(address nToken, address supplier, uint index) public {
-        compSupplierIndex[nToken][supplier] = index;
+        niuSupplierIndex[nToken][supplier] = index;
     }
 
     /**
@@ -62,7 +62,7 @@ contract NiutrollerScenario is Niutroller {
         Exp[] memory utilities = new Exp[](allMarkets_.length);
         for (uint i = 0; i < allMarkets_.length; i++) {
             NToken nToken = allMarkets_[i];
-            if (compSupplySpeeds[address(nToken)] > 0 || compBorrowSpeeds[address(nToken)] > 0) {
+            if (niuSupplySpeeds[address(nToken)] > 0 || niuBorrowSpeeds[address(nToken)] > 0) {
                 Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(nToken)});
                 Exp memory utility = mul_(assetPrice, nToken.totalBorrows());
                 utilities[i] = utility;
@@ -72,7 +72,7 @@ contract NiutrollerScenario is Niutroller {
 
         for (uint i = 0; i < allMarkets_.length; i++) {
             NToken nToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(compRate, div_(utilities[i], totalUtility)) : 0;
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(niuRate, div_(utilities[i], totalUtility)) : 0;
             setNiuSpeedInternal(nToken, newSpeed, newSpeed);
         }
     }

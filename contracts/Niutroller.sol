@@ -960,8 +960,8 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
     function _initializeMarket(address nToken) internal {
         uint32 blockNumber = safe32(getBlockNumber(), "block number exceeds 32 bits");
 
-        NiuMarketState storage supplyState = compSupplyState[nToken];
-        NiuMarketState storage borrowState = compBorrowState[nToken];
+        NiuMarketState storage supplyState = niuSupplyState[nToken];
+        NiuMarketState storage borrowState = niuBorrowState[nToken];
 
         /*
          * Update market state indices
@@ -1100,7 +1100,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         // Iterate through all affected users
         for (uint i = 0; i < affectedUsers.length; ++i) {
             user = affectedUsers[i];
-            currentAccrual = compAccrued[user];
+            currentAccrual = niuAccrued[user];
 
             amountToSubtract = amounts[i];
 
@@ -1124,7 +1124,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
             if (amountToSubtract > 0) {
                 // Subtract the bad accrual amount from what they have accrued.
                 // Users will keep whatever they have correctly accrued.
-                compAccrued[user] = newAccrual = sub_(currentAccrual, amountToSubtract);
+                niuAccrued[user] = newAccrual = sub_(currentAccrual, amountToSubtract);
 
                 emit NiuAccruedAdjusted(user, currentAccrual, newAccrual);
             }
@@ -1152,18 +1152,18 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         Market storage market = markets[address(nToken)];
         require(market.isListed, "comp market is not listed");
 
-        if (compSupplySpeeds[address(nToken)] != supplySpeed) {
+        if (niuSupplySpeeds[address(nToken)] != supplySpeed) {
             // Supply speed updated so let's update supply state to ensure that
             //  1. COMP accrued properly for the old speed, and
             //  2. COMP accrued at the new speed starts after this block.
             updateNiuSupplyIndex(address(nToken));
 
             // Update speed and emit event
-            compSupplySpeeds[address(nToken)] = supplySpeed;
+            niuSupplySpeeds[address(nToken)] = supplySpeed;
             emit NiuSupplySpeedUpdated(nToken, supplySpeed);
         }
 
-        if (compBorrowSpeeds[address(nToken)] != borrowSpeed) {
+        if (niuBorrowSpeeds[address(nToken)] != borrowSpeed) {
             // Borrow speed updated so let's update borrow state to ensure that
             //  1. COMP accrued properly for the old speed, and
             //  2. COMP accrued at the new speed starts after this block.
@@ -1171,7 +1171,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
             updateNiuBorrowIndex(address(nToken), borrowIndex);
 
             // Update speed and emit event
-            compBorrowSpeeds[address(nToken)] = borrowSpeed;
+            niuBorrowSpeeds[address(nToken)] = borrowSpeed;
             emit NiuBorrowSpeedUpdated(nToken, borrowSpeed);
         }
     }
@@ -1182,14 +1182,14 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      * @dev Index is a cumulative sum of the COMP per nToken accrued.
      */
     function updateNiuSupplyIndex(address nToken) internal {
-        NiuMarketState storage supplyState = compSupplyState[nToken];
-        uint supplySpeed = compSupplySpeeds[nToken];
+        NiuMarketState storage supplyState = niuSupplyState[nToken];
+        uint supplySpeed = niuSupplySpeeds[nToken];
         uint32 blockNumber = safe32(getBlockNumber(), "block number exceeds 32 bits");
         uint deltaBlocks = sub_(uint(blockNumber), uint(supplyState.block));
         if (deltaBlocks > 0 && supplySpeed > 0) {
             uint supplyTokens = NToken(nToken).totalSupply();
-            uint compAccrued = mul_(deltaBlocks, supplySpeed);
-            Double memory ratio = supplyTokens > 0 ? fraction(compAccrued, supplyTokens) : Double({mantissa: 0});
+            uint niuAccrued = mul_(deltaBlocks, supplySpeed);
+            Double memory ratio = supplyTokens > 0 ? fraction(niuAccrued, supplyTokens) : Double({mantissa: 0});
             supplyState.index = safe224(add_(Double({mantissa: supplyState.index}), ratio).mantissa, "new index exceeds 224 bits");
             supplyState.block = blockNumber;
         } else if (deltaBlocks > 0) {
@@ -1203,14 +1203,14 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
      * @dev Index is a cumulative sum of the COMP per nToken accrued.
      */
     function updateNiuBorrowIndex(address nToken, Exp memory marketBorrowIndex) internal {
-        NiuMarketState storage borrowState = compBorrowState[nToken];
-        uint borrowSpeed = compBorrowSpeeds[nToken];
+        NiuMarketState storage borrowState = niuBorrowState[nToken];
+        uint borrowSpeed = niuBorrowSpeeds[nToken];
         uint32 blockNumber = safe32(getBlockNumber(), "block number exceeds 32 bits");
         uint deltaBlocks = sub_(uint(blockNumber), uint(borrowState.block));
         if (deltaBlocks > 0 && borrowSpeed > 0) {
             uint borrowAmount = div_(NToken(nToken).totalBorrows(), marketBorrowIndex);
-            uint compAccrued = mul_(deltaBlocks, borrowSpeed);
-            Double memory ratio = borrowAmount > 0 ? fraction(compAccrued, borrowAmount) : Double({mantissa: 0});
+            uint niuAccrued = mul_(deltaBlocks, borrowSpeed);
+            Double memory ratio = borrowAmount > 0 ? fraction(niuAccrued, borrowAmount) : Double({mantissa: 0});
             borrowState.index = safe224(add_(Double({mantissa: borrowState.index}), ratio).mantissa, "new index exceeds 224 bits");
             borrowState.block = blockNumber;
         } else if (deltaBlocks > 0) {
@@ -1228,12 +1228,12 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         // This check should be as gas efficient as possible as distributeSupplierNiu is called in many places.
         // - We really don't want to call an external contract as that's quite expensive.
 
-        NiuMarketState storage supplyState = compSupplyState[nToken];
+        NiuMarketState storage supplyState = niuSupplyState[nToken];
         uint supplyIndex = supplyState.index;
-        uint supplierIndex = compSupplierIndex[nToken][supplier];
+        uint supplierIndex = niuSupplierIndex[nToken][supplier];
 
         // Update supplier's index to the current index since we are distributing accrued COMP
-        compSupplierIndex[nToken][supplier] = supplyIndex;
+        niuSupplierIndex[nToken][supplier] = supplyIndex;
 
         if (supplierIndex == 0 && supplyIndex >= compInitialIndex) {
             // Covers the case where users supplied tokens before the market's supply state index was set.
@@ -1250,8 +1250,8 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         // Calculate COMP accrued: nTokenAmount * accruedPerNToken
         uint supplierDelta = mul_(supplierTokens, deltaIndex);
 
-        uint supplierAccrued = add_(compAccrued[supplier], supplierDelta);
-        compAccrued[supplier] = supplierAccrued;
+        uint supplierAccrued = add_(niuAccrued[supplier], supplierDelta);
+        niuAccrued[supplier] = supplierAccrued;
 
         emit DistributedSupplierNiu(NToken(nToken), supplier, supplierDelta, supplyIndex);
     }
@@ -1267,12 +1267,12 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         // This check should be as gas efficient as possible as distributeBorrowerNiu is called in many places.
         // - We really don't want to call an external contract as that's quite expensive.
 
-        NiuMarketState storage borrowState = compBorrowState[nToken];
+        NiuMarketState storage borrowState = niuBorrowState[nToken];
         uint borrowIndex = borrowState.index;
-        uint borrowerIndex = compBorrowerIndex[nToken][borrower];
+        uint borrowerIndex = niuBorrowerIndex[nToken][borrower];
 
         // Update borrowers's index to the current index since we are distributing accrued COMP
-        compBorrowerIndex[nToken][borrower] = borrowIndex;
+        niuBorrowerIndex[nToken][borrower] = borrowIndex;
 
         if (borrowerIndex == 0 && borrowIndex >= compInitialIndex) {
             // Covers the case where users borrowed tokens before the market's borrow state index was set.
@@ -1289,8 +1289,8 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         // Calculate COMP accrued: nTokenAmount * accruedPerBorrowedUnit
         uint borrowerDelta = mul_(borrowerAmount, deltaIndex);
 
-        uint borrowerAccrued = add_(compAccrued[borrower], borrowerDelta);
-        compAccrued[borrower] = borrowerAccrued;
+        uint borrowerAccrued = add_(niuAccrued[borrower], borrowerDelta);
+        niuAccrued[borrower] = borrowerAccrued;
 
         emit DistributedBorrowerNiu(NToken(nToken), borrower, borrowerDelta, borrowIndex);
     }
@@ -1305,9 +1305,9 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
         uint deltaBlocks = sub_(blockNumber, lastContributorBlock[contributor]);
         if (deltaBlocks > 0 && compSpeed > 0) {
             uint newAccrued = mul_(deltaBlocks, compSpeed);
-            uint contributorAccrued = add_(compAccrued[contributor], newAccrued);
+            uint contributorAccrued = add_(niuAccrued[contributor], newAccrued);
 
-            compAccrued[contributor] = contributorAccrued;
+            niuAccrued[contributor] = contributorAccrued;
             lastContributorBlock[contributor] = blockNumber;
         }
     }
@@ -1357,7 +1357,7 @@ contract Niutroller is NiutrollerV7Storage, NiutrollerInterface, NiutrollerError
             }
         }
         for (uint j = 0; j < holders.length; j++) {
-            compAccrued[holders[j]] = grantNiuInternal(holders[j], compAccrued[holders[j]]);
+            niuAccrued[holders[j]] = grantNiuInternal(holders[j], niuAccrued[holders[j]]);
         }
     }
 

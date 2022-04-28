@@ -5,7 +5,7 @@ import { World } from './World';
 import { Contract } from './Contract';
 import { mustString } from './Utils';
 
-import { CErc20Delegate } from './Contract/CErc20Delegate';
+import { NErc20Delegate } from './Contract/NErc20Delegate';
 import { Niu } from './Contract/Niu';
 import { Niutroller } from './Contract/Niutroller';
 import { NiutrollerImpl } from './Contract/NiutrollerImpl';
@@ -193,8 +193,8 @@ export async function getNTokenData(
 export async function getNTokenDelegateData(
   world: World,
   nTokenDelegateArg: string
-): Promise<[CErc20Delegate, string, Map<string, string>]> {
-  let contract = getWorldContract<CErc20Delegate>(world, [['NTokenDelegate', nTokenDelegateArg, 'address']]);
+): Promise<[NErc20Delegate, string, Map<string, string>]> {
+  let contract = getWorldContract<NErc20Delegate>(world, [['NTokenDelegate', nTokenDelegateArg, 'address']]);
   let data = getContractData(world, [['NTokenDelegate', nTokenDelegateArg]]);
 
   return [contract, nTokenDelegateArg, <Map<string, string>>(<any>data)];

@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { CErc20Delegator, CErc20DelegatorScenario } from '../Contract/CErc20Delegator';
+import { NErc20Delegator, NErc20DelegatorScenario } from '../Contract/NErc20Delegator';
 import { NToken } from '../Contract/NToken';
 import { Invokation, invoke } from '../Invokation';
 import { getAddressV, getExpNumberV, getNumberV, getStringV } from '../CoreValue';
@@ -9,11 +9,11 @@ import { Arg, Fetcher, getFetcherValue } from '../Command';
 import { storeAndSaveContract } from '../Networks';
 import { getContract, getTestContract } from '../Contract';
 
-const CErc20Contract = getContract('CErc20Immutable');
-const CErc20Delegator = getContract('CErc20Delegator');
-const CErc20DelegatorScenario = getTestContract('CErc20DelegatorScenario');
+const NErc20Contract = getContract('NErc20Immutable');
+const NErc20Delegator = getContract('NErc20Delegator');
+const NErc20DelegatorScenario = getTestContract('NErc20DelegatorScenario');
 const CEtherContract = getContract('CEther');
-const CErc20ScenarioContract = getTestContract('CErc20Scenario');
+const NErc20ScenarioContract = getTestContract('NErc20Scenario');
 const CEtherScenarioContract = getTestContract('CEtherScenario');
 const CEvilContract = getTestContract('CEvil');
 
@@ -51,12 +51,12 @@ export async function buildNToken(
       TokenData
     >(
     `
-      #### CErc20Delegator
+      #### NErc20Delegator
 
-      * "CErc20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal NToken
-        * E.g. "NToken Deploy CErc20Delegator cDAI \"Niural DAI\" (Erc20 DAI Address) (Niutroller Address) (InterestRateModel Address) 1.0 8 Geoff (NToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+      * "NErc20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal NToken
+        * E.g. "NToken Deploy NErc20Delegator cDAI \"Niural DAI\" (Erc20 DAI Address) (Niutroller Address) (InterestRateModel Address) 1.0 8 Geoff (NToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
-      'CErc20Delegator',
+      'NErc20Delegator',
       [
         new Arg('symbol', getStringV),
         new Arg('name', getStringV),
@@ -85,7 +85,7 @@ export async function buildNToken(
         }
       ) => {
         return {
-          invokation: await CErc20Delegator.deploy<CErc20Delegator>(world, from, [
+          invokation: await NErc20Delegator.deploy<NErc20Delegator>(world, from, [
             underlying.val,
             comptroller.val,
             interestRateModel.val,
@@ -101,7 +101,7 @@ export async function buildNToken(
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'CErc20Delegator',
+          contract: 'NErc20Delegator',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -124,12 +124,12 @@ export async function buildNToken(
       TokenData
     >(
     `
-      #### CErc20DelegatorScenario
+      #### NErc20DelegatorScenario
 
-      * "CErc20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A NToken Scenario for local testing
-        * E.g. "NToken Deploy CErc20DelegatorScenario cDAI \"Niural DAI\" (Erc20 DAI Address) (Niutroller Address) (InterestRateModel Address) 1.0 8 Geoff (NToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+      * "NErc20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A NToken Scenario for local testing
+        * E.g. "NToken Deploy NErc20DelegatorScenario cDAI \"Niural DAI\" (Erc20 DAI Address) (Niutroller Address) (InterestRateModel Address) 1.0 8 Geoff (NToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
-      'CErc20DelegatorScenario',
+      'NErc20DelegatorScenario',
       [
         new Arg('symbol', getStringV),
         new Arg('name', getStringV),
@@ -158,7 +158,7 @@ export async function buildNToken(
         }
       ) => {
         return {
-          invokation: await CErc20DelegatorScenario.deploy<CErc20DelegatorScenario>(world, from, [
+          invokation: await NErc20DelegatorScenario.deploy<NErc20DelegatorScenario>(world, from, [
             underlying.val,
             comptroller.val,
             interestRateModel.val,
@@ -174,7 +174,7 @@ export async function buildNToken(
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'CErc20DelegatorScenario',
+          contract: 'NErc20DelegatorScenario',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -200,12 +200,12 @@ export async function buildNToken(
       ],
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CErc20ScenarioContract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await NErc20ScenarioContract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'CErc20Scenario',
+          contract: 'NErc20Scenario',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -273,12 +273,12 @@ export async function buildNToken(
     ),
 
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
-        #### CErc20
+        #### NErc20
 
-        * "CErc20 symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official NToken contract
-          * E.g. "NToken Deploy CErc20 cZRX \"Niural ZRX\" (Erc20 ZRX Address) (Niutroller Address) (InterestRateModel Address) 1.0 8"
+        * "NErc20 symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official NToken contract
+          * E.g. "NToken Deploy NErc20 cZRX \"Niural ZRX\" (Erc20 ZRX Address) (Niutroller Address) (InterestRateModel Address) 1.0 8"
       `,
-      "CErc20",
+      "NErc20",
       [
         new Arg("symbol", getStringV),
         new Arg("name", getStringV),
@@ -292,12 +292,12 @@ export async function buildNToken(
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
 
         return {
-          invokation: await CErc20Contract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await NErc20Contract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'CErc20',
+          contract: 'NErc20',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -356,23 +356,23 @@ export async function buildNToken(
         // Note: we're going to use the scenario contract as the standard deployment on local networks
         if (world.isLocalNetwork()) {
           return {
-            invokation: await CErc20ScenarioContract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+            invokation: await NErc20ScenarioContract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
             name: name.val,
             symbol: symbol.val,
             decimals: decimals.toNumber(),
             underlying: underlying.val,
-            contract: 'CErc20Scenario',
+            contract: 'NErc20Scenario',
             initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
             admin: admin.val
           };
         } else {
           return {
-            invokation: await CErc20Contract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+            invokation: await NErc20Contract.deploy<NToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
             name: name.val,
             symbol: symbol.val,
             decimals: decimals.toNumber(),
             underlying: underlying.val,
-            contract: 'CErc20Immutable',
+            contract: 'NErc20Immutable',
             initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
             admin: admin.val
           };

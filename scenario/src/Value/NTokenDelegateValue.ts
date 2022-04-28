@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { CErc20Delegate } from '../Contract/CErc20Delegate';
+import { NErc20Delegate } from '../Contract/NErc20Delegate';
 import {
   getCoreValue,
   mapValue
@@ -12,7 +12,7 @@ import {
 } from '../Value';
 import { getWorldContractByAddress, getNTokenDelegateAddress } from '../ContractLookup';
 
-export async function getNTokenDelegateV(world: World, event: Event): Promise<CErc20Delegate> {
+export async function getNTokenDelegateV(world: World, event: Event): Promise<NErc20Delegate> {
   const address = await mapValue<AddressV>(
     world,
     event,
@@ -21,16 +21,16 @@ export async function getNTokenDelegateV(world: World, event: Event): Promise<CE
     AddressV
   );
 
-  return getWorldContractByAddress<CErc20Delegate>(world, address.val);
+  return getWorldContractByAddress<NErc20Delegate>(world, address.val);
 }
 
-async function nTokenDelegateAddress(world: World, nTokenDelegate: CErc20Delegate): Promise<AddressV> {
+async function nTokenDelegateAddress(world: World, nTokenDelegate: NErc20Delegate): Promise<AddressV> {
   return new AddressV(nTokenDelegate._address);
 }
 
 export function nTokenDelegateFetchers() {
   return [
-    new Fetcher<{ nTokenDelegate: CErc20Delegate }, AddressV>(`
+    new Fetcher<{ nTokenDelegate: NErc20Delegate }, AddressV>(`
         #### Address
 
         * "NTokenDelegate <NTokenDelegate> Address" - Returns address of NTokenDelegate contract

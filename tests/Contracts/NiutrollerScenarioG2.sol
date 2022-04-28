@@ -4,7 +4,7 @@ import "../../contracts/NiutrollerG2.sol";
 
 contract NiutrollerScenarioG2 is NiutrollerG2 {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
     constructor() NiutrollerG2() public {}
 

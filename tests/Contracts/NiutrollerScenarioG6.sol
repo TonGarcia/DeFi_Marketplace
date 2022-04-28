@@ -4,7 +4,7 @@ import "../../contracts/NiutrollerG6.sol";
 
 contract NiutrollerScenarioG6 is NiutrollerG6 {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
     constructor() NiutrollerG6() public {}
 
@@ -13,12 +13,12 @@ contract NiutrollerScenarioG6 is NiutrollerG6 {
         return blockNumber;
     }
 
-    function setNiuAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setNiuAddress(address niuAddress_) public {
+        niuAddress = niuAddress_;
     }
 
     function getNiuAddress() public view returns (address) {
-        return compAddress;
+        return niuAddress;
     }
 
     function setBlockNumber(uint number) public {

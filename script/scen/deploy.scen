@@ -18,12 +18,12 @@ Gate (Erc20 REP Address) (Erc20 Deploy Standard REP "Augur")
 Gate (Erc20 USDC Address) (Erc20 Deploy Standard USDC "USD Coin" 6)
 
 -- Now deploy our nTokens
-Gate (NToken cZRX Address) (NToken Deploy CErc20 cZRX "Test 0x 📈" (Erc20 ZRX Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
-Gate (NToken cBAT Address) (NToken Deploy CErc20 cBAT "Test Basic Attention Token 📈" (Erc20 BAT Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
-Gate (NToken cDAI Address) (NToken Deploy CErc20 cDAI "Test Dai 📈" (Erc20 DAI Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
-Gate (NToken cREP Address) (NToken Deploy CErc20 cREP "Test Augur 📈" (Erc20 REP Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
+Gate (NToken cZRX Address) (NToken Deploy NErc20 cZRX "Test 0x 📈" (Erc20 ZRX Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
+Gate (NToken cBAT Address) (NToken Deploy NErc20 cBAT "Test Basic Attention Token 📈" (Erc20 BAT Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
+Gate (NToken cDAI Address) (NToken Deploy NErc20 cDAI "Test Dai 📈" (Erc20 DAI Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
+Gate (NToken cREP Address) (NToken Deploy NErc20 cREP "Test Augur 📈" (Erc20 REP Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
 Gate (NToken cETH Address) (NToken Deploy CEther cETH "Test Ether 📈" (Niutroller Address) (InterestRateModel InterestRateModel Address) 0.2e9 8)
-Gate (NToken cUSDC Address) (NToken Deploy CErc20 cUSDC "Test USD Coin 📈" (Erc20 USDC Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 2e-4 8)
+Gate (NToken cUSDC Address) (NToken Deploy NErc20 cUSDC "Test USD Coin 📈" (Erc20 USDC Address) (Niutroller Address) (InterestRateModel InterestRateModel Address) 2e-4 8)
 
 -- Deploy Maximillion
 Gate (Maximillion Address) (Maximillion Deploy cETH)

@@ -16,8 +16,8 @@ async function compBalance(comptroller, user) {
   return etherUnsigned(await call(comptroller.comp, 'balanceOf', [user]))
 }
 
-async function compAccrued(comptroller, user) {
-  return etherUnsigned(await call(comptroller, 'compAccrued', [user]));
+async function niuAccrued(comptroller, user) {
+  return etherUnsigned(await call(comptroller, 'niuAccrued', [user]));
 }
 
 async function fastForwardPatch(patch, comptroller, blocks) {
@@ -198,10 +198,10 @@ describe('Gas report', () => {
       await fastForwardPatch(patch, comptroller, 10);
 
       console.log('Niu balance before mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Niu accrued before mint', (await compAccrued(comptroller, minter)).toString());
+      console.log('Niu accrued before mint', (await niuAccrued(comptroller, minter)).toString());
       const mint2Receipt = await mint(nToken, minter, mintAmount, exchangeRate);
       console.log('Niu balance after mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Niu accrued after mint', (await compAccrued(comptroller, minter)).toString());
+      console.log('Niu accrued after mint', (await niuAccrued(comptroller, minter)).toString());
       recordGasCost(mint2Receipt.gasUsed, `${patch} second mint with comp accrued`, filename);
     });
 
@@ -211,10 +211,10 @@ describe('Gas report', () => {
       await fastForwardPatch(patch, comptroller, 10);
 
       console.log('Niu balance before claim', (await compBalance(comptroller, minter)).toString());
-      console.log('Niu accrued before claim', (await compAccrued(comptroller, minter)).toString());
+      console.log('Niu accrued before claim', (await niuAccrued(comptroller, minter)).toString());
       const claimReceipt = await claimNiu(comptroller, minter);
       console.log('Niu balance after claim', (await compBalance(comptroller, minter)).toString());
-      console.log('Niu accrued after claim', (await compAccrued(comptroller, minter)).toString());
+      console.log('Niu accrued after claim', (await niuAccrued(comptroller, minter)).toString());
       recordGasCost(claimReceipt.gasUsed, `${patch} claim comp`, filename);
     });
   });

@@ -50,14 +50,14 @@ Macro NewNiutroller price=1.0 closeFactor=0.1 maxAssets=20
     Unitroller SetPendingImpl NiutrollerScen
     NiutrollerImpl NiutrollerScen Become
 
-Macro NewNToken erc20 nToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=CErc20DelegatorScenario nTokenType=CErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
+Macro NewNToken erc20 nToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=NErc20DelegatorScenario nTokenType=NErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
     Erc20 Deploy tokenType erc20 erc20
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
     NTokenDelegate Deploy nTokenType cErc20Delegate
     NToken Deploy delegatorType nToken nToken (Erc20 erc20 Address) (Niutroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (NTokenDelegate cErc20Delegate Address) becomeImplementationData
 
 -- Same as NewNToken but does not deploy an ERC20. Used for special ERC20s that are initialized differently
-Macro NewNTokenBringERC20 erc20 nToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 delegatorType=CErc20DelegatorScenario nTokenType=CErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
+Macro NewNTokenBringERC20 erc20 nToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 delegatorType=NErc20DelegatorScenario nTokenType=NErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
     NTokenDelegate Deploy nTokenType cErc20Delegate
     NToken Deploy delegatorType nToken nToken (Erc20 erc20 Address) (Niutroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (NTokenDelegate cErc20Delegate Address) becomeImplementationData
@@ -71,7 +71,7 @@ Macro NewEtherToken nToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
     NToken Deploy CEtherScenario nToken nToken (Niutroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
 
-Macro ListedNToken erc20 nToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=CErc20DelegatorScenario nTokenType=CErc20DelegateScenario admin=Admin
+Macro ListedNToken erc20 nToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=NErc20DelegatorScenario nTokenType=NErc20DelegateScenario admin=Admin
     NewNToken erc20 nToken borrowRate initialExchangeRate decimals tokenType delegatorType nTokenType admin
     Niutroller SupportMarket nToken
 

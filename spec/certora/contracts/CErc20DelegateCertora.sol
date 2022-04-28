@@ -1,11 +1,11 @@
 pragma solidity ^0.5.16;
 
-import "../../../contracts/CErc20Delegate.sol";
+import "../../../contracts/NErc20Delegate.sol";
 import "../../../contracts/EIP20Interface.sol";
 
 import "./NTokenCollateral.sol";
 
-contract CErc20DelegateCertora is CErc20Delegate {
+contract NErc20DelegateCertora is NErc20Delegate {
     NTokenCollateral public otherToken;
 
     function mintFreshPub(address minter, uint mintAmount) public returns (uint) {

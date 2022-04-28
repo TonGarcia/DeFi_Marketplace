@@ -1,12 +1,12 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/CErc20Immutable.sol";
-import "../../contracts/CErc20Delegator.sol";
-import "../../contracts/CErc20Delegate.sol";
-import "../../contracts/CDaiDelegate.sol";
+import "../../contracts/NErc20Immutable.sol";
+import "../../contracts/NErc20Delegator.sol";
+import "../../contracts/NErc20Delegate.sol";
+import "../../contracts/NDaiDelegate.sol";
 import "./NiutrollerScenario.sol";
 
-contract CErc20Harness is CErc20Immutable {
+contract NErc20Harness is NErc20Immutable {
     uint blockNumber = 100000;
     uint harnessExchangeRate;
     bool harnessExchangeRateStored;
@@ -21,7 +21,7 @@ contract CErc20Harness is CErc20Immutable {
                 string memory symbol_,
                 uint8 decimals_,
                 address payable admin_)
-    CErc20Immutable(
+    NErc20Immutable(
     underlying_,
     comptroller_,
     interestRateModel_,
@@ -151,7 +151,7 @@ contract CErc20Harness is CErc20Immutable {
     }
 }
 
-contract CErc20Scenario is CErc20Immutable {
+contract NErc20Scenario is NErc20Immutable {
     constructor(address underlying_,
                 NiutrollerInterface comptroller_,
                 InterestRateModel interestRateModel_,
@@ -160,7 +160,7 @@ contract CErc20Scenario is CErc20Immutable {
                 string memory symbol_,
                 uint8 decimals_,
                 address payable admin_)
-    CErc20Immutable(
+    NErc20Immutable(
     underlying_,
     comptroller_,
     interestRateModel_,
@@ -184,7 +184,7 @@ contract CErc20Scenario is CErc20Immutable {
     }
 }
 
-contract CEvil is CErc20Scenario {
+contract CEvil is NErc20Scenario {
     constructor(address underlying_,
                 NiutrollerInterface comptroller_,
                 InterestRateModel interestRateModel_,
@@ -193,7 +193,7 @@ contract CEvil is CErc20Scenario {
                 string memory symbol_,
                 uint8 decimals_,
                 address payable admin_)
-    CErc20Scenario(
+    NErc20Scenario(
     underlying_,
     comptroller_,
     interestRateModel_,
@@ -208,7 +208,7 @@ contract CEvil is CErc20Scenario {
     }
 }
 
-contract CErc20DelegatorScenario is CErc20Delegator {
+contract NErc20DelegatorScenario is NErc20Delegator {
     constructor(address underlying_,
                 NiutrollerInterface comptroller_,
                 InterestRateModel interestRateModel_,
@@ -219,7 +219,7 @@ contract CErc20DelegatorScenario is CErc20Delegator {
                 address payable admin_,
                 address implementation_,
                 bytes memory becomeImplementationData)
-    CErc20Delegator(
+    NErc20Delegator(
     underlying_,
     comptroller_,
     interestRateModel_,
@@ -240,7 +240,7 @@ contract CErc20DelegatorScenario is CErc20Delegator {
     }
 }
 
-contract CErc20DelegateHarness is CErc20Delegate {
+contract NErc20DelegateHarness is NErc20Delegate {
     event Log(string x, address y);
     event Log(string x, uint y);
 
@@ -374,7 +374,7 @@ contract CErc20DelegateHarness is CErc20Delegate {
     }
 }
 
-contract CErc20DelegateScenario is CErc20Delegate {
+contract NErc20DelegateScenario is NErc20Delegate {
     constructor() public {}
 
     function setTotalBorrows(uint totalBorrows_) public {
@@ -391,7 +391,7 @@ contract CErc20DelegateScenario is CErc20Delegate {
     }
 }
 
-contract CErc20DelegateScenarioExtra is CErc20DelegateScenario {
+contract NErc20DelegateScenarioExtra is NErc20DelegateScenario {
     function iHaveSpoken() public pure returns (string memory) {
       return "i have spoken";
     }
@@ -405,7 +405,7 @@ contract CErc20DelegateScenarioExtra is CErc20DelegateScenario {
     }
 }
 
-contract CDaiDelegateHarness is CDaiDelegate {
+contract NDaiDelegateHarness is NDaiDelegate {
     uint blockNumber = 100000;
     uint harnessExchangeRate;
     bool harnessExchangeRateStored;
@@ -440,7 +440,7 @@ contract CDaiDelegateHarness is CDaiDelegate {
     }
 }
 
-contract CDaiDelegateScenario is CDaiDelegate {
+contract NDaiDelegateScenario is NDaiDelegate {
     function setTotalBorrows(uint totalBorrows_) public {
         totalBorrows = totalBorrows_;
     }
@@ -455,7 +455,7 @@ contract CDaiDelegateScenario is CDaiDelegate {
     }
 }
 
-contract CDaiDelegateMakerHarness is PotLike, VatLike, GemLike, DaiJoinLike {
+contract NDaiDelegateMakerHarness is PotLike, VatLike, GemLike, DaiJoinLike {
     /* Pot */
 
     // exchangeRate

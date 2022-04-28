@@ -2,8 +2,8 @@ import { Event } from '../Event';
 import { addAction, describeUser, World } from '../World';
 import { decodeCall, getPastEvents } from '../Contract';
 import { NToken, NTokenScenario } from '../Contract/NToken';
-import { CErc20Delegate } from '../Contract/CErc20Delegate'
-import { CErc20Delegator } from '../Contract/CErc20Delegator'
+import { NErc20Delegate } from '../Contract/NErc20Delegate'
+import { NErc20Delegator } from '../Contract/NErc20Delegator'
 import { invoke, Sendable } from '../Invokation';
 import {
   getAddressV,
@@ -30,7 +30,7 @@ import { buildNToken } from '../Builder/NTokenBuilder';
 import { verify } from '../Verify';
 import { getLiquidity } from '../Value/NiutrollerValue';
 import { encodedNumber } from '../Encoding';
-import { getNTokenV, getCErc20DelegatorV } from '../Value/NTokenValue';
+import { getNTokenV, getNErc20DelegatorV } from '../Value/NTokenValue';
 
 function showTrxValue(world: World): string {
   return new NumberV(world.trxInvokationOpts.get('value')).show();
@@ -308,8 +308,8 @@ async function becomeImplementation(
   becomeImplementationData: string
 ): Promise<World> {
 
-  const cErc20Delegate = getContract('CErc20Delegate');
-  const cErc20DelegateContract = await cErc20Delegate.at<CErc20Delegate>(world, nToken._address);
+  const cErc20Delegate = getContract('NErc20Delegate');
+  const cErc20DelegateContract = await cErc20Delegate.at<NErc20Delegate>(world, nToken._address);
 
   let invokation = await invoke(
     world,
@@ -336,8 +336,8 @@ async function resignImplementation(
   nToken: NToken,
 ): Promise<World> {
 
-  const cErc20Delegate = getContract('CErc20Delegate');
-  const cErc20DelegateContract = await cErc20Delegate.at<CErc20Delegate>(world, nToken._address);
+  const cErc20Delegate = getContract('NErc20Delegate');
+  const cErc20DelegateContract = await cErc20Delegate.at<NErc20Delegate>(world, nToken._address);
 
   let invokation = await invoke(
     world,
@@ -361,7 +361,7 @@ async function resignImplementation(
 async function setImplementation(
   world: World,
   from: string,
-  nToken: CErc20Delegator,
+  nToken: NErc20Delegator,
   implementation: string,
   allowResign: boolean,
   becomeImplementationData: string
@@ -818,7 +818,7 @@ export function nTokenCommands() {
       { namePos: 1 }
     ),
     new Command<{
-      nToken: CErc20Delegator;
+      nToken: NErc20Delegator;
       implementation: AddressV;
       allowResign: BoolV;
       becomeImplementationData: StringV;
@@ -831,7 +831,7 @@ export function nTokenCommands() {
       `,
       'SetImplementation',
       [
-        new Arg('nToken', getCErc20DelegatorV),
+        new Arg('nToken', getNErc20DelegatorV),
         new Arg('implementation', getAddressV),
         new Arg('allowResign', getBoolV),
         new Arg('becomeImplementationData', getStringV)

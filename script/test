@@ -10,7 +10,7 @@ verbose=${verbose:-}
 debug_args="-n --inspect" #add "debugger" statements to javascript and interact with running code in repl found at chrome://inspect
 [[ -z $DEBUG ]] && debug_args=""
 
-# Niuile scenario runner
+# Compile scenario runner
 [[ -z $NO_TSC ]] && "$proj_root/scenario/script/tsc"
 
 # Build scenario stubs

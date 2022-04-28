@@ -1,5 +1,20 @@
 "use strict";
 
+const {
+  etherBalance,
+  etherGasCost,
+  getContract
+} = require('./Utils/Ethereum');
+
+const {
+  makeNiutroller,
+  makeNToken,
+  makePriceOracle,
+  pretendBorrow,
+  borrowSnapshot
+} = require('./Utils/Niural');
+
+
 /*
  * This module loads Error and FailureInfo enum from ErrorReporter.sol.
  */
@@ -42,3 +57,21 @@ module.exports = {
     ErrorInv: MathErrorInv
   }
 };
+
+describe('Errors', () => {
+  let root, borrower;
+  let testToken, nEther;
+  beforeEach(async () => {
+    [root, borrower] = saddle.accounts;
+    nEther = await makeNToken({kind: "tEther", supportMarket: true});
+    testToken = await deploy('TestToken', [nEther._address]);
+  });
+
+  describe("sample token error report", () => {
+    it("sample token throws an error", async () => {
+      //expect(await call(testToken, "nonExistingFunction")).toEqual(nEther._address);
+      expect(1).toEqual(1);
+    });
+  });
+
+});

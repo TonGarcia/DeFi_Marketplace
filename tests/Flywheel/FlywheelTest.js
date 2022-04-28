@@ -15,12 +15,12 @@ const {
   etherMantissa
 } = require('../Utils/Ethereum');
 
-const compRate = etherUnsigned(1e18);
+const niuRate = etherUnsigned(1e18);
 
 const compInitialIndex = 1e36;
 
-async function compAccrued(comptroller, user) {
-  return etherUnsigned(await call(comptroller, 'compAccrued', [user]));
+async function niuAccrued(comptroller, user) {
+  return etherUnsigned(await call(comptroller, 'niuAccrued', [user]));
 }
 
 async function compBalance(comptroller, user) {
@@ -28,7 +28,7 @@ async function compBalance(comptroller, user) {
 }
 
 async function totalNiuAccrued(comptroller, user) {
-  return (await compAccrued(comptroller, user)).plus(await compBalance(comptroller, user));
+  return (await niuAccrued(comptroller, user)).plus(await compBalance(comptroller, user));
 }
 
 describe('Flywheel upgrade', () => {
@@ -141,7 +141,7 @@ describe('Flywheel', () => {
       await fastForward(comptroller, 20);
       await send(comptroller, '_setNiuSpeeds', [[mkt._address], [etherExp(1)], [etherExp(0.5)]]);
 
-      const {index, block} = await call(comptroller, 'compSupplyState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuSupplyState', [mkt._address]);
       expect(index).toEqualNumber(2e36);
       expect(block).toEqualNumber(20);
     });
@@ -209,18 +209,18 @@ describe('Flywheel', () => {
 
         borrowAmt   = totalBorrows * 1e18 / borrowIdx
                     = 11e18 * 1e18 / 1.1e18 = 10e18
-        compAccrued = deltaBlocks * borrowSpeed
+        niuAccrued = deltaBlocks * borrowSpeed
                     = 100 * 0.5e18 = 50e18
-        newIndex   += 1e36 + compAccrued * 1e36 / borrowAmt
+        newIndex   += 1e36 + niuAccrued * 1e36 / borrowAmt
                     = 1e36 + 50e18 * 1e36 / 10e18 = 6e36
       */
 
-      const {index, block} = await call(comptroller, 'compBorrowState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuBorrowState', [mkt._address]);
       expect(index).toEqualNumber(6e36);
       expect(block).toEqualNumber(100);
     });
 
-    it('should not revert or update compBorrowState index if nToken not in COMP markets', async () => {
+    it('should not revert or update niuBorrowState index if nToken not in COMP markets', async () => {
       const mkt = await makeNToken({
         comptroller: comptroller,
         supportMarket: true,
@@ -232,12 +232,12 @@ describe('Flywheel', () => {
         etherExp(1.1),
       ]);
 
-      const {index, block} = await call(comptroller, 'compBorrowState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuBorrowState', [mkt._address]);
       expect(index).toEqualNumber(compInitialIndex);
       expect(block).toEqualNumber(100);
-      const supplySpeed = await call(comptroller, 'compSupplySpeeds', [mkt._address]);
+      const supplySpeed = await call(comptroller, 'niuSupplySpeeds', [mkt._address]);
       expect(supplySpeed).toEqualNumber(0);
-      const borrowSpeed = await call(comptroller, 'compBorrowSpeeds', [mkt._address]);
+      const borrowSpeed = await call(comptroller, 'niuBorrowSpeeds', [mkt._address]);
       expect(borrowSpeed).toEqualNumber(0);
     });
 
@@ -249,7 +249,7 @@ describe('Flywheel', () => {
         etherExp(1.1),
       ]);
 
-      const {index, block} = await call(comptroller, 'compBorrowState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuBorrowState', [mkt._address]);
       expect(index).toEqualNumber(compInitialIndex);
       expect(block).toEqualNumber(0);
     });
@@ -264,7 +264,7 @@ describe('Flywheel', () => {
         etherExp(1.1),
       ]);
 
-      const {index, block} = await call(comptroller, 'compBorrowState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuBorrowState', [mkt._address]);
       expect(index).toEqualNumber(compInitialIndex);
       expect(block).toEqualNumber(100);
     });
@@ -279,12 +279,12 @@ describe('Flywheel', () => {
       await send(comptroller, 'harnessUpdateNiuSupplyIndex', [mkt._address]);
       /*
         suppyTokens = 10e18
-        compAccrued = deltaBlocks * supplySpeed
+        niuAccrued = deltaBlocks * supplySpeed
                     = 100 * 0.5e18 = 50e18
-        newIndex   += compAccrued * 1e36 / supplyTokens
+        newIndex   += niuAccrued * 1e36 / supplyTokens
                     = 1e36 + 50e18 * 1e36 / 10e18 = 6e36
       */
-      const {index, block} = await call(comptroller, 'compSupplyState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuSupplyState', [mkt._address]);
       expect(index).toEqualNumber(6e36);
       expect(block).toEqualNumber(100);
     });
@@ -300,12 +300,12 @@ describe('Flywheel', () => {
         mkt._address
       ]);
 
-      const {index, block} = await call(comptroller, 'compSupplyState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuSupplyState', [mkt._address]);
       expect(index).toEqualNumber(compInitialIndex);
       expect(block).toEqualNumber(100);
-      const supplySpeed = await call(comptroller, 'compSupplySpeeds', [mkt._address]);
+      const supplySpeed = await call(comptroller, 'niuSupplySpeeds', [mkt._address]);
       expect(supplySpeed).toEqualNumber(0);
-      const borrowSpeed = await call(comptroller, 'compBorrowSpeeds', [mkt._address]);
+      const borrowSpeed = await call(comptroller, 'niuBorrowSpeeds', [mkt._address]);
       expect(borrowSpeed).toEqualNumber(0);
       // ctoken could have no comp speed or comp supplier state if not in comp markets
       // this logic could also possibly be implemented in the allowed hook
@@ -318,13 +318,13 @@ describe('Flywheel', () => {
       await send(comptroller, '_setNiuSpeeds', [[mkt._address], [etherExp(0.5)], [etherExp(0.5)]]);
       await send(comptroller, 'harnessUpdateNiuSupplyIndex', [mkt._address]);
 
-      const {index, block} = await call(comptroller, 'compSupplyState', [mkt._address]);
+      const {index, block} = await call(comptroller, 'niuSupplyState', [mkt._address]);
       expect(index).toEqualNumber(compInitialIndex);
       expect(block).toEqualNumber(0);
     });
 
     it('should not matter if the index is updated multiple times', async () => {
-      const compRemaining = compRate.multipliedBy(100)
+      const compRemaining = niuRate.multipliedBy(100)
       await send(comptroller, 'harnessAddNiuMarkets', [[cLOW._address]]);
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       await pretendBorrow(cLOW, a1, 1, 1, 100);
@@ -372,14 +372,14 @@ describe('Flywheel', () => {
 
   describe('distributeBorrowerNiu()', () => {
 
-    it('should update borrow index checkpoint but not compAccrued for first time user', async () => {
+    it('should update borrow index checkpoint but not niuAccrued for first time user', async () => {
       const mkt = cREP;
       await send(comptroller, "setNiuBorrowState", [mkt._address, etherDouble(6), 10]);
       await send(comptroller, "setNiuBorrowerIndex", [mkt._address, root, etherUnsigned(0)]);
 
       await send(comptroller, "harnessDistributeBorrowerNiu", [mkt._address, root, etherExp(1.1)]);
-      expect(await call(comptroller, "compAccrued", [root])).toEqualNumber(0);
-      expect(await call(comptroller, "compBorrowerIndex", [ mkt._address, root])).toEqualNumber(6e36);
+      expect(await call(comptroller, "niuAccrued", [root])).toEqualNumber(0);
+      expect(await call(comptroller, "niuBorrowerIndex", [ mkt._address, root])).toEqualNumber(6e36);
     });
 
     it('should transfer comp and update borrow index checkpoint correctly for repeat time user', async () => {
@@ -400,7 +400,7 @@ describe('Flywheel', () => {
                        = 5e18 * 5e36 / 1e36 = 25e18
       */
       const tx = await send(comptroller, "harnessDistributeBorrowerNiu", [mkt._address, a1, etherUnsigned(1.1e18)]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(25e18);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(25e18);
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
       expect(tx).toHaveLog('DistributedBorrowerNiu', {
         nToken: mkt._address,
@@ -426,7 +426,7 @@ describe('Flywheel', () => {
         0.00095e18 < compClaimThreshold of 0.001e18
       */
       await send(comptroller, "harnessDistributeBorrowerNiu", [mkt._address, a1, etherExp(1.1)]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(0.00095e18);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(0.00095e18);
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
     });
 
@@ -438,9 +438,9 @@ describe('Flywheel', () => {
       });
 
       await send(comptroller, "harnessDistributeBorrowerNiu", [mkt._address, a1, etherExp(1.1)]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(0);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(0);
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
-      expect(await call(comptroller, 'compBorrowerIndex', [mkt._address, a1])).toEqualNumber(compInitialIndex);
+      expect(await call(comptroller, 'niuBorrowerIndex', [mkt._address, a1])).toEqualNumber(compInitialIndex);
     });
   });
 
@@ -462,7 +462,7 @@ describe('Flywheel', () => {
       */
 
       const tx = await send(comptroller, "harnessDistributeAllSupplierNiu", [mkt._address, a1]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(0);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(0);
       expect(await compBalance(comptroller, a1)).toEqualNumber(25e18);
       expect(tx).toHaveLog('DistributedSupplierNiu', {
         nToken: mkt._address,
@@ -488,11 +488,11 @@ describe('Flywheel', () => {
       */
 
       await send(comptroller, "harnessDistributeAllSupplierNiu", [mkt._address, a1]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(0);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(0);
       expect(await compBalance(comptroller, a1)).toEqualNumber(20e18);
     });
 
-    it('should not transfer when compAccrued below threshold', async () => {
+    it('should not transfer when niuAccrued below threshold', async () => {
       const mkt = cREP;
       await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
 
@@ -507,7 +507,7 @@ describe('Flywheel', () => {
       */
 
       await send(comptroller, "harnessDistributeSupplierNiu", [mkt._address, a1]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(0.00095e18);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(0.00095e18);
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
     });
 
@@ -519,9 +519,9 @@ describe('Flywheel', () => {
       });
 
       await send(comptroller, "harnessDistributeSupplierNiu", [mkt._address, a1]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(0);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(0);
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
-      expect(await call(comptroller, 'compBorrowerIndex', [mkt._address, a1])).toEqualNumber(0);
+      expect(await call(comptroller, 'niuBorrowerIndex', [mkt._address, a1])).toEqualNumber(0);
     });
 
   });
@@ -533,7 +533,7 @@ describe('Flywheel', () => {
       const tx0 = await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       const tx1 = await send(comptroller, 'setNiuAccrued', [a1, a1AccruedPre]);
       const tx2 = await send(comptroller, 'harnessTransferNiu', [a1, a1AccruedPre, threshold]);
-      const a1AccruedPost = await compAccrued(comptroller, a1);
+      const a1AccruedPost = await niuAccrued(comptroller, a1);
       const compBalancePost = await compBalance(comptroller, a1);
       expect(compBalancePre).toEqualNumber(0);
       expect(compBalancePost).toEqualNumber(a1AccruedPre);
@@ -545,7 +545,7 @@ describe('Flywheel', () => {
       const tx0 = await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       const tx1 = await send(comptroller, 'setNiuAccrued', [a1, a1AccruedPre]);
       const tx2 = await send(comptroller, 'harnessTransferNiu', [a1, a1AccruedPre, threshold]);
-      const a1AccruedPost = await compAccrued(comptroller, a1);
+      const a1AccruedPost = await niuAccrued(comptroller, a1);
       const compBalancePost = await compBalance(comptroller, a1);
       expect(compBalancePre).toEqualNumber(0);
       expect(compBalancePost).toEqualNumber(0);
@@ -557,7 +557,7 @@ describe('Flywheel', () => {
       const tx0 = await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       const tx1 = await send(comptroller, 'setNiuAccrued', [a1, a1AccruedPre]);
       const tx2 = await send(comptroller, 'harnessTransferNiu', [a1, a1AccruedPre, threshold]);
-      const a1AccruedPost = await compAccrued(comptroller, a1);
+      const a1AccruedPost = await niuAccrued(comptroller, a1);
       const compBalancePost = await compBalance(comptroller, a1);
       expect(compBalancePre).toEqualNumber(0);
       expect(compBalancePost).toEqualNumber(0);
@@ -566,51 +566,51 @@ describe('Flywheel', () => {
 
   describe('claimNiu', () => {
     it('should accrue comp and then transfer comp accrued', async () => {
-      const compRemaining = compRate.multipliedBy(100), mintAmount = etherUnsigned(12e18), deltaBlocks = 10;
+      const compRemaining = niuRate.multipliedBy(100), mintAmount = etherUnsigned(12e18), deltaBlocks = 10;
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       await pretendBorrow(cLOW, a1, 1, 1, 100);
       await send(comptroller, '_setNiuSpeeds', [[cLOW._address], [etherExp(0.5)], [etherExp(0.5)]]);
       await send(comptroller, 'harnessRefreshNiuSpeeds');
-      const supplySpeed = await call(comptroller, 'compSupplySpeeds', [cLOW._address]);
-      const borrowSpeed = await call(comptroller, 'compBorrowSpeeds', [cLOW._address]);
-      const a2AccruedPre = await compAccrued(comptroller, a2);
+      const supplySpeed = await call(comptroller, 'niuSupplySpeeds', [cLOW._address]);
+      const borrowSpeed = await call(comptroller, 'niuBorrowSpeeds', [cLOW._address]);
+      const a2AccruedPre = await niuAccrued(comptroller, a2);
       const compBalancePre = await compBalance(comptroller, a2);
       await quickMint(cLOW, a2, mintAmount);
       await fastForward(comptroller, deltaBlocks);
       const tx = await send(comptroller, 'claimNiu', [a2]);
-      const a2AccruedPost = await compAccrued(comptroller, a2);
+      const a2AccruedPost = await niuAccrued(comptroller, a2);
       const compBalancePost = await compBalance(comptroller, a2);
       expect(tx.gasUsed).toBeLessThan(500000);
-      expect(supplySpeed).toEqualNumber(compRate);
-      expect(borrowSpeed).toEqualNumber(compRate);
+      expect(supplySpeed).toEqualNumber(niuRate);
+      expect(borrowSpeed).toEqualNumber(niuRate);
       expect(a2AccruedPre).toEqualNumber(0);
       expect(a2AccruedPost).toEqualNumber(0);
       expect(compBalancePre).toEqualNumber(0);
-      expect(compBalancePost).toEqualNumber(compRate.multipliedBy(deltaBlocks).minus(1)); // index is 8333...
+      expect(compBalancePost).toEqualNumber(niuRate.multipliedBy(deltaBlocks).minus(1)); // index is 8333...
     });
 
     it('should accrue comp and then transfer comp accrued in a single market', async () => {
-      const compRemaining = compRate.multipliedBy(100), mintAmount = etherUnsigned(12e18), deltaBlocks = 10;
+      const compRemaining = niuRate.multipliedBy(100), mintAmount = etherUnsigned(12e18), deltaBlocks = 10;
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       await pretendBorrow(cLOW, a1, 1, 1, 100);
       await send(comptroller, 'harnessAddNiuMarkets', [[cLOW._address]]);
       await send(comptroller, 'harnessRefreshNiuSpeeds');
-      const supplySpeed = await call(comptroller, 'compSupplySpeeds', [cLOW._address]);
-      const borrowSpeed = await call(comptroller, 'compBorrowSpeeds', [cLOW._address]);
-      const a2AccruedPre = await compAccrued(comptroller, a2);
+      const supplySpeed = await call(comptroller, 'niuSupplySpeeds', [cLOW._address]);
+      const borrowSpeed = await call(comptroller, 'niuBorrowSpeeds', [cLOW._address]);
+      const a2AccruedPre = await niuAccrued(comptroller, a2);
       const compBalancePre = await compBalance(comptroller, a2);
       await quickMint(cLOW, a2, mintAmount);
       await fastForward(comptroller, deltaBlocks);
       const tx = await send(comptroller, 'claimNiu', [a2, [cLOW._address]]);
-      const a2AccruedPost = await compAccrued(comptroller, a2);
+      const a2AccruedPost = await niuAccrued(comptroller, a2);
       const compBalancePost = await compBalance(comptroller, a2);
       expect(tx.gasUsed).toBeLessThan(170000);
-      expect(supplySpeed).toEqualNumber(compRate);
-      expect(borrowSpeed).toEqualNumber(compRate);
+      expect(supplySpeed).toEqualNumber(niuRate);
+      expect(borrowSpeed).toEqualNumber(niuRate);
       expect(a2AccruedPre).toEqualNumber(0);
       expect(a2AccruedPost).toEqualNumber(0);
       expect(compBalancePre).toEqualNumber(0);
-      expect(compBalancePost).toEqualNumber(compRate.multipliedBy(deltaBlocks).minus(1)); // index is 8333...
+      expect(compBalancePost).toEqualNumber(niuRate.multipliedBy(deltaBlocks).minus(1)); // index is 8333...
     });
 
     it('should claim when comp accrued is below threshold', async () => {
@@ -618,7 +618,7 @@ describe('Flywheel', () => {
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       await send(comptroller, 'setNiuAccrued', [a1, accruedAmt]);
       await send(comptroller, 'claimNiu', [a1, [cLOW._address]]);
-      expect(await compAccrued(comptroller, a1)).toEqualNumber(0);
+      expect(await niuAccrued(comptroller, a1)).toEqualNumber(0);
       expect(await compBalance(comptroller, a1)).toEqualNumber(accruedAmt);
     });
 
@@ -632,7 +632,7 @@ describe('Flywheel', () => {
 
   describe('claimNiu batch', () => {
     it('should revert when claiming comp from non-listed market', async () => {
-      const compRemaining = compRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
+      const compRemaining = niuRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_, __, ...claimAccts] = saddle.accounts;
 
@@ -651,7 +651,7 @@ describe('Flywheel', () => {
     });
 
     it('should claim the expected amount when holders and ctokens arg is duplicated', async () => {
-      const compRemaining = compRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
+      const compRemaining = niuRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_, __, ...claimAccts] = saddle.accounts;
       for(let from of claimAccts) {
@@ -668,13 +668,13 @@ describe('Flywheel', () => {
       const tx = await send(comptroller, 'claimNiu', [[...claimAccts, ...claimAccts], [cLOW._address, cLOW._address], false, true]);
       // comp distributed => 10e18
       for(let acct of claimAccts) {
-        expect(await call(comptroller, 'compSupplierIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(1.125));
+        expect(await call(comptroller, 'niuSupplierIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(1.125));
         expect(await compBalance(comptroller, acct)).toEqualNumber(etherExp(1.25));
       }
     });
 
     it('claims comp for multiple suppliers only', async () => {
-      const compRemaining = compRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
+      const compRemaining = niuRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_, __, ...claimAccts] = saddle.accounts;
       for(let from of claimAccts) {
@@ -691,13 +691,13 @@ describe('Flywheel', () => {
       const tx = await send(comptroller, 'claimNiu', [claimAccts, [cLOW._address], false, true]);
       // comp distributed => 10e18
       for(let acct of claimAccts) {
-        expect(await call(comptroller, 'compSupplierIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(1.125));
+        expect(await call(comptroller, 'niuSupplierIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(1.125));
         expect(await compBalance(comptroller, acct)).toEqualNumber(etherExp(1.25));
       }
     });
 
     it('claims comp for multiple borrowers only, primes uninitiated', async () => {
-      const compRemaining = compRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10), borrowAmt = etherExp(1), borrowIdx = etherExp(1)
+      const compRemaining = niuRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10), borrowAmt = etherExp(1), borrowIdx = etherExp(1)
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_,__, ...claimAccts] = saddle.accounts;
 
@@ -712,8 +712,8 @@ describe('Flywheel', () => {
 
       const tx = await send(comptroller, 'claimNiu', [claimAccts, [cLOW._address], true, false]);
       for(let acct of claimAccts) {
-        expect(await call(comptroller, 'compBorrowerIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(2.25));
-        expect(await call(comptroller, 'compSupplierIndex', [cLOW._address, acct])).toEqualNumber(0);
+        expect(await call(comptroller, 'niuBorrowerIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(2.25));
+        expect(await call(comptroller, 'niuSupplierIndex', [cLOW._address, acct])).toEqualNumber(0);
       }
     });
 
@@ -728,8 +728,8 @@ describe('Flywheel', () => {
   describe('harnessRefreshNiuSpeeds', () => {
     it('should start out 0', async () => {
       await send(comptroller, 'harnessRefreshNiuSpeeds');
-      const supplySpeed = await call(comptroller, 'compSupplySpeeds', [cLOW._address]);
-      const borrowSpeed = await call(comptroller, 'compBorrowSpeeds', [cLOW._address]);
+      const supplySpeed = await call(comptroller, 'niuSupplySpeeds', [cLOW._address]);
+      const borrowSpeed = await call(comptroller, 'niuBorrowSpeeds', [cLOW._address]);
       expect(supplySpeed).toEqualNumber(0);
       expect(borrowSpeed).toEqualNumber(0);
     });
@@ -738,10 +738,10 @@ describe('Flywheel', () => {
       await pretendBorrow(cLOW, a1, 1, 1, 100);
       await send(comptroller, 'harnessAddNiuMarkets', [[cLOW._address]]);
       const tx = await send(comptroller, 'harnessRefreshNiuSpeeds');
-      const supplySpeed = await call(comptroller, 'compSupplySpeeds', [cLOW._address]);
-      const borrowSpeed = await call(comptroller, 'compBorrowSpeeds', [cLOW._address]);
-      expect(supplySpeed).toEqualNumber(compRate);
-      expect(borrowSpeed).toEqualNumber(compRate);
+      const supplySpeed = await call(comptroller, 'niuSupplySpeeds', [cLOW._address]);
+      const borrowSpeed = await call(comptroller, 'niuBorrowSpeeds', [cLOW._address]);
+      expect(supplySpeed).toEqualNumber(niuRate);
+      expect(borrowSpeed).toEqualNumber(niuRate);
       expect(tx).toHaveLog(['NiuBorrowSpeedUpdated', 0], {
         nToken: cLOW._address,
         newSpeed: borrowSpeed
@@ -757,18 +757,18 @@ describe('Flywheel', () => {
       await pretendBorrow(cZRX, a1, 1, 1, 100);
       await send(comptroller, 'harnessAddNiuMarkets', [[cLOW._address, cZRX._address]]);
       await send(comptroller, 'harnessRefreshNiuSpeeds');
-      const supplySpeed1 = await call(comptroller, 'compSupplySpeeds', [cLOW._address]);
-      const borrowSpeed1 = await call(comptroller, 'compBorrowSpeeds', [cLOW._address]);
-      const supplySpeed2 = await call(comptroller, 'compSupplySpeeds', [cREP._address]);
-      const borrowSpeed2 = await call(comptroller, 'compBorrowSpeeds', [cREP._address]);
-      const supplySpeed3 = await call(comptroller, 'compSupplySpeeds', [cZRX._address]);
-      const borrowSpeed3 = await call(comptroller, 'compBorrowSpeeds', [cZRX._address]);
-      expect(supplySpeed1).toEqualNumber(compRate.dividedBy(4));
-      expect(borrowSpeed1).toEqualNumber(compRate.dividedBy(4));
+      const supplySpeed1 = await call(comptroller, 'niuSupplySpeeds', [cLOW._address]);
+      const borrowSpeed1 = await call(comptroller, 'niuBorrowSpeeds', [cLOW._address]);
+      const supplySpeed2 = await call(comptroller, 'niuSupplySpeeds', [cREP._address]);
+      const borrowSpeed2 = await call(comptroller, 'niuBorrowSpeeds', [cREP._address]);
+      const supplySpeed3 = await call(comptroller, 'niuSupplySpeeds', [cZRX._address]);
+      const borrowSpeed3 = await call(comptroller, 'niuBorrowSpeeds', [cZRX._address]);
+      expect(supplySpeed1).toEqualNumber(niuRate.dividedBy(4));
+      expect(borrowSpeed1).toEqualNumber(niuRate.dividedBy(4));
       expect(supplySpeed2).toEqualNumber(0);
       expect(borrowSpeed2).toEqualNumber(0);
-      expect(supplySpeed3).toEqualNumber(compRate.dividedBy(4).multipliedBy(3));
-      expect(borrowSpeed3).toEqualNumber(compRate.dividedBy(4).multipliedBy(3));
+      expect(supplySpeed3).toEqualNumber(niuRate.dividedBy(4).multipliedBy(3));
+      expect(borrowSpeed3).toEqualNumber(niuRate.dividedBy(4).multipliedBy(3));
     });
   });
 
@@ -786,8 +786,8 @@ describe('Flywheel', () => {
         nToken: cLOW._address,
         newSpeed: desiredNiuSupplySpeed
       });
-      const currentNiuSupplySpeed = await call(comptroller, 'compSupplySpeeds', [cLOW._address]);
-      const currentNiuBorrowSpeed = await call(comptroller, 'compBorrowSpeeds', [cLOW._address]);
+      const currentNiuSupplySpeed = await call(comptroller, 'niuSupplySpeeds', [cLOW._address]);
+      const currentNiuBorrowSpeed = await call(comptroller, 'niuBorrowSpeeds', [cLOW._address]);
       expect(currentNiuSupplySpeed).toEqualNumber(desiredNiuSupplySpeed);
       expect(currentNiuBorrowSpeed).toEqualNumber(desiredNiuBorrowSpeed);
     });
@@ -811,14 +811,14 @@ describe('Flywheel', () => {
       await send(comptroller, 'harnessAddNiuMarkets', [[cREP._address, cZRX._address, cBAT._address, cDAI._address]]);
       await send(comptroller, '_setNiuSpeeds', [[cREP._address, cZRX._address, cBAT._address, cDAI._address], [supplySpeed1, supplySpeed2, supplySpeed3, supplySpeed4], [borrowSpeed1, borrowSpeed2, borrowSpeed3, borrowSpeed4]]);
 
-      const currentSupplySpeed1 = await call(comptroller, 'compSupplySpeeds', [cREP._address]);
-      const currentBorrowSpeed1 = await call(comptroller, 'compBorrowSpeeds', [cREP._address]);
-      const currentSupplySpeed2 = await call(comptroller, 'compSupplySpeeds', [cZRX._address]);
-      const currentBorrowSpeed2 = await call(comptroller, 'compBorrowSpeeds', [cZRX._address]);
-      const currentSupplySpeed3 = await call(comptroller, 'compSupplySpeeds', [cBAT._address]);
-      const currentBorrowSpeed3 = await call(comptroller, 'compBorrowSpeeds', [cBAT._address]);
-      const currentSupplySpeed4 = await call(comptroller, 'compSupplySpeeds', [cDAI._address]);
-      const currentBorrowSpeed4 = await call(comptroller, 'compBorrowSpeeds', [cDAI._address]);
+      const currentSupplySpeed1 = await call(comptroller, 'niuSupplySpeeds', [cREP._address]);
+      const currentBorrowSpeed1 = await call(comptroller, 'niuBorrowSpeeds', [cREP._address]);
+      const currentSupplySpeed2 = await call(comptroller, 'niuSupplySpeeds', [cZRX._address]);
+      const currentBorrowSpeed2 = await call(comptroller, 'niuBorrowSpeeds', [cZRX._address]);
+      const currentSupplySpeed3 = await call(comptroller, 'niuSupplySpeeds', [cBAT._address]);
+      const currentBorrowSpeed3 = await call(comptroller, 'niuBorrowSpeeds', [cBAT._address]);
+      const currentSupplySpeed4 = await call(comptroller, 'niuSupplySpeeds', [cDAI._address]);
+      const currentBorrowSpeed4 = await call(comptroller, 'niuBorrowSpeeds', [cDAI._address]);
 
       expect(currentSupplySpeed1).toEqualNumber(supplySpeed1);
       expect(currentBorrowSpeed1).toEqualNumber(borrowSpeed1);
@@ -831,7 +831,7 @@ describe('Flywheel', () => {
     });
 
     const checkAccrualsBorrowAndSupply = async (compSupplySpeed, compBorrowSpeed) => {
-      const mintAmount = etherUnsigned(1000e18), borrowAmount = etherUnsigned(1e18), borrowCollateralAmount = etherUnsigned(1000e18), compRemaining = compRate.multipliedBy(100), deltaBlocks = 10;
+      const mintAmount = etherUnsigned(1000e18), borrowAmount = etherUnsigned(1e18), borrowCollateralAmount = etherUnsigned(1000e18), compRemaining = niuRate.multipliedBy(100), deltaBlocks = 10;
 
       // Transfer COMP to the comptroller
       await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
@@ -916,11 +916,11 @@ describe('Flywheel', () => {
       await send(comptroller, "_setNiuSpeeds", [[mkt], [0], [0]]);
       await send(comptroller, "harnessAddNiuMarkets", [[mkt]]);
 
-      const supplyState = await call(comptroller, 'compSupplyState', [mkt]);
+      const supplyState = await call(comptroller, 'niuSupplyState', [mkt]);
       expect(supplyState.block).toEqual(bn1.toString());
       expect(supplyState.index).toEqual(idx.toFixed());
 
-      const borrowState = await call(comptroller, 'compBorrowState', [mkt]);
+      const borrowState = await call(comptroller, 'niuBorrowState', [mkt]);
       expect(borrowState.block).toEqual(bn1.toString());
       expect(borrowState.index).toEqual(idx.toFixed());
     });
@@ -936,11 +936,11 @@ describe('Flywheel', () => {
       const tx1 = await send(comptroller, '_setContributorNiuSpeed', [a1, 2000]);
       await fastForward(comptroller, 50);
 
-      const a1Accrued = await compAccrued(comptroller, a1);
+      const a1Accrued = await niuAccrued(comptroller, a1);
       expect(a1Accrued).toEqualNumber(0);
 
       const tx2 = await send(comptroller, 'updateContributorRewards', [a1], {from: a1});
-      const a1Accrued2 = await compAccrued(comptroller, a1);
+      const a1Accrued2 = await niuAccrued(comptroller, a1);
       expect(a1Accrued2).toEqualNumber(50 * 2000);
     });
 
@@ -950,7 +950,7 @@ describe('Flywheel', () => {
       await fastForward(comptroller, 50);
 
       const tx2 = await send(comptroller, 'updateContributorRewards', [a1], {from: a1});
-      const a1Accrued2 = await compAccrued(comptroller, a1);
+      const a1Accrued2 = await niuAccrued(comptroller, a1);
       expect(a1Accrued2).toEqualNumber(50 * 2000);
     });
   });
@@ -978,7 +978,7 @@ describe('Flywheel', () => {
       await fastForward(comptroller, 50);
 
       const tx3 = await send(comptroller, 'updateContributorRewards', [a1], {from: a1});
-      const a1Accrued = await compAccrued(comptroller, a1);
+      const a1Accrued = await niuAccrued(comptroller, a1);
       expect(a1Accrued).toEqualNumber(50 * 2000);
     });
   });

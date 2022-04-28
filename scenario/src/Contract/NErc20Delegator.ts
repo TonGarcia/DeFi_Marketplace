@@ -3,7 +3,7 @@ import { Callable, Sendable } from '../Invokation';
 import { NTokenMethods } from './NToken';
 import { encodedNumber } from '../Encoding';
 
-interface CErc20DelegatorMethods extends NTokenMethods {
+interface NErc20DelegatorMethods extends NTokenMethods {
   implementation(): Callable<string>;
   _setImplementation(
     implementation_: string,
@@ -12,17 +12,17 @@ interface CErc20DelegatorMethods extends NTokenMethods {
   ): Sendable<void>;
 }
 
-interface CErc20DelegatorScenarioMethods extends CErc20DelegatorMethods {
+interface NErc20DelegatorScenarioMethods extends NErc20DelegatorMethods {
   setTotalBorrows(amount: encodedNumber): Sendable<void>;
   setTotalReserves(amount: encodedNumber): Sendable<void>;
 }
 
-export interface CErc20Delegator extends Contract {
-  methods: CErc20DelegatorMethods;
+export interface NErc20Delegator extends Contract {
+  methods: NErc20DelegatorMethods;
   name: string;
 }
 
-export interface CErc20DelegatorScenario extends Contract {
-  methods: CErc20DelegatorMethods;
+export interface NErc20DelegatorScenario extends Contract {
+  methods: NErc20DelegatorMethods;
   name: string;
 }

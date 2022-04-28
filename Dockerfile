@@ -8,6 +8,7 @@ RUN apt-get -y install perl make
 RUN apt -y install libudev-dev
 #RUN npm install -g node@12.9.1
 RUN npm install --global yarn
+RUN npm i -g ganache
 
 RUN wget https://github.com/ethereum/solidity/releases/download/v0.5.16/solc-static-linux -O /bin/solc && chmod +x /bin/solc
 

@@ -19,11 +19,22 @@ Contributing
 
 Contributing to the Niural protocol is a bit different than most open-source projects -- check out the [community guide on Contributing](https://www.comp.xyz/t/contributing-to-niural-protocol/48).
 
-Developing
+Development (setup)
 ==========
 
+[Local Development - check configuration step](https://github.com/compound-finance/saddle)
+
+1. Install solc-select: ``` pip3 install solc-select ```
+1. Install the contract version: ``` solc-select install 0.5.16 ```
 1. Run ``` $ docker-compose up -d ```
-1. Run repl: ``` $ yarn repl -n development ```
+
+Development (tests)
+==========
+
+1. Compile with saddle (generate contracts.json): ``` $ npx saddle compile ```
+1. Compile with yarn (BEST COMPILE CHOICE): ``` $ yarn compile ```
+1. Run repl mini test: ``` $ yarn repl -n development ```
+1. Run full tests: ``` $ yarn test ```
 
 Contracts
 =========
@@ -31,8 +42,8 @@ Contracts
 We detail a few of the core contracts in the Niural protocol.
 
 <dl>
-  <dt>NToken, CErc20 and CEther</dt>
-  <dd>The Niural nTokens, which are self-contained borrowing and lending contracts. NToken contains the core logic and CErc20 and CEther add public interfaces for Erc20 tokens and ether, respectively. Each NToken is assigned an interest rate and risk model (see InterestRateModel and Niutroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each NToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
+  <dt>NToken, NErc20 and CEther</dt>
+  <dd>The Niural nTokens, which are self-contained borrowing and lending contracts. NToken contains the core logic and NErc20 and CEther add public interfaces for Erc20 tokens and ether, respectively. Each NToken is assigned an interest rate and risk model (see InterestRateModel and Niutroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each NToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
 </dl>
 
 <dl>

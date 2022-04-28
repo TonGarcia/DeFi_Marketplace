@@ -1,11 +1,11 @@
 
 # Run a single cvl e.g.:
-#  make -B spec/certora/CErc20/borrowAndRepayFresh.cvl
+#  make -B spec/certora/NErc20/borrowAndRepayFresh.cvl
 
 # TODO:
 #  - mintAndRedeemFresh.cvl in progress and is failing due to issues with tool proving how the exchange rate can change
 #    hoping for better division modelling - currently fails to prove (a + 1) / b >= a / b
-#  - CErc20Delegator/*.cvl cannot yet be run with the tool
+#  - NErc20Delegator/*.cvl cannot yet be run with the tool
 #  - cDAI proofs are WIP, require using the delegate and the new revert message assertions
 
 .PHONY: certora-clean
@@ -81,42 +81,42 @@ spec/certora/cDAI/%.cvl:
 	 CDaiDelegateCertora:$@ \
 	--settings -cache=certora-run-cdai
 
-spec/certora/CErc20/%.cvl:
+spec/certora/NErc20/%.cvl:
 	$(CERTORA_RUN) \
-	 spec/certora/contracts/CErc20ImmutableCertora.sol \
+	 spec/certora/contracts/NErc20ImmutableCertora.sol \
 	 spec/certora/contracts/NTokenCollateral.sol \
 	 spec/certora/contracts/NiutrollerCertora.sol \
 	 spec/certora/contracts/InterestRateModelModel.sol \
 	 spec/certora/contracts/UnderlyingModelNonStandard.sol \
 	--link \
-	 CErc20ImmutableCertora:otherToken=NTokenCollateral \
-	 CErc20ImmutableCertora:comptroller=NiutrollerCertora \
-	 CErc20ImmutableCertora:underlying=UnderlyingModelNonStandard \
-	 CErc20ImmutableCertora:interestRateModel=InterestRateModelModel \
+	 NErc20ImmutableCertora:otherToken=NTokenCollateral \
+	 NErc20ImmutableCertora:comptroller=NiutrollerCertora \
+	 NErc20ImmutableCertora:underlying=UnderlyingModelNonStandard \
+	 NErc20ImmutableCertora:interestRateModel=InterestRateModelModel \
 	 NTokenCollateral:comptroller=NiutrollerCertora \
 	 NTokenCollateral:underlying=UnderlyingModelNonStandard \
 	--verify \
-	 CErc20ImmutableCertora:$@ \
+	 NErc20ImmutableCertora:$@ \
 	--settings -cache=certora-run-cerc20-immutable
 
-spec/certora/CErc20Delegator/%.cvl:
+spec/certora/NErc20Delegator/%.cvl:
 	$(CERTORA_RUN) \
-	 spec/certora/contracts/CErc20DelegatorCertora.sol \
-	 spec/certora/contracts/CErc20DelegateCertora.sol \
+	 spec/certora/contracts/NErc20DelegatorCertora.sol \
+	 spec/certora/contracts/NErc20DelegateCertora.sol \
 	 spec/certora/contracts/NTokenCollateral.sol \
 	 spec/certora/contracts/NiutrollerCertora.sol \
 	 spec/certora/contracts/InterestRateModelModel.sol \
 	 spec/certora/contracts/UnderlyingModelNonStandard.sol \
 	--link \
-	 CErc20DelegatorCertora:implementation=CErc20DelegateCertora \
-	 CErc20DelegatorCertora:otherToken=NTokenCollateral \
-	 CErc20DelegatorCertora:comptroller=NiutrollerCertora \
-	 CErc20DelegatorCertora:underlying=UnderlyingModelNonStandard \
-	 CErc20DelegatorCertora:interestRateModel=InterestRateModelModel \
+	 NErc20DelegatorCertora:implementation=NErc20DelegateCertora \
+	 NErc20DelegatorCertora:otherToken=NTokenCollateral \
+	 NErc20DelegatorCertora:comptroller=NiutrollerCertora \
+	 NErc20DelegatorCertora:underlying=UnderlyingModelNonStandard \
+	 NErc20DelegatorCertora:interestRateModel=InterestRateModelModel \
 	 NTokenCollateral:comptroller=NiutrollerCertora \
 	 NTokenCollateral:underlying=UnderlyingModelNonStandard \
 	--verify \
-	 CErc20DelegatorCertora:$@ \
+	 NErc20DelegatorCertora:$@ \
 	--settings -assumeUnwindCond \
 	--settings -cache=certora-run-cerc20-delegator
 

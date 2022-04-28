@@ -432,7 +432,7 @@ export function comptrollerFetchers() {
       `,
       "NiuRate",
       [new Arg("comptroller", getNiutroller, {implicit: true})],
-      async(world, {comptroller}) => new NumberV(await comptroller.methods.compRate().call())
+      async(world, {comptroller}) => new NumberV(await comptroller.methods.niuRate().call())
     ),
 
     new Fetcher<{comptroller: Niutroller, signature: StringV, callArgs: StringV[]}, NumberV>(`
@@ -469,7 +469,7 @@ export function comptrollerFetchers() {
         new Arg("key", getStringV),
       ],
       async (world, {comptroller, NToken, key}) => {
-        const result = await comptroller.methods.compSupplyState(NToken._address).call();
+        const result = await comptroller.methods.niuSupplyState(NToken._address).call();
         return new NumberV(result[key.val]);
       }
     ),
@@ -485,7 +485,7 @@ export function comptrollerFetchers() {
         new Arg("key", getStringV),
       ],
       async (world, {comptroller, NToken, key}) => {
-        const result = await comptroller.methods.compBorrowState(NToken._address).call();
+        const result = await comptroller.methods.niuBorrowState(NToken._address).call();
         return new NumberV(result[key.val]);
       }
     ),
@@ -500,7 +500,7 @@ export function comptrollerFetchers() {
         new Arg("account", getAddressV),
       ],
       async (world, {comptroller,account}) => {
-        const result = await comptroller.methods.compAccrued(account.val).call();
+        const result = await comptroller.methods.niuAccrued(account.val).call();
         return new NumberV(result);
       }
     ),
@@ -520,7 +520,7 @@ export function comptrollerFetchers() {
       }
     ),
     new Fetcher<{comptroller: Niutroller, NToken: NToken, account: AddressV}, NumberV>(`
-        #### compSupplierIndex
+        #### niuSupplierIndex
 
         * "Niutroller NiuSupplierIndex cZRX Coburn
       `,
@@ -531,7 +531,7 @@ export function comptrollerFetchers() {
         new Arg("account", getAddressV),
       ],
       async (world, {comptroller, NToken, account}) => {
-        return new NumberV(await comptroller.methods.compSupplierIndex(NToken._address, account.val).call());
+        return new NumberV(await comptroller.methods.niuSupplierIndex(NToken._address, account.val).call());
       }
     ),
     new Fetcher<{comptroller: Niutroller, NToken: NToken, account: AddressV}, NumberV>(`
@@ -546,7 +546,7 @@ export function comptrollerFetchers() {
         new Arg("account", getAddressV),
       ],
       async (world, {comptroller, NToken, account}) => {
-        return new NumberV(await comptroller.methods.compBorrowerIndex(NToken._address, account.val).call());
+        return new NumberV(await comptroller.methods.niuBorrowerIndex(NToken._address, account.val).call());
       }
     ),
     new Fetcher<{comptroller: Niutroller, NToken: NToken}, NumberV>(`
@@ -574,7 +574,7 @@ export function comptrollerFetchers() {
         new Arg("NToken", getNTokenV),
       ],
       async (world, {comptroller, NToken}) => {
-        return new NumberV(await comptroller.methods.compSupplySpeeds(NToken._address).call());
+        return new NumberV(await comptroller.methods.niuSupplySpeeds(NToken._address).call());
       }
     ),
     new Fetcher<{comptroller: Niutroller, NToken: NToken}, NumberV>(`
@@ -588,7 +588,7 @@ export function comptrollerFetchers() {
         new Arg("NToken", getNTokenV),
       ],
       async (world, {comptroller, NToken}) => {
-        return new NumberV(await comptroller.methods.compBorrowSpeeds(NToken._address).call());
+        return new NumberV(await comptroller.methods.niuBorrowSpeeds(NToken._address).call());
       }
     ),
     new Fetcher<{comptroller: Niutroller}, AddressV>(`

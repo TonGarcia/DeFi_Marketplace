@@ -43,12 +43,13 @@ contract DAIInterestRateModelV3 is JumpRateModelV2 {
 
     /**
      * @notice External function to update the parameters of the interest rate model
-     * @param baseRatePerYear The approximate target base APR, as a mantissa (scaled by 1e18). For DAI, this is calculated from DSR and SF. Input not used.
+     * (unused) param baseRatePerYear The approximate target base APR, as a mantissa (scaled by 1e18). For DAI, this is calculated from DSR and SF. Input not used.
      * @param gapPerYear The Additional margin per year separating the base borrow rate from the roof. (scaled by 1e18)
      * @param jumpMultiplierPerYear The jumpMultiplierPerYear after hitting a specified utilization point
      * @param kink_ The utilization point at which the jump multiplier is applied
      */
-    function updateJumpRateModel(uint baseRatePerYear, uint gapPerYear, uint jumpMultiplierPerYear, uint kink_) external {
+     //uint baseRatePerYear
+    function updateJumpRateModel(uint gapPerYear, uint jumpMultiplierPerYear, uint kink_) external {
         require(msg.sender == owner, "only the owner may call this function.");
         gapPerBlock = gapPerYear / blocksPerYear;
         updateJumpRateModelInternal(0, 0, jumpMultiplierPerYear, kink_);

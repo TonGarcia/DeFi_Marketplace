@@ -20,7 +20,7 @@ example:
 	npx saddle -n rinkeby script flywheel:init '{batch: "200"}'
 
 To test locally:
-	1) ganache-cli --gasLimit 20000000 --gasPrice 20000 --defaultBalanceEther 1000000000 --allowUnlimitedContractSize true
+	1) ganache --gasLimit 20000000 --gasPrice 20000 --defaultBalanceEther 1000000000 --allowUnlimitedContractSize true
 		* use ^6.9
 	2) PROVIDER="http://localhost:8545/" script/scen/scriptFlywheel.scen
 	3) PROVIDER="http://localhost:8545/" npx saddle -n development script flywheel:init
@@ -143,16 +143,16 @@ let accountRequest = async (network, opts) => {
 let filterInitialized = async (borrowersByNToken) => {
 	let res = {}
 	let batchSize = 75;
-	console.log(`Calling compBorrowerIndex for borrowers in batches of ${batchSize}...\n`);
+	console.log(`Calling niuBorrowerIndex for borrowers in batches of ${batchSize}...\n`);
 	for(let nTokenAddr of Object.keys(borrowersByNToken)) {
-		let supplySpeed = await call(Niutroller, 'compSupplySpeeds', [nTokenAddr]);
-		let borrowSpeed = await call(Niutroller, 'compBorrowSpeeds', [nTokenAddr]);
+		let supplySpeed = await call(Niutroller, 'niuSupplySpeeds', [nTokenAddr]);
+		let borrowSpeed = await call(Niutroller, 'niuBorrowSpeeds', [nTokenAddr]);
 		if (Number(supplySpeed) != 0 || Number(borrowSpeed) != 0){
 			for (let borrowerChunk of getChunks(borrowersByNToken[nTokenAddr], batchSize)) {
 				try {
 					let indices = await Promise.all(borrowerChunk.map(
 						async(borrower) => {
-							return await call(Niutroller, 'compBorrowerIndex',[nTokenAddr, borrower])
+							return await call(Niutroller, 'niuBorrowerIndex',[nTokenAddr, borrower])
 					}));
 					let uninitialized = borrowerChunk.filter((borrower, i) => Number(indices[i]) == 0);
 					res[nTokenAddr] = res[nTokenAddr] ? res[nTokenAddr].concat(uninitialized) : uninitialized;

@@ -2,7 +2,7 @@ import { Event } from '../Event';
 import { addAction, describeUser, World } from '../World';
 import { decodeCall, getPastEvents } from '../Contract';
 import { NToken, NTokenScenario } from '../Contract/NToken';
-import { CErc20Delegate } from '../Contract/CErc20Delegate'
+import { NErc20Delegate } from '../Contract/NErc20Delegate'
 import { invoke, Sendable } from '../Invokation';
 import {
   getAddressV,
@@ -38,7 +38,7 @@ async function genNTokenDelegate(world: World, from: string, event: Event): Prom
   return world;
 }
 
-async function verifyNTokenDelegate(world: World, nTokenDelegate: CErc20Delegate, name: string, contract: string, apiKey: string): Promise<World> {
+async function verifyNTokenDelegate(world: World, nTokenDelegate: NErc20Delegate, name: string, contract: string, apiKey: string): Promise<World> {
   if (world.isLocalNetwork()) {
     world.printer.printLine(`Politely declining to verify on local network: ${world.network}.`);
   } else {

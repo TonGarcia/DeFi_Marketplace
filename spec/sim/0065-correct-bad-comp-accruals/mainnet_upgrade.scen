@@ -21,7 +21,7 @@ NiutrollerImpl Deploy Standard NewNiutroller
 -- Merge ABIs so that we can call the newly compReceivable without an error
 NiutrollerImpl NewNiutroller MergeABI
 
--- Verify compAccrued for select affected users
+-- Verify niuAccrued for select affected users
 Assert Equal (Niutroller NiuAccrued AffectedUser1) (70026235599882059838229769)
 Assert Equal (Niutroller NiuAccrued AffectedUser2) (99436286923591330401865)
 Assert Equal (Niutroller NiuAccrued AffectedUser3) (0343336911491348169)
@@ -42,30 +42,30 @@ PrintNumber LastGas
 MineBlock
 
 -- Inflection points to test:
---   compOverAccrued < compAccrued -- AffectedUser1, AffectedUser2, AffectedUser74
---   compOverAccrued > compAccrued -- AffectedUser3, AffectedUser4
---   compAccrued == 0 -- AffectedUser4
---   compAccrued == compOverAccrued -- AffectedUser54
+--   compOverAccrued < niuAccrued -- AffectedUser1, AffectedUser2, AffectedUser74
+--   compOverAccrued > niuAccrued -- AffectedUser3, AffectedUser4
+--   niuAccrued == 0 -- AffectedUser4
+--   niuAccrued == compOverAccrued -- AffectedUser54
 --   first affected user -- AffectedUser1
 --   last affected user -- AffectedUser74
 
 Assert Equal (Niutroller NiuAccrued AffectedUser1) (1653772666598537943133) -- 70026235599882059838229769 - 70024581827215461300286636
-Assert Equal (Niutroller NiuReceivable AffectedUser1) (0) -- compAccrued > compOverAccrued => compReceivable = 0
+Assert Equal (Niutroller NiuReceivable AffectedUser1) (0) -- niuAccrued > compOverAccrued => compReceivable = 0
 
 Assert Equal (Niutroller NiuAccrued AffectedUser2) (1744403539509603152) -- 99436286923591330401865 - 99434542520051820798713
-Assert Equal (Niutroller NiuReceivable AffectedUser2) (0) -- compAccrued > compOverAccrued => compReceivable = 0
+Assert Equal (Niutroller NiuReceivable AffectedUser2) (0) -- niuAccrued > compOverAccrued => compReceivable = 0
 
-Assert Equal (Niutroller NiuAccrued AffectedUser3) (0) -- compOverAccrued > compAccrued => compAccrued = 0
+Assert Equal (Niutroller NiuAccrued AffectedUser3) (0) -- compOverAccrued > niuAccrued => niuAccrued = 0
 Assert Equal (Niutroller NiuReceivable AffectedUser3) (91168284984981027180025) -- 91168628321892518528194 - 343336911491348169
 
-Assert Equal (Niutroller NiuAccrued AffectedUser4) (0) -- compOverAccrued > compAccrued => compAccrued = 0
+Assert Equal (Niutroller NiuAccrued AffectedUser4) (0) -- compOverAccrued > niuAccrued => niuAccrued = 0
 Assert Equal (Niutroller NiuReceivable AffectedUser4) (65253893519524513427603) -- 65253893519524513427603 - 0
 
-Assert Equal (Niutroller NiuAccrued AffectedUser54) (0) -- compOverAccrued == compAccrued => compAccrued = 0
-Assert Equal (Niutroller NiuReceivable AffectedUser54) (0) -- compOverAccrued == compAccrued => compReceivable = 0
+Assert Equal (Niutroller NiuAccrued AffectedUser54) (0) -- compOverAccrued == niuAccrued => niuAccrued = 0
+Assert Equal (Niutroller NiuReceivable AffectedUser54) (0) -- compOverAccrued == niuAccrued => compReceivable = 0
 
 Assert Equal (Niutroller NiuAccrued AffectedUser74) (934955697487847555) -- 934955697489397386 - 1549831
-Assert Equal (Niutroller NiuReceivable AffectedUser74) (0) -- compAccrued > compOverAccrued => compReceivable = 0
+Assert Equal (Niutroller NiuReceivable AffectedUser74) (0) -- niuAccrued > compOverAccrued => compReceivable = 0
 
 -- Ensure that claimNiu functionality has been restored and works as expected
 -- From 70M COMP accrued to 2055 - looks good

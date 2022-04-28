@@ -14,10 +14,10 @@ interface NiutrollerLensInterface {
     function getAccountLiquidity(address) external view returns (uint, uint, uint);
     function getAssetsIn(address) external view returns (NToken[] memory);
     function claimNiu(address) external;
-    function compAccrued(address) external view returns (uint);
+    function niuAccrued(address) external view returns (uint);
     function compSpeeds(address) external view returns (uint);
-    function compSupplySpeeds(address) external view returns (uint);
-    function compBorrowSpeeds(address) external view returns (uint);
+    function niuSupplySpeeds(address) external view returns (uint);
+    function niuBorrowSpeeds(address) external view returns (uint);
     function borrowCaps(address) external view returns (uint);
 }
 
@@ -73,7 +73,7 @@ contract NiuralLens {
         (bool compSupplySpeedSuccess, bytes memory compSupplySpeedReturnData) =
             address(comptroller).call(
                 abi.encodePacked(
-                    comptroller.compSupplySpeeds.selector,
+                    comptroller.niuSupplySpeeds.selector,
                     abi.encode(address(nToken))
                 )
             );
@@ -85,7 +85,7 @@ contract NiuralLens {
         (bool compBorrowSpeedSuccess, bytes memory compBorrowSpeedReturnData) =
             address(comptroller).call(
                 abi.encodePacked(
-                    comptroller.compBorrowSpeeds.selector,
+                    comptroller.niuBorrowSpeeds.selector,
                     abi.encode(address(nToken))
                 )
             );
@@ -454,7 +454,7 @@ contract NiuralLens {
         uint balance = comp.balanceOf(account);
         comptroller.claimNiu(account);
         uint newBalance = comp.balanceOf(account);
-        uint accrued = comptroller.compAccrued(account);
+        uint accrued = comptroller.niuAccrued(account);
         uint total = add(accrued, newBalance, "sum comp total");
         uint allocated = sub(total, balance, "sub allocated");
 

@@ -4,16 +4,16 @@ import "../../contracts/NiutrollerG3.sol";
 
 contract NiutrollerScenarioG3 is NiutrollerG3 {
     uint public blockNumber;
-    address public compAddress;
+    address public niuAddress;
 
     constructor() NiutrollerG3() public {}
 
-    function setNiuAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setNiuAddress(address niuAddress_) public {
+        niuAddress = niuAddress_;
     }
 
     function getNiuAddress() public view returns (address) {
-        return compAddress;
+        return niuAddress;
     }
 
     function membershipLength(NToken nToken) public view returns (uint) {

@@ -169,7 +169,7 @@
             "symbol": "cUSDC",
             "decimals": 8,
             "underlying": "0xD87Ba7A50B2E7E660f678A895E4B72E7CB4CCd9C",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCEC4a43eBB02f9B80916F1c718338169d6d5C1F0"
@@ -179,7 +179,7 @@
             "symbol": "cDAI",
             "decimals": 8,
             "underlying": "0xdc31Ee1784292379Fbb2964b3B9C4124D8F89C60",
-            "contract": "CErc20Delegator",
+            "contract": "NErc20Delegator",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x822397d9a55d0fefd20F5c4bCaB33C5F65bd28Eb"
@@ -204,7 +204,7 @@
             "symbol": "cBAT",
             "decimals": 8,
             "underlying": "0x70cBa46d2e933030E2f274AE58c951C800548AeF",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCCaF265E7492c0d9b7C2f0018bf6382Ba7f0148D"
@@ -232,7 +232,7 @@
             "symbol": "cSAI",
             "decimals": 8,
             "underlying": "0x8e9192D6f9d903b1BEb3836F52a9f71E05846e42",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x5D4373F8C1AF21C391aD7eC755762D8dD3CCA809"
@@ -242,7 +242,7 @@
             "symbol": "cREP",
             "decimals": 8,
             "underlying": "0x183Faf58c4461972765f3F90c6272A4ecE66Bd96",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x1d70B01A2C3e3B2e56FcdcEfe50d5c5d70109a5D"
@@ -276,7 +276,7 @@
             "symbol": "cZRX",
             "decimals": 8,
             "underlying": "0xe4E81Fa6B16327D4B78CFEB83AAdE04bA7075165",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xA253295eC2157B8b69C44b2cb35360016DAa25b1"
@@ -286,7 +286,7 @@
             "symbol": "cWBTC",
             "decimals": 8,
             "underlying": "0xC04B0d3107736C32e19F1c62b2aF67BE61d63a05",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "20000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x6CE27497A64fFFb5517AA4aeE908b1E7EB63B9fF"
@@ -303,8 +303,8 @@
     "NTokenDelegate": {
         "cErc20Delegate": {
             "address": "0xB40d042a65Dd413Ae0fd85bECF8D722e16bC46F1",
-            "contract": "CErc20Delegate",
-            "description": "Standard CErc20 Delegate"
+            "contract": "NErc20Delegate",
+            "description": "Standard NErc20 Delegate"
         }
     },
     "Counter": {
@@ -319,7 +319,7 @@
             "symbol": "cZRX",
             "decimals": 8,
             "underlying": "0xe4E81Fa6B16327D4B78CFEB83AAdE04bA7075165",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xA253295eC2157B8b69C44b2cb35360016DAa25b1"
@@ -329,7 +329,7 @@
             "symbol": "cBAT",
             "decimals": 8,
             "underlying": "0x70cBa46d2e933030E2f274AE58c951C800548AeF",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCCaF265E7492c0d9b7C2f0018bf6382Ba7f0148D"
@@ -339,7 +339,7 @@
             "symbol": "cSAI",
             "decimals": 8,
             "underlying": "0x8e9192D6f9d903b1BEb3836F52a9f71E05846e42",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x5D4373F8C1AF21C391aD7eC755762D8dD3CCA809"
@@ -349,7 +349,7 @@
             "symbol": "cREP",
             "decimals": 8,
             "underlying": "0x183Faf58c4461972765f3F90c6272A4ecE66Bd96",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x1d70B01A2C3e3B2e56FcdcEfe50d5c5d70109a5D"
@@ -369,7 +369,7 @@
             "symbol": "cUSDC",
             "decimals": 8,
             "underlying": "0xD87Ba7A50B2E7E660f678A895E4B72E7CB4CCd9C",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCEC4a43eBB02f9B80916F1c718338169d6d5C1F0"
@@ -379,7 +379,7 @@
             "symbol": "cWBTC",
             "decimals": 8,
             "underlying": "0xC04B0d3107736C32e19F1c62b2aF67BE61d63a05",
-            "contract": "CErc20",
+            "contract": "NErc20",
             "initial_exchange_rate_mantissa": "20000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x6CE27497A64fFFb5517AA4aeE908b1E7EB63B9fF"
@@ -389,7 +389,7 @@
             "symbol": "cDAI",
             "decimals": 8,
             "underlying": "0xdc31Ee1784292379Fbb2964b3B9C4124D8F89C60",
-            "contract": "CErc20Delegator",
+            "contract": "NErc20Delegator",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x822397d9a55d0fefd20F5c4bCaB33C5F65bd28Eb"

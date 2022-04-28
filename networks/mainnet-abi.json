@@ -17450,7 +17450,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compAccrued",
+            "name": "niuAccrued",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -17471,7 +17471,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowState",
+            "name": "niuBorrowState",
             "outputs": [
                 {
                     "internalType": "uint224",
@@ -17502,7 +17502,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowerIndex",
+            "name": "niuBorrowerIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -17553,7 +17553,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "compRate",
+            "name": "niuRate",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -17600,7 +17600,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplierIndex",
+            "name": "niuSupplierIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -17621,7 +17621,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplyState",
+            "name": "niuSupplyState",
             "outputs": [
                 {
                     "internalType": "uint224",
@@ -43611,7 +43611,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "compRate_",
+                    "name": "niuRate_",
                     "type": "uint256"
                 },
                 {
@@ -43637,7 +43637,7 @@
             "inputs": [
                 {
                     "internalType": "uint256",
-                    "name": "compRate_",
+                    "name": "niuRate_",
                     "type": "uint256"
                 },
                 {
@@ -43787,7 +43787,7 @@
             "inputs": [
                 {
                     "internalType": "uint256",
-                    "name": "compRate_",
+                    "name": "niuRate_",
                     "type": "uint256"
                 }
             ],
@@ -44244,7 +44244,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compAccrued",
+            "name": "niuAccrued",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -44266,7 +44266,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowState",
+            "name": "niuBorrowState",
             "outputs": [
                 {
                     "internalType": "uint224",
@@ -44298,7 +44298,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowerIndex",
+            "name": "niuBorrowerIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -44346,7 +44346,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "compRate",
+            "name": "niuRate",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -44395,7 +44395,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplierIndex",
+            "name": "niuSupplierIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -44417,7 +44417,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplyState",
+            "name": "niuSupplyState",
             "outputs": [
                 {
                     "internalType": "uint224",
@@ -47122,7 +47122,7 @@
             "inputs": [
                 {
                     "internalType": "uint256",
-                    "name": "compRate_",
+                    "name": "niuRate_",
                     "type": "uint256"
                 }
             ],
@@ -47579,7 +47579,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compAccrued",
+            "name": "niuAccrued",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -47601,7 +47601,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowState",
+            "name": "niuBorrowState",
             "outputs": [
                 {
                     "internalType": "uint224",
@@ -47633,7 +47633,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowerIndex",
+            "name": "niuBorrowerIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -47681,7 +47681,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "compRate",
+            "name": "niuRate",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -47730,7 +47730,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplierIndex",
+            "name": "niuSupplierIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -47752,7 +47752,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplyState",
+            "name": "niuSupplyState",
             "outputs": [
                 {
                     "internalType": "uint224",
@@ -51170,7 +51170,7 @@
             "inputs": [
                 {
                     "internalType": "uint256",
-                    "name": "compRate_",
+                    "name": "niuRate_",
                     "type": "uint256"
                 }
             ],
@@ -51686,7 +51686,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compAccrued",
+            "name": "niuAccrued",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -51708,7 +51708,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowState",
+            "name": "niuBorrowState",
             "outputs": [
                 {
                     "internalType": "uint224",
@@ -51740,7 +51740,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compBorrowerIndex",
+            "name": "niuBorrowerIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -51788,7 +51788,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "compRate",
+            "name": "niuRate",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -51837,7 +51837,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplierIndex",
+            "name": "niuSupplierIndex",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -51859,7 +51859,7 @@
                     "type": "address"
                 }
             ],
-            "name": "compSupplyState",
+            "name": "niuSupplyState",
             "outputs": [
                 {
                     "internalType": "uint224",

@@ -1,23 +1,23 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/CEther.sol";
+import "../../contracts/NEther.sol";
 import "./NiutrollerScenario.sol";
 
-contract CEtherHarness is CEther {
+contract NEtherHarness is NEther {
     uint harnessExchangeRate;
     uint public blockNumber = 100000;
 
     mapping (address => bool) public failTransferToAddresses;
 
-    constructor(NiutrollerInterface comptroller_,
+    constructor(NiutrollerInterface niuroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa,
                 string memory name_,
                 string memory symbol_,
                 uint8 decimals_,
                 address payable admin_)
-    CEther(
-    comptroller_,
+    NEther(
+    niuroller_,
     interestRateModel_,
     initialExchangeRateMantissa,
     name_,
@@ -156,23 +156,27 @@ contract CEtherHarness is CEther {
     }
 }
 
-contract CEtherScenario is CEther {
+contract NEtherScenario is NEther {
     uint reserveFactor;
+    NiutrollerInterface niuroller;
 
     constructor(string memory name_,
                 string memory symbol_,
                 uint8 decimals_,
                 address payable admin_,
-                NiutrollerInterface comptroller_,
+                NiutrollerInterface niuroller_,
                 InterestRateModel interestRateModel_,
                 uint initialExchangeRateMantissa)
-        CEther(comptroller_,
+        NEther(niuroller_,
                interestRateModel_,
                initialExchangeRateMantissa,
                name_,
                symbol_,
                decimals_,
                admin_) public {
+
+        niuroller = niuroller_;
+
     }
 
     function setTotalBorrows(uint totalBorrows_) public {
@@ -188,7 +192,7 @@ contract CEtherScenario is CEther {
     }
 
     function getBlockNumber() internal view returns (uint) {
-        NiutrollerScenario comptrollerScenario = NiutrollerScenario(address(comptroller));
-        return comptrollerScenario.blockNumber();
+        NiutrollerScenario niurollerScenario = NiutrollerScenario(address(niuroller));
+        return niurollerScenario.blockNumber();
     }
 }

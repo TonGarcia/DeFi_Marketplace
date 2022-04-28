@@ -13,7 +13,7 @@ interface NiutrollerImplMethods {
 
   _become(
     comptroller: string,
-    compRate: encodedNumber,
+    niuRate: encodedNumber,
     compMarkets: string[],
     otherMarkets: string[]
   ): Sendable<string>;

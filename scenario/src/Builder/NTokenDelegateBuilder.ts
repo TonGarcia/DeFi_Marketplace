@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { CErc20Delegate, CErc20DelegateScenario } from '../Contract/CErc20Delegate';
+import { NErc20Delegate, NErc20DelegateScenario } from '../Contract/NErc20Delegate';
 import { NToken } from '../Contract/NToken';
 import { Invokation } from '../Invokation';
 import { getStringV } from '../CoreValue';
@@ -11,12 +11,12 @@ import { getContract, getTestContract } from '../Contract';
 
 const CDaiDelegateContract = getContract('CDaiDelegate');
 const CDaiDelegateScenarioContract = getTestContract('CDaiDelegateScenario');
-const CErc20DelegateContract = getContract('CErc20Delegate');
-const CErc20DelegateScenarioContract = getTestContract('CErc20DelegateScenario');
+const NErc20DelegateContract = getContract('NErc20Delegate');
+const NErc20DelegateScenarioContract = getTestContract('NErc20DelegateScenario');
 
 
 export interface NTokenDelegateData {
-  invokation: Invokation<CErc20Delegate>;
+  invokation: Invokation<NErc20Delegate>;
   name: string;
   contract: string;
   description?: string;
@@ -26,7 +26,7 @@ export async function buildNTokenDelegate(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; nTokenDelegate: CErc20Delegate; delegateData: NTokenDelegateData }> {
+): Promise<{ world: World; nTokenDelegate: NErc20Delegate; delegateData: NTokenDelegateData }> {
   const fetchers = [
     new Fetcher<{ name: StringV; }, NTokenDelegateData>(
       `
@@ -44,7 +44,7 @@ export async function buildNTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CDaiDelegateContract.deploy<CErc20Delegate>(world, from, []),
+          invokation: await CDaiDelegateContract.deploy<NErc20Delegate>(world, from, []),
           name: name.val,
           contract: 'CDaiDelegate',
           description: 'Standard CDai Delegate'
@@ -68,7 +68,7 @@ export async function buildNTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CDaiDelegateScenarioContract.deploy<CErc20DelegateScenario>(world, from, []),
+          invokation: await CDaiDelegateScenarioContract.deploy<NErc20DelegateScenario>(world, from, []),
           name: name.val,
           contract: 'CDaiDelegateScenario',
           description: 'Scenario CDai Delegate'
@@ -78,12 +78,12 @@ export async function buildNTokenDelegate(
 
     new Fetcher<{ name: StringV; }, NTokenDelegateData>(
       `
-        #### CErc20Delegate
+        #### NErc20Delegate
 
-        * "CErc20Delegate name:<String>"
-          * E.g. "NTokenDelegate Deploy CErc20Delegate cDAIDelegate"
+        * "NErc20Delegate name:<String>"
+          * E.g. "NTokenDelegate Deploy NErc20Delegate cDAIDelegate"
       `,
-      'CErc20Delegate',
+      'NErc20Delegate',
       [
         new Arg('name', getStringV)
       ],
@@ -92,22 +92,22 @@ export async function buildNTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CErc20DelegateContract.deploy<CErc20Delegate>(world, from, []),
+          invokation: await NErc20DelegateContract.deploy<NErc20Delegate>(world, from, []),
           name: name.val,
-          contract: 'CErc20Delegate',
-          description: 'Standard CErc20 Delegate'
+          contract: 'NErc20Delegate',
+          description: 'Standard NErc20 Delegate'
         };
       }
     ),
 
     new Fetcher<{ name: StringV; }, NTokenDelegateData>(
       `
-        #### CErc20DelegateScenario
+        #### NErc20DelegateScenario
 
-        * "CErc20DelegateScenario name:<String>" - A CErc20Delegate Scenario for local testing
-          * E.g. "NTokenDelegate Deploy CErc20DelegateScenario cDAIDelegate"
+        * "NErc20DelegateScenario name:<String>" - A NErc20Delegate Scenario for local testing
+          * E.g. "NTokenDelegate Deploy NErc20DelegateScenario cDAIDelegate"
       `,
-      'CErc20DelegateScenario',
+      'NErc20DelegateScenario',
       [
         new Arg('name', getStringV),
       ],
@@ -116,10 +116,10 @@ export async function buildNTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CErc20DelegateScenarioContract.deploy<CErc20DelegateScenario>(world, from, []),
+          invokation: await NErc20DelegateScenarioContract.deploy<NErc20DelegateScenario>(world, from, []),
           name: name.val,
-          contract: 'CErc20DelegateScenario',
-          description: 'Scenario CErc20 Delegate'
+          contract: 'NErc20DelegateScenario',
+          description: 'Scenario NErc20 Delegate'
         };
       }
     )

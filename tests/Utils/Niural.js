@@ -61,12 +61,12 @@ async function makeNiutroller(opts = {}) {
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const maxAssets = etherUnsigned(dfn(opts.maxAssets, 10));
     const liquidationIncentive = etherMantissa(1);
-    const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
+    const niuRate = etherUnsigned(dfn(opts.niuRate, 1e18));
     const compMarkets = opts.compMarkets || [];
     const otherMarkets = opts.otherMarkets || [];
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
-    await send(comptroller, '_become', [unitroller._address, compRate, compMarkets, otherMarkets]);
+    await send(comptroller, '_become', [unitroller._address, niuRate, compMarkets, otherMarkets]);
     mergeInterface(unitroller, comptroller);
     await send(unitroller, '_setLiquidationIncentive', [liquidationIncentive]);
     await send(unitroller, '_setCloseFactor', [closeFactor]);
@@ -83,7 +83,7 @@ async function makeNiutroller(opts = {}) {
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
     const comp = opts.comp || await deploy('Niu', [opts.compOwner || root]);
-    const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
+    const niuRate = etherUnsigned(dfn(opts.niuRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
     await send(comptroller, '_become', [unitroller._address]);
@@ -91,7 +91,7 @@ async function makeNiutroller(opts = {}) {
     await send(unitroller, '_setLiquidationIncentive', [liquidationIncentive]);
     await send(unitroller, '_setCloseFactor', [closeFactor]);
     await send(unitroller, '_setPriceOracle', [priceOracle._address]);
-    await send(unitroller, '_setNiuRate', [compRate]);
+    await send(unitroller, '_setNiuRate', [niuRate]);
     await send(unitroller, 'setNiuAddress', [comp._address]); // harness only
 
     return Object.assign(unitroller, { priceOracle, comp });
@@ -104,7 +104,7 @@ async function makeNiutroller(opts = {}) {
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
     const comp = opts.comp || await deploy('Niu', [opts.compOwner || root]);
-    const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
+    const niuRate = etherUnsigned(dfn(opts.niuRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
     await send(comptroller, '_become', [unitroller._address]);
@@ -113,7 +113,7 @@ async function makeNiutroller(opts = {}) {
     await send(unitroller, '_setCloseFactor', [closeFactor]);
     await send(unitroller, '_setPriceOracle', [priceOracle._address]);
     await send(unitroller, 'setNiuAddress', [comp._address]); // harness only
-    await send(unitroller, 'harnessSetNiuRate', [compRate]);
+    await send(unitroller, 'harnessSetNiuRate', [niuRate]);
 
     return Object.assign(unitroller, { priceOracle, comp });
   }
@@ -154,7 +154,7 @@ async function makeNToken(opts = {}) {
       cDaiMaker  = await deploy('CDaiDelegateMakerHarness');
       underlying = cDaiMaker;
       cDelegatee = await deploy('CDaiDelegateHarness');
-      cDelegator = await deploy('CErc20Delegator',
+      cDelegator = await deploy('NErc20Delegator',
         [
           underlying._address,
           comptroller._address,
@@ -173,8 +173,8 @@ async function makeNToken(opts = {}) {
     
     case 'ccomp':
       underlying = await deploy('Niu', [opts.compHolder || root]);
-      cDelegatee = await deploy('CErc20DelegateHarness');
-      cDelegator = await deploy('CErc20Delegator',
+      cDelegatee = await deploy('NErc20DelegateHarness');
+      cDelegator = await deploy('NErc20Delegator',
         [
           underlying._address,
           comptroller._address,
@@ -188,14 +188,14 @@ async function makeNToken(opts = {}) {
           "0x0"
         ]
       );
-      nToken = await saddle.getContractAt('CErc20DelegateHarness', cDelegator._address);
+      nToken = await saddle.getContractAt('NErc20DelegateHarness', cDelegator._address);
       break;
 
     case 'cerc20':
     default:
       underlying = opts.underlying || await makeToken(opts.underlyingOpts);
-      cDelegatee = await deploy('CErc20DelegateHarness');
-      cDelegator = await deploy('CErc20Delegator',
+      cDelegatee = await deploy('NErc20DelegateHarness');
+      cDelegator = await deploy('NErc20Delegator',
         [
           underlying._address,
           comptroller._address,
@@ -209,7 +209,7 @@ async function makeNToken(opts = {}) {
           "0x0"
         ]
       );
-      nToken = await saddle.getContractAt('CErc20DelegateHarness', cDelegator._address);
+      nToken = await saddle.getContractAt('NErc20DelegateHarness', cDelegator._address);
       break;
       
   }

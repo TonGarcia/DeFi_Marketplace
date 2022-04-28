@@ -1093,7 +1093,7 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
 
         for (uint i = 0; i < allMarkets_.length; i++) {
             NToken nToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(compRate, div_(utilities[i], totalUtility)) : 0;
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(niuRate, div_(utilities[i], totalUtility)) : 0;
             compSpeeds[address(nToken)] = newSpeed;
             emit NiuSpeedUpdated(nToken, newSpeed);
         }
@@ -1104,16 +1104,16 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
      * @param nToken The market whose supply index to update
      */
     function updateNiuSupplyIndex(address nToken) internal {
-        NiuMarketState storage supplyState = compSupplyState[nToken];
+        NiuMarketState storage supplyState = niuSupplyState[nToken];
         uint supplySpeed = compSpeeds[nToken];
         uint blockNumber = getBlockNumber();
         uint deltaBlocks = sub_(blockNumber, uint(supplyState.block));
         if (deltaBlocks > 0 && supplySpeed > 0) {
             uint supplyTokens = NToken(nToken).totalSupply();
-            uint compAccrued = mul_(deltaBlocks, supplySpeed);
-            Double memory ratio = supplyTokens > 0 ? fraction(compAccrued, supplyTokens) : Double({mantissa: 0});
+            uint niuAccrued = mul_(deltaBlocks, supplySpeed);
+            Double memory ratio = supplyTokens > 0 ? fraction(niuAccrued, supplyTokens) : Double({mantissa: 0});
             Double memory index = add_(Double({mantissa: supplyState.index}), ratio);
-            compSupplyState[nToken] = NiuMarketState({
+            niuSupplyState[nToken] = NiuMarketState({
                 index: safe224(index.mantissa, "new index exceeds 224 bits"),
                 block: safe32(blockNumber, "block number exceeds 32 bits")
             });
@@ -1127,16 +1127,16 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
      * @param nToken The market whose borrow index to update
      */
     function updateNiuBorrowIndex(address nToken, Exp memory marketBorrowIndex) internal {
-        NiuMarketState storage borrowState = compBorrowState[nToken];
+        NiuMarketState storage borrowState = niuBorrowState[nToken];
         uint borrowSpeed = compSpeeds[nToken];
         uint blockNumber = getBlockNumber();
         uint deltaBlocks = sub_(blockNumber, uint(borrowState.block));
         if (deltaBlocks > 0 && borrowSpeed > 0) {
             uint borrowAmount = div_(NToken(nToken).totalBorrows(), marketBorrowIndex);
-            uint compAccrued = mul_(deltaBlocks, borrowSpeed);
-            Double memory ratio = borrowAmount > 0 ? fraction(compAccrued, borrowAmount) : Double({mantissa: 0});
+            uint niuAccrued = mul_(deltaBlocks, borrowSpeed);
+            Double memory ratio = borrowAmount > 0 ? fraction(niuAccrued, borrowAmount) : Double({mantissa: 0});
             Double memory index = add_(Double({mantissa: borrowState.index}), ratio);
-            compBorrowState[nToken] = NiuMarketState({
+            niuBorrowState[nToken] = NiuMarketState({
                 index: safe224(index.mantissa, "new index exceeds 224 bits"),
                 block: safe32(blockNumber, "block number exceeds 32 bits")
             });
@@ -1151,10 +1151,10 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
      * @param supplier The address of the supplier to distribute COMP to
      */
     function distributeSupplierNiu(address nToken, address supplier, bool distributeAll) internal {
-        NiuMarketState storage supplyState = compSupplyState[nToken];
+        NiuMarketState storage supplyState = niuSupplyState[nToken];
         Double memory supplyIndex = Double({mantissa: supplyState.index});
-        Double memory supplierIndex = Double({mantissa: compSupplierIndex[nToken][supplier]});
-        compSupplierIndex[nToken][supplier] = supplyIndex.mantissa;
+        Double memory supplierIndex = Double({mantissa: niuSupplierIndex[nToken][supplier]});
+        niuSupplierIndex[nToken][supplier] = supplyIndex.mantissa;
 
         if (supplierIndex.mantissa == 0 && supplyIndex.mantissa > 0) {
             supplierIndex.mantissa = compInitialIndex;
@@ -1163,8 +1163,8 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
         Double memory deltaIndex = sub_(supplyIndex, supplierIndex);
         uint supplierTokens = NToken(nToken).balanceOf(supplier);
         uint supplierDelta = mul_(supplierTokens, deltaIndex);
-        uint supplierAccrued = add_(compAccrued[supplier], supplierDelta);
-        compAccrued[supplier] = transferNiu(supplier, supplierAccrued, distributeAll ? 0 : compClaimThreshold);
+        uint supplierAccrued = add_(niuAccrued[supplier], supplierDelta);
+        niuAccrued[supplier] = transferNiu(supplier, supplierAccrued, distributeAll ? 0 : compClaimThreshold);
         emit DistributedSupplierNiu(NToken(nToken), supplier, supplierDelta, supplyIndex.mantissa);
     }
 
@@ -1175,17 +1175,17 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
      * @param borrower The address of the borrower to distribute COMP to
      */
     function distributeBorrowerNiu(address nToken, address borrower, Exp memory marketBorrowIndex, bool distributeAll) internal {
-        NiuMarketState storage borrowState = compBorrowState[nToken];
+        NiuMarketState storage borrowState = niuBorrowState[nToken];
         Double memory borrowIndex = Double({mantissa: borrowState.index});
-        Double memory borrowerIndex = Double({mantissa: compBorrowerIndex[nToken][borrower]});
-        compBorrowerIndex[nToken][borrower] = borrowIndex.mantissa;
+        Double memory borrowerIndex = Double({mantissa: niuBorrowerIndex[nToken][borrower]});
+        niuBorrowerIndex[nToken][borrower] = borrowIndex.mantissa;
 
         if (borrowerIndex.mantissa > 0) {
             Double memory deltaIndex = sub_(borrowIndex, borrowerIndex);
             uint borrowerAmount = div_(NToken(nToken).borrowBalanceStored(borrower), marketBorrowIndex);
             uint borrowerDelta = mul_(borrowerAmount, deltaIndex);
-            uint borrowerAccrued = add_(compAccrued[borrower], borrowerDelta);
-            compAccrued[borrower] = transferNiu(borrower, borrowerAccrued, distributeAll ? 0 : compClaimThreshold);
+            uint borrowerAccrued = add_(niuAccrued[borrower], borrowerDelta);
+            niuAccrued[borrower] = transferNiu(borrower, borrowerAccrued, distributeAll ? 0 : compClaimThreshold);
             emit DistributedBorrowerNiu(NToken(nToken), borrower, borrowerDelta, borrowIndex.mantissa);
         }
     }
@@ -1219,9 +1219,9 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
         uint deltaBlocks = sub_(blockNumber, lastContributorBlock[contributor]);
         if (deltaBlocks > 0 && compSpeed > 0) {
             uint newAccrued = mul_(deltaBlocks, compSpeed);
-            uint contributorAccrued = add_(compAccrued[contributor], newAccrued);
+            uint contributorAccrued = add_(niuAccrued[contributor], newAccrued);
 
-            compAccrued[contributor] = contributorAccrued;
+            niuAccrued[contributor] = contributorAccrued;
             lastContributorBlock[contributor] = blockNumber;
         }
     }
@@ -1326,14 +1326,14 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
 
     /**
      * @notice Set the amount of COMP distributed per block
-     * @param compRate_ The amount of COMP wei per block to distribute
+     * @param niuRate_ The amount of COMP wei per block to distribute
      */
-    function _setNiuRate(uint compRate_) public {
+    function _setNiuRate(uint niuRate_) public {
         require(adminOrInitializing(), "only admin can change comp rate");
 
-        uint oldRate = compRate;
-        compRate = compRate_;
-        emit NewNiuRate(oldRate, compRate_);
+        uint oldRate = niuRate;
+        niuRate = niuRate_;
+        emit NewNiuRate(oldRate, niuRate_);
 
         refreshNiuSpeedsInternal();
     }
@@ -1360,15 +1360,15 @@ contract NiutrollerG6 is NiutrollerV5Storage, NiutrollerInterface, NiutrollerErr
         market.isNiued = true;
         emit MarketNiued(NToken(nToken), true);
 
-        if (compSupplyState[nToken].index == 0 && compSupplyState[nToken].block == 0) {
-            compSupplyState[nToken] = NiuMarketState({
+        if (niuSupplyState[nToken].index == 0 && niuSupplyState[nToken].block == 0) {
+            niuSupplyState[nToken] = NiuMarketState({
                 index: compInitialIndex,
                 block: safe32(getBlockNumber(), "block number exceeds 32 bits")
             });
         }
 
-        if (compBorrowState[nToken].index == 0 && compBorrowState[nToken].block == 0) {
-            compBorrowState[nToken] = NiuMarketState({
+        if (niuBorrowState[nToken].index == 0 && niuBorrowState[nToken].block == 0) {
+            niuBorrowState[nToken] = NiuMarketState({
                 index: compInitialIndex,
                 block: safe32(getBlockNumber(), "block number exceeds 32 bits")
             });

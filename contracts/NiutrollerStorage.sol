@@ -107,25 +107,25 @@ contract NiutrollerV3Storage is NiutrollerV2Storage {
     NToken[] public allMarkets;
 
     /// @notice The rate at which the flywheel distributes COMP, per block
-    uint public compRate;
+    uint public niuRate;
 
-    /// @notice The portion of compRate that each market currently receives
+    /// @notice The portion of niuRate that each market currently receives
     mapping(address => uint) public compSpeeds;
 
     /// @notice The COMP market supply state for each market
-    mapping(address => NiuMarketState) public compSupplyState;
+    mapping(address => NiuMarketState) public niuSupplyState;
 
     /// @notice The COMP market borrow state for each market
-    mapping(address => NiuMarketState) public compBorrowState;
+    mapping(address => NiuMarketState) public niuBorrowState;
 
     /// @notice The COMP borrow index for each market for each supplier as of the last time they accrued COMP
-    mapping(address => mapping(address => uint)) public compSupplierIndex;
+    mapping(address => mapping(address => uint)) public niuSupplierIndex;
 
     /// @notice The COMP borrow index for each market for each borrower as of the last time they accrued COMP
-    mapping(address => mapping(address => uint)) public compBorrowerIndex;
+    mapping(address => mapping(address => uint)) public niuBorrowerIndex;
 
     /// @notice The COMP accrued but not yet transferred to each user
-    mapping(address => uint) public compAccrued;
+    mapping(address => uint) public niuAccrued;
 }
 
 contract NiutrollerV4Storage is NiutrollerV3Storage {
@@ -146,10 +146,10 @@ contract NiutrollerV5Storage is NiutrollerV4Storage {
 
 contract NiutrollerV6Storage is NiutrollerV5Storage {
     /// @notice The rate at which comp is distributed to the corresponding borrow market (per block)
-    mapping(address => uint) public compBorrowSpeeds;
+    mapping(address => uint) public niuBorrowSpeeds;
 
     /// @notice The rate at which comp is distributed to the corresponding supply market (per block)
-    mapping(address => uint) public compSupplySpeeds;
+    mapping(address => uint) public niuSupplySpeeds;
 }
 
 contract NiutrollerV7Storage is NiutrollerV6Storage {
